@@ -112,6 +112,7 @@ function noteIn(m, source) {
 
 /* ---------- microphone button ---------- */
 const micBtn = $('#mic');
+let lastQuietTip = 0;
 micBtn.addEventListener('click', async () => {
   await startAudio();
   if (micOn()) { stopMic(); micBtn.classList.remove('on'); $('#mic .ic').textContent = '🎤'; return; }
@@ -119,7 +120,14 @@ micBtn.addEventListener('click', async () => {
   try {
     await startMic({
       onNote: (m) => noteIn(m, 'mic'),
-      onLevel: (v) => { $('#mic .lvl i').style.width = Math.round(v * 100) + '%'; },
+      onLevel: (v, quietMs) => {
+        $('#mic .lvl i').style.width = Math.round(v * 100) + '%';
+        // nothing loud enough for 20s while waiting for notes: the tablet is probably too far from the piano
+        if (quietMs > 20000 && ['play', 'lesson'].includes(current) && performance.now() - lastQuietTip > 120000) {
+          lastQuietTip = performance.now();
+          toast('🐔👂 Clucky can’t hear the piano well. Move the tablet closer, or play a little louder!', 6000);
+        }
+      },
     });
     micBtn.classList.add('on');
     $('#mic .ic').textContent = '👂';

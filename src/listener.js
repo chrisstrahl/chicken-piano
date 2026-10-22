@@ -13,11 +13,17 @@ const CLARITY = 0.8;
 const REPEAT_WAIT = 180;
 const PITCH_SIZE = 2048;
 const GATE = 2; // how far above the room's background noise a note must be
+const MIN_GATE = 0.0002; // absolute floor, low enough for quiet tablet mics (the noise-relative gate does the real work)
 // semitones above a held note where its own overtones show up (octave+5th, 2 octaves+3rd, ...)
 const OVERTONES = [19, 28, 31, 34];
 const FLUX_K = 1.6;
 const FLUX_MIN = 0.35;
-const TARGET_RATIO = 1.35; // expected note must beat every other note name by this much
+const TARGET_RATIO = 1.35;
+// Input gain: quiet tablet mics get boosted until the room noise sits near NOISE_TARGET, the level the
+// thresholds above were tuned at. It can't add signal over noise, but it stops quiet-but-clean input
+// from falling under fixed thresholds.
+const NOISE_TARGET = 0.0009;
+const MAX_GAIN = 16; // expected note must beat every other note name by this much
 
 export class NoteListener {
   constructor(size) {
@@ -31,6 +37,7 @@ export class NoteListener {
     this.spec = this.fft.createComplexArray();
     this.mag = new Float32Array(size / 2);
     this.armed = true; this.lastMidi = null; this.stable = 0; this.lastAccept = -1e9; this.lastPc = -1; this.lastAcceptMidi = -99;
+    this.rawNoise = 0.004; this.gain = 1; this.scaled = new Float32Array(size);
     this.targetHits = 0; this.noise = 0.004; this.recent = []; this.peak = 0; this.notePeak = 0;
     this.prevLog = new Float32Array(size / 2); this.fluxHist = []; this.onsetAt = -1e9; this.specReady = false;
   }
@@ -39,13 +46,21 @@ export class NoteListener {
   // expectPc: pitch class (0-11) the app is waiting for, or null.
   // Returns { rms, midi } where midi is set only when a new key press is recognized.
   process(buf, sr, now, ignore = false, expectPc = null) {
-    let rms = 0;
-    for (let i = 0; i < buf.length; i++) rms += buf[i] * buf[i];
-    rms = Math.sqrt(rms / buf.length);
+    let raw = 0;
+    for (let i = 0; i < buf.length; i++) raw += buf[i] * buf[i];
+    raw = Math.sqrt(raw / buf.length);
+    this.rawNoise = raw < this.rawNoise ? this.rawNoise * 0.8 + raw * 0.2 : this.rawNoise * 0.998 + raw * 0.002;
+    this.gain = Math.min(MAX_GAIN, Math.max(1, NOISE_TARGET / Math.max(this.rawNoise, 1e-6)));
+    let rms = raw;
+    if (this.gain > 1) {
+      for (let i = 0; i < buf.length; i++) this.scaled[i] = buf[i] * this.gain;
+      buf = this.scaled;
+      rms = raw * this.gain;
+    }
 
     // adaptive noise floor: drifts down quickly, up slowly
     this.noise = rms < this.noise ? this.noise * 0.8 + rms * 0.2 : this.noise * 0.998 + rms * 0.002;
-    const gate = Math.max(0.0015, this.noise * GATE);
+    const gate = Math.max(MIN_GATE, this.noise * GATE);
 
     // onset: a sudden jump in loudness means a new key press (even the same key again).
     // It must also get back near recent loudness, so wobbles in a ringing note don't count.
