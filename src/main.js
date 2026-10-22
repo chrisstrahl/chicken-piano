@@ -1,6 +1,6 @@
 import { SONGS, LEVELS, PRAISE, COLORS, BEATS, letterOf, nameOf, isBlack, parse, songById, songsForLevel } from './music.js';
 import { startAudio, playNote, noteDown, noteUp, playSequence, cluck, peck, bawk, silly, say, stopTalking } from './audio.js';
-import { startMic, stopMic, micOn, micSupported, expectNote } from './mic.js';
+import { startMic, stopMic, micOn, micSupported, expectNote, micHealth } from './mic.js';
 import { drawStaff, focusNote } from './staff.js';
 import { makeKeyboard, LOW, HIGH } from './keyboard.js';
 
@@ -106,6 +106,7 @@ document.addEventListener('pointerdown', () => { startAudio(); }, { capture: tru
 function noteIn(m, source) {
   if (source === 'tap') noteDown(m);
   const hd = $('#mic .heard');
+  if (source === 'mic') heardCount++;
   if (source === 'mic') { hd.textContent = nameOf(m); hd.style.background = isBlack(m) ? '#ddd' : COLORS[letterOf(m)]; }
   onNote && onNote(m, source);
 }
@@ -113,6 +114,19 @@ function noteIn(m, source) {
 /* ---------- microphone button ---------- */
 const micBtn = $('#mic');
 let lastQuietTip = 0;
+let heardCount = 0;
+// Grown-ups: hold the mic button for 1.5s to see what the microphone is doing (for bug reports).
+{
+  let t = null;
+  micBtn.addEventListener('pointerdown', () => {
+    t = setTimeout(() => {
+      t = null;
+      const h = micHealth();
+      toast(`🎤 ${micOn() ? 'on' : 'off'} · audio ${h.ctx} · stream ${h.open ? 'open' : 'closed'} · heard ${heardCount} · fixes ${h.fixes}`, 8000);
+    }, 1500);
+  });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) => micBtn.addEventListener(ev, () => clearTimeout(t)));
+}
 micBtn.addEventListener('click', async () => {
   await startAudio();
   if (micOn()) { stopMic(); micBtn.classList.remove('on'); $('#mic .ic').textContent = '🎤'; return; }
@@ -786,3 +800,4 @@ document.addEventListener('keyup', (e) => { const m = KEYMAP[e.key.toLowerCase()
 renderHome();
 window.__cp = { show, openSong, openLesson, noteIn, jumpTo, P, L, progress, LEVELS, SONGS };
 window.__cpMs = ms;
+window.__cpHeard = () => heardCount;
