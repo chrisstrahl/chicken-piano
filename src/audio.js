@@ -2,6 +2,8 @@
 import * as Tone from 'tone';
 import { SAMPLES } from './samples.generated.js';
 import { BEATS } from './music.js';
+import { lineId } from './lines.js';
+import { VOICE } from './voice.generated.js';
 
 let piano = null;
 let fx = null;
@@ -160,7 +162,8 @@ export function playSequence(notes, tempo, onNote, onDone, vel = 0.8) {
   return () => { stopped = true; clearTimeout(timer); };
 }
 
-// Talking chicken (built-in Web Speech API)
+// Talking chicken. Lines are pre-recorded with a natural voice (tools/voice, clips in dist/voice);
+// anything without a clip falls back to the device's built-in speech.
 let voice = null;
 function pickVoice() {
   const vs = window.speechSynthesis ? speechSynthesis.getVoices() : [];
@@ -171,13 +174,72 @@ if (window.speechSynthesis) {
   pickVoice();
   speechSynthesis.onvoiceschanged = pickVoice;
 }
+const clips = new Map(); // line id -> Promise<AudioBuffer>
+function clip(text) {
+  const id = lineId(text);
+  if (!VOICE.has(id)) return null;
+  if (!clips.has(id)) {
+    const p = fetch(`voice/${id}.mp3`)
+      .then((r) => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+      .then((b) => Tone.getContext().rawContext.decodeAudioData(b));
+    p.catch(() => clips.delete(id));
+    clips.set(id, p);
+  }
+  return clips.get(id);
+}
+// Fetch clips ahead of time so the chicken answers right away (e.g. every line of a lesson).
+export function preloadVoice(lines) { lines.flat().forEach((t) => t && clip(t)); }
+
 let talkId = 0; // only the newest sentence may un-mute the mic when it ends
+let talking = null; // the clip that is playing now
+// text is a sentence or a list of sentences (played back to back).
 // onEnd runs when the chicken stops talking (or about when it should have, if speech is missing).
 export function say(text, onEnd) {
+  const parts = [].concat(text || []).filter(Boolean);
   let done = false;
   const finish = () => { if (!done) { done = true; onEnd && onEnd(); } };
-  const est = 600 + (text || '').length * 70;
-  if (!window.speechSynthesis || !text) { setTimeout(finish, text ? 300 : 0); return; }
+  if (!parts.length) { setTimeout(finish, 0); return; }
+  stopTalking();
+  const id = ++talkId;
+  // Short mute while the clip loads; the full length is set once playback (or device speech) starts,
+  // so a device that never speaks doesn't leave the mic deaf.
+  busy(1200);
+  const loads = started && Tone.getContext().state === 'running' ? parts.map(clip) : [];
+  if (loads.length && loads.every(Boolean)) {
+    Promise.all(loads).then((bufs) => {
+      if (id !== talkId) return finish();
+      const ctx = Tone.getContext().rawContext;
+      const out = ctx.createGain();
+      out.connect(ctx.destination);
+      let t = ctx.currentTime + 0.03;
+      const srcs = bufs.map((b) => {
+        const s = ctx.createBufferSource();
+        s.buffer = b;
+        s.connect(out);
+        s.start(t);
+        t += b.duration + 0.25;
+        return s;
+      });
+      const ms = (t - ctx.currentTime) * 1000;
+      busy(ms);
+      const end = () => { if (talking && talking.id === id) talking = null; if (id === talkId) busy(300, true); setTimeout(finish, 250); };
+      srcs[srcs.length - 1].onended = end;
+      talking = { id, stop: () => { srcs.forEach((s) => { s.onended = null; try { s.stop(); } catch (e) {} }); out.disconnect(); end(); } };
+    }).catch(() => { if (id === talkId) speak(parts.join(' '), id, finish); else finish(); });
+  } else {
+    speak(parts.join(' '), id, finish);
+  }
+}
+// Device voices read a lone capital letter as "capital C", so spell note names out.
+const LETTER_SOUND = { A: 'ay', B: 'bee', C: 'see', D: 'dee', E: 'ee', F: 'eff', G: 'gee' };
+export const speakable = (text) => text
+  .replace(/\b([B-G])\b(?!['’])/g, (_, l) => LETTER_SOUND[l])
+  .replace(/\bA\b(?=,|\.|!|\?| sharp\b(?! sign)| flat\b(?! sign)| and\b|$)/g, 'ay')
+  .replace(/♯/g, ' sharp').replace(/♭/g, ' flat');
+function speak(text, id, finish) {
+  if (!window.speechSynthesis) { setTimeout(finish, 300); return; }
+  text = speakable(text);
+  const est = 600 + text.length * 70;
   try {
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
@@ -187,13 +249,15 @@ export function say(text, onEnd) {
     // Mute the mic while the chicken talks. Only a short mute until speech actually starts: if the device
     // never speaks (no voice, blocked), the mic shouldn't stay deaf for the whole sentence.
     busy(1200);
-    const id = ++talkId;
     u.onstart = () => { if (id === talkId) busy(est); };
     u.onend = () => { if (id === talkId) busy(300, true); setTimeout(finish, 250); };
     speechSynthesis.speak(u);
     setTimeout(finish, est * 1.6 + 1500); // iOS sometimes never fires onend
   } catch (e) { setTimeout(finish, 300); }
 }
-export function stopTalking() { try { if (window.speechSynthesis && speechSynthesis.speaking) { speechSynthesis.cancel(); busy(300, true); } } catch (e) {} }
+export function stopTalking() {
+  if (talking) talking.stop();
+  try { if (window.speechSynthesis && speechSynthesis.speaking) { speechSynthesis.cancel(); busy(300, true); } } catch (e) {}
+}
 
 export { Tone };

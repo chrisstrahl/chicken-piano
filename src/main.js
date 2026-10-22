@@ -1,5 +1,6 @@
 import { SONGS, LEVELS, PRAISE, COLORS, BEATS, letterOf, nameOf, isBlack, parse, songById, songsForLevel } from './music.js';
-import { startAudio, playNote, noteDown, noteUp, playSequence, cluck, peck, bawk, silly, say, stopTalking } from './audio.js';
+import { coop, openSongsAsk, letsPlay, oopsFind, songDone, lessonDone, noteWords } from './lines.js';
+import { startAudio, playNote, noteDown, noteUp, playSequence, cluck, peck, bawk, silly, say, stopTalking, preloadVoice } from './audio.js';
 import { startMic, stopMic, micOn, micSupported, expectNote, micHealth } from './mic.js';
 import { drawStaff, focusNote } from './staff.js';
 import { makeKeyboard, LOW, HIGH } from './keyboard.js';
@@ -81,9 +82,6 @@ function noteOf(m, d = 'q') {
   return { m, keys: [k], d, letter, label: k.label, lyric: '' };
 }
 
-// Note names said out loud. A lone capital letter makes some voices say "capital C", so spell them as words.
-const SPOKEN = { C: 'see', D: 'dee', E: 'ee', F: 'eff', G: 'gee', A: 'ay', B: 'bee' };
-const spoken = (label) => SPOKEN[label[0]] + (label.includes('♯') || label.includes('#') ? ' sharp' : label.includes('♭') ? ' flat' : '');
 
 /* ---------- screens and note input routing ---------- */
 let current = 'home';
@@ -177,7 +175,7 @@ $('#coop').addEventListener('click', () => {
   act($('#home .chicken'), 'happy');
   cluck(2);
   const chicks = LEVELS.filter(levelDone).length;
-  say(`This is your chicken coop! You have ${eggs} eggs${chicks ? ` and ${chicks} baby ${chicks === 1 ? 'chick' : 'chicks'}` : ''}. Win eggs in lessons and songs. Finish a level to hatch a baby chick!`);
+  say(coop(eggs, chicks));
 });
 
 // First tap: browsers only allow sound after a tap, so the egg on the start screen hatches with a silly chicken noise.
@@ -264,7 +262,7 @@ function songTap(e) {
   const s = songById(c.dataset.song);
   if (!songOpen(s)) {
     cluck(1);
-    return ask(`🔓 ${LEVELS[s.level - 1].emoji} ${s.level}`, `Open all the songs in level ${s.level}?`, () => {
+    return ask(`🔓 ${LEVELS[s.level - 1].emoji} ${s.level}`, openSongsAsk(s.level), () => {
       progress.open = { ...(progress.open || {}), [s.level]: true };
       save();
       if (current === 'level') renderLevel(); else renderSongs();
@@ -325,7 +323,7 @@ function restartSong(first) {
   settle();
   setCurrent();
   const n = notesP()[P.i];
-  if (first) say(`Let's play ${P.song.title}! Start on ${spoken(n.label)}.`);
+  if (first) say(letsPlay(P.song.title, n.label));
 }
 // grey out every note before i, un-grey the rest
 function markUpTo(i) {
@@ -386,7 +384,7 @@ function playInput(m) {
     act(playChicken(), 'oops');
     bubble($('#playBubble'), `${bigLetter(m)} 🙈 👉 ${bigLetter(n.m, n.label)}`);
     playCard.classList.remove('shake'); void playCard.offsetWidth; playCard.classList.add('shake');
-    if (P.wrongRow === 2) say(`Oops! Find ${spoken(n.label)}.`);
+    if (P.wrongRow === 2) say(oopsFind(n.label));
   }
 }
 function finishSong() {
@@ -400,7 +398,7 @@ function finishSong() {
   party(eggs, {
     again: () => openSong(P.song.id, P.back),
     next: () => (nxt && songOpen(nxt) ? openSong(nxt.id, P.back) : show('level')),
-    words: eggs === 3 ? 'Perfect! Three eggs!' : `You did it! ${eggs} eggs!`,
+    words: songDone(eggs),
   });
 }
 function stopDemo() {
@@ -471,6 +469,7 @@ function openLesson(n, i) {
   levelN = n;
   onNote = lessonInput;
   leaveHooks.push(stopHear);
+  preloadVoice(lesson().steps.map((st) => [st.say, st.hint]));
   renderStep();
 }
 function stopHear() { L.stopHear && L.stopHear(); L.stopHear = null; }
@@ -535,9 +534,7 @@ function finishLesson() {
   const newSongs = songsForLevel(lv.n).slice(songsBefore, songsOpenIn(lv)).slice(0, 5);
   const hatched = !wasDone && levelDone(lv);
   const newLevel = hatched && lv.n < 10;
-  let words = 'You did it! You got an egg!';
-  if (newSongs.length) words += ` New song: ${newSongs.map((x) => x.title).join(', and ')}!`;
-  if (hatched) words += ` You finished level ${lv.n}! A baby chick hatched!${newLevel ? ` Next is level ${lv.n + 1}.` : ' You are a piano champion!'}`;
+  const words = lessonDone(newSongs.map((x) => x.title), hatched && lv.n);
   if (newSongs.length) setTimeout(() => toast(`🔓 ${newSongs.map((x) => `${x.emoji} ${x.title}`).join('  ')}`, 5000), 900);
   const nxt = lv.lessons[L.li + 1] && !progress.lessons[lv.lessons[L.li + 1].id] ? lv.lessons[L.li + 1] : null;
   party(1, {
@@ -609,7 +606,7 @@ function showInput(m) {
     act(lessonChicken(), 'peck', 300);
     L.hits++;
     L.got.add(pc(m));
-    if (g.length >= 7) say(spoken(nameOf(m)));
+    if (g.length >= 7) say(noteWords(nameOf(m)));
     const { times, distinct } = needed(s);
     if (L.hits >= times && L.got.size >= distinct) return stepDone();
     // all the taps used up on the same key? wait for the missing ones
@@ -637,7 +634,7 @@ function keyPrompt(first) {
   const n = parse(s.targets)[L.sub];
   expectNote(n.m);
   bubble($('#lessonBubble'), `🎹 ${bigLetter(n.m, n.label)}`);
-  if (first) sayThen(s.say); else say(spoken(n.label));
+  if (first) sayThen(s.say); else say(noteWords(n.label));
 }
 function keyInput(m) {
   const s = stepObj();
@@ -846,7 +843,7 @@ document.addEventListener('keydown', (e) => {
 document.addEventListener('keyup', (e) => { const m = KEYMAP[e.key.toLowerCase()]; if (m) keyUp(m); });
 
 renderHome();
-window.__cp = { show, openSong, openLesson, noteIn, jumpTo, P, L, progress, LEVELS, SONGS };
+window.__cp = { say, show, openSong, openLesson, noteIn, jumpTo, P, L, progress, LEVELS, SONGS };
 window.__cpMs = ms;
 window.__cpHeard = () => heardCount;
 window.__cpFree = () => F.notes;

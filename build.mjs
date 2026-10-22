@@ -15,6 +15,9 @@ for (const n of NOTES) {
   }
   samples[n.replace('s', '#')] = fs.readFileSync(out).toString('base64');
 }
+// Recorded voice clips (tools/voice); the page only asks for clips it knows exist.
+const voiceIds = fs.existsSync('dist/voice/manifest.json') ? Object.keys(JSON.parse(fs.readFileSync('dist/voice/manifest.json', 'utf8'))) : [];
+fs.writeFileSync('src/voice.generated.js', `export const VOICE = new Set(${JSON.stringify(voiceIds)});\n`);
 fs.writeFileSync('src/samples.generated.js', `export const SAMPLES = ${JSON.stringify(samples)};\n`);
 
 const res = await build({ entryPoints: ['src/main.js'], bundle: true, minify: true, format: 'iife', write: false, target: ['es2020'], legalComments: 'none', mainFields: ['module', 'main'] });

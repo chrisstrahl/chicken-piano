@@ -11,12 +11,13 @@ libraries and sounds below. Their licenses still apply to those parts.
 | [fft.js](https://github.com/indutny/fft.js) (used by Pitchy) | 4.0.4 | MIT | Copyright Fedor Indutny, 2017 |
 | Bravura music font (inside VexFlow) | | SIL Open Font License 1.1 | Steinberg Media Technologies GmbH |
 | Piano samples: [tonejs-instruments](https://github.com/nbrosowsky/tonejs-instruments) via [tonejs-instrument-piano-mp3](https://github.com/Makefully-Studios/tonejs-instruments) | 1.1.2 | Samples: [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/); code: MIT | Samples collected and edited by Nicholas Brosowsky, from Versilian Studios VSCO 2 (per the project's sample-source-info.txt). Chicken Piano trims them to 2.5 s, mono, 64 kbps. |
+| Talking-chicken voice clips (`dist/voice`), recorded with [Kokoro-82M](https://github.com/hexgrad/kokoro) (voice `af_heart`) via [kokoro-onnx](https://github.com/thewh1teagle/kokoro-onnx) | 1.0 / 0.6.1 | Apache 2.0 (model weights and kokoro-onnx) | Kokoro model by hexgrad; kokoro-onnx by thewh1teagle. The model is used only at build time and is not shipped. |
 | [Fredoka](https://fonts.google.com/specimen/Fredoka) font (loaded from Google Fonts, not bundled) | | SIL Open Font License 1.1 | The Fredoka Project Authors |
 
 Not third-party:
 
 - Chicken sounds (clucks, pecks, the "bawk") are synthesized in code with Tone.js. No recorded clips.
-- The talking chicken uses the device's built-in speech voice (Web Speech API).
+- The talking chicken plays clips recorded with Kokoro (above); sentences without a clip use the device's built-in speech voice (Web Speech API).
 - Song melodies are traditional or public domain tunes (or new). The chicken lyrics are new.
 
 ## MIT license text (Tone.js, VexFlow, Pitchy, fft.js)
