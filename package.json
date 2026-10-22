@@ -1,0 +1,21 @@
+{
+  "name": "chicken-piano",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "pitchy": "^4.1.0",
+    "tone": "^14.9.17",
+    "tonejs-instrument-piano-mp3": "^1.1.2",
+    "vexflow": "^4.2.5"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
+  }
+}
