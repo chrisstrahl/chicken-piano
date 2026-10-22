@@ -2,3 +2,5 @@ node_modules/
 build/
 test/shots/
 src/samples.generated.js
+src/voice.generated.js
+__pycache__/

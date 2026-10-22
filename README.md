@@ -23,10 +23,27 @@ the piano samples are CC BY 3.0 and need credit. See [THIRD_PARTY_NOTICES.md](TH
 
 ```
 npm install
-node build.mjs     # writes dist/index.html (one self-contained file)
+node build.mjs     # writes dist/index.html (one self-contained file, plus voice clips in dist/voice)
 ```
 
 The microphone needs the page served over HTTPS (it is deployed on Netlify; `netlify.toml` publishes the committed `dist/` as-is, so run `node build.mjs` and commit `dist/` after changes). On a laptop, keys A–; play the notes.
+
+## The chicken's voice
+
+Spoken lines are pre-recorded with [Kokoro-82M](https://github.com/hexgrad/kokoro) (open source neural TTS, voice
+`af_heart`, runs locally with no API key) into small mp3 clips in `dist/voice/`, named by a hash of the sentence.
+The app plays the clip for a sentence when it has one and falls back to the device's built-in speech otherwise.
+
+After changing anything the chicken says (lesson `say`/`hint` text, songs, or the templates in `src/lines.js`):
+
+```
+mkdir -p build && pip install -r tools/voice/requirements.txt   # once; needs ffmpeg too
+npm run voice      # records only new or changed lines, deletes unused clips
+node build.mjs
+```
+
+The first run downloads the model (~350 MB) into `~/.cache/chicken-piano-voice`. If a word comes out wrong,
+add a regex spelling fix to `tools/voice/pronounce.json` (it changes what the voice reads, not what the app shows).
 
 ## Testing note detection
 

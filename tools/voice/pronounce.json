@@ -1,0 +1,10 @@
+[
+  ["note: regex fixes applied to what the voice reads, never to what the app shows", ""],
+  ["\\bA (sharp|flat)\\b(?! sign)", "\"A\" $1"],
+  ["^A( sharp| flat)?[.!]?$", "\"A\"$1"],
+  ["\\bA and\\b", "A, and"],
+  ["\\bf means forte\\b", "F means forte"],
+  ["Für Eggs-lise", "Fur Eggs-leeze"],
+  ["Clu, uck!", "Cluck, cluck!"],
+  ["Cluuuuuck!", "Cluck, cluck, cluck, cluck!"]
+]
