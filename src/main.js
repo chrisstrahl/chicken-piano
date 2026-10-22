@@ -65,7 +65,7 @@ function confetti(n = 28) {
   for (let i = 0; i < n; i++) {
     const c = document.createElement('div');
     c.className = 'confetti';
-    c.textContent = pick(['🥚', '🪶', '🐥', '⭐', '🌽']);
+    c.textContent = pick(['🥚', '🪶', '🐥', '🌽']);
     c.style.left = Math.random() * 100 + 'vw';
     c.style.animationDuration = 2 + Math.random() * 2 + 's';
     c.style.animationDelay = Math.random() * 0.8 + 's';
@@ -165,21 +165,19 @@ micBtn.addEventListener('click', async () => {
 
 /* ---------- HOME ---------- */
 function renderHome() {
-  $('#homeLevel').textContent = `⭐ ${currentLevel()}`;
+  $('#homeLevel').textContent = currentLevel();
   const eggs = totalEggs();
-  const chicks = Math.floor(eggs / 3);
-  const left = eggs % 3;
-  const shown = Math.min(chicks, 24);
-  $('#coop').innerHTML = `<span class="lbl">🏡 ${eggs ? `${eggs}🥚` : ''}</span>${'🐥'.repeat(shown)}${chicks > shown ? `<b>+${chicks - shown}</b>` : ''}${'🥚'.repeat(left)}${eggs === 0 ? '<span style="opacity:.5">🥚 🥚 🥚 → 🐥</span>' : ''}`;
+  const chicks = LEVELS.filter(levelDone).length;
+  $('#coop').innerHTML = `<span class="lbl">🏡</span><span class="cnt">🥚 ${eggs}</span>${chicks ? `<span class="cnt">${'🐥'.repeat(chicks)}</span>` : ''}`;
 }
 
-// The coop: every egg earned (lessons, and up to 3 per song) goes here; 3 eggs hatch a chick.
+// The coop: eggs from lessons (1 each) and songs (up to 3 each), plus one chick for every finished level.
 $('#coop').addEventListener('click', () => {
   const eggs = totalEggs();
   act($('#home .chicken'), 'happy');
   cluck(2);
-  say(eggs ? `This is your chicken coop! You have ${eggs} eggs. Every three eggs hatch a baby chick. Win more eggs in lessons and songs!`
-    : 'This is your chicken coop! Win eggs in lessons and songs. Every three eggs hatch a baby chick!');
+  const chicks = LEVELS.filter(levelDone).length;
+  say(`This is your chicken coop! You have ${eggs} eggs${chicks ? ` and ${chicks} baby ${chicks === 1 ? 'chick' : 'chicks'}` : ''}. Win eggs in lessons and songs. Finish a level to hatch a baby chick!`);
 });
 
 // First tap: browsers only allow sound after a tap, so the egg on the start screen hatches with a silly chicken noise.
@@ -198,11 +196,11 @@ function renderMap() {
     const done = levelDone(lv);
     const state = done ? 'done' : lv.n === cur ? 'here' : lv.n > cur ? 'later' : '';
     return `<button class="node ${state}" data-level="${lv.n}" style="--lc:${lv.color}">
-      <span class="num">${done ? '⭐' : lv.n}</span><span class="em">${lv.emoji}</span><span class="nm">${lv.title}</span>
+      <span class="num">${done ? '🐥' : lv.n}</span><span class="em">${lv.emoji}</span><span class="nm">${lv.title}</span>
       <span class="pips">${lv.lessons.map((l) => `<i class="${progress.lessons[l.id] ? 'on' : ''}"></i>`).join('')}</span></button>`;
   }).join('');
-  const stars = LEVELS.filter(levelDone).length;
-  $('#mapStars').innerHTML = LEVELS.map((lv) => `<i class="${levelDone(lv) ? 'on' : lv.n === cur ? 'cur' : ''}" style="--lc:${lv.color}"></i>`).join('') + `<b>⭐ ${stars}/10</b>`;
+  const chicks = LEVELS.filter(levelDone).length;
+  $('#mapStars').innerHTML = LEVELS.map((lv) => `<i class="${levelDone(lv) ? 'on' : lv.n === cur ? 'cur' : ''}" style="--lc:${lv.color}"></i>`).join('') + `<b>🐥 ${chicks}/10</b>`;
   $('#btnKey').classList.toggle('on', !!progress.all);
 }
 let levelN = 1;
@@ -442,8 +440,10 @@ function ask(html, words, onYes) {
 }
 
 /* ---------- CELEBRATION ---------- */
-function party(eggs, { again, next, words }) {
-  $('#partyEggs').innerHTML = '<span>🥚</span>'.repeat(eggs) + '<span style="filter:grayscale(1) opacity(.25)">🥚</span>'.repeat(3 - eggs);
+// eggs won (a lesson gives 1, a song up to 3); chick: a level was just finished
+function party(eggs, { again, next, words, chick = false }) {
+  $('#partyEggs').innerHTML = chick ? '<span>🥚</span><span>🐣</span>'
+    : '<span>🥚</span>'.repeat(eggs) + '<span style="filter:grayscale(1) opacity(.25)">🥚</span>'.repeat(3 - eggs);
   $('#partyTitle').textContent = eggs === 3 ? 'BAWK-TASTIC!' : 'BAWK!';
   $('#party').classList.add('show');
   $('#partyChicken').classList.add('dance');
@@ -533,13 +533,15 @@ function finishLesson() {
   progress.lessons[les.id] = true;
   save();
   const newSongs = songsForLevel(lv.n).slice(songsBefore, songsOpenIn(lv)).slice(0, 5);
-  const newLevel = !wasDone && levelDone(lv) && lv.n < 10;
+  const hatched = !wasDone && levelDone(lv);
+  const newLevel = hatched && lv.n < 10;
   let words = 'You did it! You got an egg!';
   if (newSongs.length) words += ` New song: ${newSongs.map((x) => x.title).join(', and ')}!`;
-  if (newLevel) words += ` You finished level ${lv.n}! You got a star! Next is level ${lv.n + 1}.`;
+  if (hatched) words += ` You finished level ${lv.n}! A baby chick hatched!${newLevel ? ` Next is level ${lv.n + 1}.` : ' You are a piano champion!'}`;
   if (newSongs.length) setTimeout(() => toast(`🔓 ${newSongs.map((x) => `${x.emoji} ${x.title}`).join('  ')}`, 5000), 900);
   const nxt = lv.lessons[L.li + 1] && !progress.lessons[lv.lessons[L.li + 1].id] ? lv.lessons[L.li + 1] : null;
   party(1, {
+    chick: hatched,
     again: () => openLesson(lv.n, L.li),
     next: () => {
       if (newSongs.length) return openSong(newSongs[0].id, 'level');
@@ -575,7 +577,7 @@ const labelFor = (s, p) => { const k = parse(s.goal).flatMap((n) => n.keys).find
 function needed(s) { const g = goalPcs(s); return { times: s.times || 1, distinct: Math.min(s.times || 1, g.length) }; }
 function goalHtml(s) {
   const { times } = needed(s);
-  return `<span class="goal">${Array.from({ length: times }, (_, i) => (i < L.hits ? '🐥' : '🥚')).join('')}</span>`;
+  return `<span class="goal">${Array.from({ length: times }, (_, i) => (i < L.hits ? '🥚' : '<i class="egg0">🥚</i>')).join('')}</span>`;
 }
 function showStep() {
   const s = stepObj();
@@ -673,7 +675,7 @@ function seqTarget() {
   expectNote(n.m);
   L.seqDrawn.cur.setAttribute('x', L.seqDrawn.xs[L.seqPos] - 22);
   L.seqDrawn.noteEls.forEach((e, j) => e && e.classList.toggle('done', j < L.seqPos));
-  bubble($('#lessonBubble'), `${tune.map((x, j) => (j < L.seqPos ? '🐥' : j === L.seqPos ? bigLetter(x.m, x.label) : '🥚')).join('')}`);
+  bubble($('#lessonBubble'), `${tune.map((x, j) => (j < L.seqPos ? '🥚' : j === L.seqPos ? bigLetter(x.m, x.label) : '<i class="egg0">🥚</i>')).join('')}`);
 }
 function seqInput(m) {
   const s = stepObj();
