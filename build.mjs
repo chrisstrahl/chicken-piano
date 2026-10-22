@@ -4,7 +4,7 @@ import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 
 const SAMPLE_DIR = 'node_modules/tonejs-instrument-piano-mp3';
-const NOTES = ['C4', 'Ds4', 'Fs4', 'A4', 'C5', 'Ds5', 'Fs5'];
+const NOTES = ['C3', 'Ds3', 'Fs3', 'A3', 'C4', 'Ds4', 'Fs4', 'A4', 'C5', 'Ds5', 'Fs5'];
 fs.mkdirSync('build', { recursive: true });
 const samples = {};
 for (const n of NOTES) {
@@ -19,7 +19,9 @@ fs.writeFileSync('src/samples.generated.js', `export const SAMPLES = ${JSON.stri
 
 const res = await build({ entryPoints: ['src/main.js'], bundle: true, minify: true, format: 'iife', write: false, target: ['es2020'], legalComments: 'none', mainFields: ['module', 'main'] });
 const js = res.outputFiles[0].text.replace(/<\/script/gi, '<\\/script');
-const html = fs.readFileSync('src/index.html', 'utf8').replace('<!--APP-->', () => `<script>${js}</script>`);
+// build stamp shown small on the home screen, so a bug report says which version was running
+const stamp = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
+const html = fs.readFileSync('src/index.html', 'utf8').replace('<!--APP-->', () => `<script>${js}</script>`).replace('<!--VERSION-->', stamp);
 fs.mkdirSync('dist', { recursive: true });
 fs.writeFileSync('dist/index.html', html);
 // Artifact version: claude.ai wraps the page in its own <html>/<head>/<body>, so ship only the inner parts.

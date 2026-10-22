@@ -12,7 +12,10 @@ const state = {
   ignoreUntil: 0, expectPc: null, onNote: null, onLevel: null,
 };
 
-onBusy((ms) => { state.ignoreUntil = Math.max(state.ignoreUntil, performance.now() + ms); });
+onBusy((ms, exact) => {
+  const t = performance.now() + ms;
+  state.ignoreUntil = exact ? t : Math.max(state.ignoreUntil, t);
+});
 
 export const micSupported = () => !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
 export const micOn = () => state.listening;
@@ -24,7 +27,7 @@ async function open() {
   if (!micSupported()) throw new Error('unsupported');
   const media = new Tone.UserMedia();
   await media.open(); // Tone turns off echo cancellation / noise suppression for us
-  const analyser = new Tone.Analyser('waveform', SIZE);
+  const analyser = state.analyser || new Tone.Analyser('waveform', SIZE);
   media.connect(analyser);
   state.media = media;
   state.analyser = analyser;
@@ -59,9 +62,31 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 
+// Watchdog. After a while iOS can "interrupt" the audio context (speech, the screen dimming, another app's sound)
+// or end the microphone track. Both leave the analyser reading silence forever, so check every second and repair.
+let lastCheck = 0;
+let reopening = false;
+function watchdog(now) {
+  if (now - lastCheck < 1000 || reopening) return;
+  lastCheck = now;
+  const ctx = Tone.getContext();
+  if (ctx.state !== 'running') ctx.resume().catch(() => {});
+  const stream = state.media && state.media._stream;
+  const track = stream && stream.getAudioTracks()[0];
+  if (!track || track.readyState === 'ended') {
+    reopening = true;
+    try { state.media.close(); } catch (e) {}
+    state.media.dispose();
+    state.open = false;
+    open().catch((e) => console.warn('mic reopen failed', e)).finally(() => { reopening = false; });
+  }
+}
+
 function tick() {
-  const buf = state.analyser.getValue();
   const now = performance.now();
+  watchdog(now);
+  if (!state.open) return;
+  const buf = state.analyser.getValue();
   const r = state.listener.process(buf, Tone.getContext().sampleRate, now, now < state.ignoreUntil, state.expectPc);
   state.onLevel && state.onLevel(Math.min(1, r.rms / 0.08));
   if (r.midi !== null) state.onNote && state.onNote(r.midi);

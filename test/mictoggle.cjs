@@ -6,6 +6,7 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
   page.on('pageerror', e => console.log('PAGEERROR', e.message));
   await page.route(/fonts\.(googleapis|gstatic)/, r => r.abort());
   await page.goto('file://' + process.cwd() + '/dist/index.html');
+  await page.locator('#start').dispatchEvent('pointerdown'); await page.waitForTimeout(900);
   await page.evaluate(() => window.__cp.show('free'));
   const heard = () => page.evaluate(() => document.querySelector('#mic .heard').textContent + '|' + document.querySelectorAll('#freeStaff .vf-stavenote').length);
   await page.click('#mic', { force: true }); await page.waitForTimeout(6000);
