@@ -19,6 +19,10 @@ const OVERTONES = [19, 28, 31, 34];
 const FLUX_K = 1.6;
 const FLUX_MIN = 0.35;
 const TARGET_RATIO = 1.35;
+// Talking vs. piano: a piano note holds one steady pitch; a voice slides around. A pitch must stay within
+// DRIFT semitones from frame to frame for STABLE frames (40 ms apart) to count.
+const DRIFT = 0.15;
+const STABLE = 3;
 // Input gain: quiet tablet mics get boosted until the room noise sits near NOISE_TARGET, the level the
 // thresholds above were tuned at. It can't add signal over noise, but it stops quiet-but-clean input
 // from falling under fixed thresholds.
@@ -84,15 +88,18 @@ export class NoteListener {
 
     const [freq, clarity] = this.detector.findPitch(buf.subarray(buf.length - this.pitchSize), sr);
     let midi = null;
+    let midiF = null;
     if (clarity >= CLARITY && freq > 27 && freq < 4300) {
-      const midiF = 69 + 12 * Math.log2(freq / 440);
+      midiF = 69 + 12 * Math.log2(freq / 440);
       if (Math.abs(midiF - Math.round(midiF)) <= 0.45) midi = Math.round(midiF);
     }
 
     if (midi !== null) {
-      this.stable = midi === this.lastMidi ? this.stable + 1 : 1;
+      const steady = midi === this.lastMidi && Math.abs(midiF - this.lastMidiF) <= DRIFT;
+      this.stable = steady ? this.stable + 1 : 1;
       this.lastMidi = midi;
-      if (this.stable >= 2) {
+      this.lastMidiF = midiF;
+      if (this.stable >= STABLE) {
         // moved to a different key: only if it's loud, not an overtone showing up as a held note fades
         if (!this.armed && midi % 12 !== this.lastPc && rms > this.notePeak * 0.35 && !OVERTONES.includes(midi - this.lastAcceptMidi)) this.armed = true;
         // Same note as last time? Wait a moment: right after a new key is struck, the old note
