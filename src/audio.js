@@ -201,7 +201,9 @@ export function say(text, onEnd) {
   if (!parts.length) { setTimeout(finish, 0); return; }
   stopTalking();
   const id = ++talkId;
-  busy(600 + parts.join(' ').length * 70); // roughly how long it takes, so the mic ignores it
+  // Short mute while the clip loads; the full length is set once playback (or device speech) starts,
+  // so a device that never speaks doesn't leave the mic deaf.
+  busy(1200);
   const loads = started && Tone.getContext().state === 'running' ? parts.map(clip) : [];
   if (loads.length && loads.every(Boolean)) {
     Promise.all(loads).then((bufs) => {
@@ -237,7 +239,10 @@ function speak(text, id, finish) {
     if (voice) u.voice = voice;
     u.rate = 0.95;
     u.pitch = 1.35;
-    busy(est);
+    // Mute the mic while the chicken talks. Only a short mute until speech actually starts: if the device
+    // never speaks (no voice, blocked), the mic shouldn't stay deaf for the whole sentence.
+    busy(1200);
+    u.onstart = () => { if (id === talkId) busy(est); };
     u.onend = () => { if (id === talkId) busy(300, true); setTimeout(finish, 250); };
     speechSynthesis.speak(u);
     setTimeout(finish, est * 1.6 + 1500); // iOS sometimes never fires onend

@@ -74,28 +74,48 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 
-// Watchdog. After a while iOS can "interrupt" the audio context (speech, the screen dimming, another app's sound)
-// or end the microphone track. Both leave the analyser reading silence forever, so check every second and repair.
+// Watchdog. iOS can "interrupt" the audio context or mute/end the mic track, most often when the chicken
+// starts talking (songs and lessons speak as they open; free play doesn't). Then the analyser either stops
+// updating (the meter freezes on its last level) or reads silence, and no notes register. Spot that and
+// reopen the microphone.
 let lastCheck = 0;
 let reopening = false;
-function watchdog(now) {
-  if (now - lastCheck < 1000 || reopening) return;
+const health = { sig: NaN, staleSince: 0, silentSince: 0, mutedSince: 0, lastFix: 0, fixes: 0 };
+function watchdog(now, buf) {
+  // a frozen graph hands back the very same samples every time
+  const sig = buf ? buf[0] + buf[517] * 3 + buf[1999] * 7 + buf[buf.length - 1] * 11 : NaN;
+  const frozen = sig === health.sig;
+  health.sig = sig;
+  health.staleSince = frozen ? health.staleSince || now : 0;
+  let peak = 0;
+  if (buf) for (let i = 0; i < buf.length; i += 16) peak = Math.max(peak, Math.abs(buf[i]));
+  health.silentSince = peak < 1e-7 ? health.silentSince || now : 0;
+  const track = state.stream && state.stream.getAudioTracks()[0];
+  health.mutedSince = track && track.muted ? health.mutedSince || now : 0;
+
+  if (now - lastCheck < 500 || reopening) return;
   lastCheck = now;
   const ctx = Tone.getContext();
   if (ctx.state !== 'running') ctx.resume().catch(() => {});
-  const track = state.stream && state.stream.getAudioTracks()[0];
-  if (!track || track.readyState === 'ended') {
+  const stuck = (since, ms) => since && now - since > ms;
+  const broken = !track || track.readyState === 'ended' || stuck(health.mutedSince, 1500)
+    || stuck(health.staleSince, 1200) || stuck(health.silentSince, 2500);
+  if (broken && now - health.lastFix > 3000) {
+    health.lastFix = now;
+    health.fixes++;
+    health.staleSince = health.silentSince = health.mutedSince = 0;
     reopening = true;
     close();
-    open().catch((e) => console.warn('mic reopen failed', e)).finally(() => { reopening = false; });
+    open().then(() => ctx.resume()).catch((e) => console.warn('mic reopen failed', e)).finally(() => { reopening = false; });
   }
 }
+export const micHealth = () => ({ ...health, ctx: Tone.getContext().state, open: state.open });
 
 function tick() {
   const now = performance.now();
-  watchdog(now);
-  if (!state.open) return;
+  if (!state.open) { watchdog(now, null); return; }
   const buf = state.analyser.getValue();
+  watchdog(now, buf);
   const r = state.listener.process(buf, Tone.getContext().sampleRate, now, now < state.ignoreUntil, state.expectPc);
   // meter: how far above the room's noise, on a log scale (30x above noise = full), so a quiet but usable
   // signal still reads mid-meter. lastLoud lets the app say "come closer" if nothing is ever loud enough.
