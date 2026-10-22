@@ -9,7 +9,7 @@ const ACC_WORD = { '': '', '#': ' sharp', 'b': ' flat', '♯': ' sharp', '♭': 
 export const noteWords = (label) => label[0] + ACC_WORD[label.slice(1)];
 export const letsPlay = (title, label) => `Let's play ${title}! Start on ${noteWords(label)}.`;
 export const oopsFind = (label) => `Oops! Find ${noteWords(label)}.`;
-export const songLocked = (level) => `Do more lessons in level ${level} to open this song!`;
+export const openSongsAsk = (level) => `Open all the songs in level ${level}?`;
 export const songDone = (eggs) => ['', 'You did it! One egg!', 'You did it! Two eggs!', 'Perfect! Three eggs!'][eggs];
 export const coop = (eggs) => (eggs
   ? ['This is your chicken coop!', eggs === 1 ? 'You have one egg.' : `You have ${eggs} eggs.`, 'Every three eggs hatch a baby chick. Win more eggs in lessons and songs!']
@@ -29,7 +29,7 @@ export function templatedLines(songs, levels) {
     ...songs.map((s) => `New song: ${s.title}!`),
     ...labels.map(oopsFind),
     ...labels.map(noteWords),
-    ...levels.map((lv) => songLocked(lv.n)),
+    ...levels.map((lv) => openSongsAsk(lv.n)),
     ...levels.filter((lv) => lv.n < levels.length).flatMap((lv) => lessonDone([], lv.n).slice(1)),
     lessonDone([], 0)[0],
     ...[1, 2, 3].map(songDone),

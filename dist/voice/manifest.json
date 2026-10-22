@@ -224,11 +224,6 @@
   "spoken": "You have 252 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "0c95b47e": {
-  "text": "Do more lessons in level 4 to open this song!",
-  "spoken": "Do more lessons in level 4 to open this song!",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "0cde1e95": {
   "text": "You have 81 eggs.",
   "spoken": "You have 81 eggs.",
@@ -714,11 +709,6 @@
   "spoken": "Let's play Chicken Boogie! Start on C.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "320e7a70": {
-  "text": "Do more lessons in level 2 to open this song!",
-  "spoken": "Do more lessons in level 2 to open this song!",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "321ccbb7": {
   "text": "Let's play Rain, Rain, Go Away! Start on G.",
   "spoken": "Let's play Rain, Rain, Go Away! Start on G.",
@@ -874,11 +864,6 @@
   "spoken": "Let's play Chicken Can-Can! Start on C.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "3ecc7207": {
-  "text": "Do more lessons in level 9 to open this song!",
-  "spoken": "Do more lessons in level 9 to open this song!",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "3ee64848": {
   "text": "You have 110 eggs.",
   "spoken": "You have 110 eggs.",
@@ -1014,11 +999,6 @@
   "spoken": "You have 90 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "47796072": {
-  "text": "Do more lessons in level 8 to open this song!",
-  "spoken": "Do more lessons in level 8 to open this song!",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "47c9c40c": {
   "text": "You have 114 eggs.",
   "spoken": "You have 114 eggs.",
@@ -1052,11 +1032,6 @@
  "49e2f204": {
   "text": "Let's play My Coop, 'Tis of Thee! Start on C.",
   "spoken": "Let's play My Coop, 'Tis of Thee! Start on C.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "4a8024af": {
-  "text": "Do more lessons in level 1 to open this song!",
-  "spoken": "Do more lessons in level 1 to open this song!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "4a8a5804": {
@@ -1177,6 +1152,21 @@
  "54d6ea5c": {
   "text": "You have 37 eggs.",
   "spoken": "You have 37 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "5552eef4": {
+  "text": "Open all the songs in level 5?",
+  "spoken": "Open all the songs in level 5?",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "55552d8b": {
+  "text": "Open all the songs in level 6?",
+  "spoken": "Open all the songs in level 6?",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "55576c22": {
+  "text": "Open all the songs in level 7?",
+  "spoken": "Open all the songs in level 7?",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "55ddcf2d": {
@@ -2089,11 +2079,6 @@
   "spoken": "New song: Chord Hop!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "90cd2c01": {
-  "text": "Do more lessons in level 7 to open this song!",
-  "spoken": "Do more lessons in level 7 to open this song!",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "9123e446": {
   "text": "Let's play Going Home to Roost! Start on E.",
   "spoken": "Let's play Going Home to Roost! Start on E.",
@@ -2564,11 +2549,6 @@
   "spoken": "G is right next door to F. Tap G.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "b134f183": {
-  "text": "Do more lessons in level 10 to open this song!",
-  "spoken": "Do more lessons in level 10 to open this song!",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "b165a70b": {
   "text": "You did it! One egg!",
   "spoken": "You did it! One egg!",
@@ -3019,6 +2999,11 @@
   "spoken": "You have 150 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "d0127f16": {
+  "text": "Open all the songs in level 10?",
+  "spoken": "Open all the songs in level 10?",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "d0383721": {
   "text": "You have 290 eggs.",
   "spoken": "You have 290 eggs.",
@@ -3104,6 +3089,36 @@
   "spoken": "You have 2 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "d54fe6dd": {
+  "text": "Open all the songs in level 4?",
+  "spoken": "Open all the songs in level 4?",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "d55cb2d0": {
+  "text": "Open all the songs in level 1?",
+  "spoken": "Open all the songs in level 1?",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "d55ef167": {
+  "text": "Open all the songs in level 2?",
+  "spoken": "Open all the songs in level 2?",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "d5612ffe": {
+  "text": "Open all the songs in level 3?",
+  "spoken": "Open all the songs in level 3?",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "d56dfbf1": {
+  "text": "Open all the songs in level 8?",
+  "spoken": "Open all the songs in level 8?",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "d5703a88": {
+  "text": "Open all the songs in level 9?",
+  "spoken": "Open all the songs in level 9?",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "d57428b7": {
   "text": "Oops! Find E sharp.",
   "spoken": "Oops! Find E sharp.",
@@ -3187,11 +3202,6 @@
  "db29f575": {
   "text": "You have 52 eggs.",
   "spoken": "You have 52 eggs.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "dbbe9c7d": {
-  "text": "Do more lessons in level 3 to open this song!",
-  "spoken": "Do more lessons in level 3 to open this song!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "dc676797": {
@@ -3284,11 +3294,6 @@
   "spoken": "Let's play Twinkle Little Chick (Left Hand)! Start on C.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "e2b30a84": {
-  "text": "Do more lessons in level 6 to open this song!",
-  "spoken": "Do more lessons in level 6 to open this song!",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "e3566650": {
   "text": "You have 213 eggs.",
   "spoken": "You have 213 eggs.",
@@ -3362,11 +3367,6 @@
  "e5d6865b": {
   "text": "You have 300 eggs.",
   "spoken": "You have 300 eggs.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "e63322c3": {
-  "text": "Do more lessons in level 5 to open this song!",
-  "spoken": "Do more lessons in level 5 to open this song!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "e6cd8dfb": {

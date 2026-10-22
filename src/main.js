@@ -1,5 +1,5 @@
 import { SONGS, LEVELS, PRAISE, COLORS, BEATS, letterOf, nameOf, isBlack, parse, songById, songsForLevel } from './music.js';
-import { coop, songLocked, letsPlay, oopsFind, songDone, lessonDone, noteWords } from './lines.js';
+import { coop, openSongsAsk, letsPlay, oopsFind, songDone, lessonDone, noteWords } from './lines.js';
 import { startAudio, playNote, noteDown, noteUp, playSequence, cluck, peck, bawk, silly, say, stopTalking, preloadVoice } from './audio.js';
 import { startMic, stopMic, micOn, micSupported, expectNote, micHealth } from './mic.js';
 import { drawStaff, focusNote } from './staff.js';
@@ -26,7 +26,8 @@ const lessonsDone = (lv) => lv.lessons.filter((l) => progress.lessons[l.id]).len
 const levelDone = (lv) => lessonsDone(lv) === 4;
 const currentLevel = () => (LEVELS.find((lv) => !levelDone(lv)) || LEVELS[9]).n;
 const nextLesson = (lv) => lv.lessons.findIndex((l) => !progress.lessons[l.id]);
-const songsOpenIn = (lv) => (progress.all ? Infinity : [0, 1, 2, 3, Infinity][lessonsDone(lv)]);
+// progress.open[n]: a grown-up (or kid) chose to open every song in level n without doing its lessons
+const songsOpenIn = (lv) => (progress.all || (progress.open || {})[lv.n] ? Infinity : [0, 1, 2, 3, Infinity][lessonsDone(lv)]);
 const songOpen = (s) => songsForLevel(s.level).indexOf(s) < songsOpenIn(LEVELS[s.level - 1]);
 
 /* ---------- chicken mascot ---------- */
@@ -81,9 +82,11 @@ function noteOf(m, d = 'q') {
   return { m, keys: [k], d, letter, label: k.label, lyric: '' };
 }
 
+
 /* ---------- screens and note input routing ---------- */
 let current = 'home';
 let onNote = null; // the active screen's handler for a played note
+let onRelease = null; // ...and for a tapped key being let go
 let leaveHooks = [];
 let gen = 0; // bumps on every screen or step change, so late callbacks know they are stale
 function show(id) {
@@ -94,6 +97,7 @@ function show(id) {
   $$('.screen').forEach((s) => s.classList.toggle('active', s.id === id));
   current = id;
   onNote = null;
+  onRelease = null;
   expectNote(null);
   ({ home: renderHome, songs: renderSongs, map: renderMap, level: renderLevel, free: openFree })[id]?.();
 }
@@ -104,6 +108,10 @@ document.addEventListener('click', (e) => {
 // iOS: unlock audio on the first touch anywhere
 document.addEventListener('pointerdown', () => { startAudio(); }, { capture: true });
 
+function keyUp(m) {
+  noteUp(m);
+  onRelease && onRelease(m);
+}
 function noteIn(m, source) {
   if (source === 'tap') noteDown(m);
   const hd = $('#mic .heard');
@@ -253,7 +261,15 @@ function songTap(e) {
   const c = e.target.closest('[data-song]');
   if (!c) return;
   const s = songById(c.dataset.song);
-  if (!songOpen(s)) { cluck(1); say(songLocked(s.level)); return; }
+  if (!songOpen(s)) {
+    cluck(1);
+    return ask(`🔓 ${LEVELS[s.level - 1].emoji} ${s.level}`, openSongsAsk(s.level), () => {
+      progress.open = { ...(progress.open || {}), [s.level]: true };
+      save();
+      if (current === 'level') renderLevel(); else renderSongs();
+      openSong(s.id, current);
+    });
+  }
   openSong(s.id, current);
 }
 $('#levelSongs').addEventListener('click', songTap);
@@ -266,7 +282,7 @@ function renderSongs() {
 $('#songCards').addEventListener('click', songTap);
 
 /* ---------- PLAY A SONG ---------- */
-const playKb = makeKeyboard($('#playKb'), (m) => noteIn(m, 'tap'), noteUp);
+const playKb = makeKeyboard($('#playKb'), (m) => noteIn(m, 'tap'), keyUp);
 const P = { song: null, i: 0, mistakes: 0, missed: false, wrongRow: 0, drawn: null, stopDemo: null, back: 'songs' };
 const playCard = $('#playStaff');
 const playChicken = () => $('#playChicken');
@@ -412,6 +428,16 @@ $('#btnListen').addEventListener('click', () => {
 $('#btnRestart').addEventListener('click', () => restartSong(false));
 window.addEventListener('resize', () => { if (current === 'play' && P.drawn) focusNote(playCard, P.drawn, P.i); });
 
+/* ---------- yes / no question ---------- */
+function ask(html, words, onYes) {
+  $('#askText').innerHTML = html;
+  $('#ask').classList.add('show');
+  say(words);
+  const close = () => { $('#ask').classList.remove('show'); stopTalking(); };
+  $('#askYes').onclick = () => { close(); onYes(); };
+  $('#askNo').onclick = close;
+}
+
 /* ---------- CELEBRATION ---------- */
 function party(eggs, { again, next, words }) {
   $('#partyEggs').innerHTML = '<span>🥚</span>'.repeat(eggs) + '<span style="filter:grayscale(1) opacity(.25)">🥚</span>'.repeat(3 - eggs);
@@ -428,7 +454,7 @@ function party(eggs, { again, next, words }) {
 }
 
 /* ---------- LESSON PLAYER ---------- */
-const lessonKb = makeKeyboard($('#lessonKb'), (m) => noteIn(m, 'tap'), noteUp);
+const lessonKb = makeKeyboard($('#lessonKb'), (m) => noteIn(m, 'tap'), keyUp);
 const L = { lv: null, li: 0, step: 0, sub: 0, stopHear: null, locked: false, hits: 0, got: new Set(), done: false, echo: [], seqPos: 0 };
 const lessonCard = $('#lessonStaff');
 const lessonChicken = () => $('#lessonChicken');
@@ -767,23 +793,40 @@ function lessonInput(m) {
 }
 
 /* ---------- FREE PLAY ---------- */
-const freeKb = makeKeyboard($('#freeKb'), (m) => noteIn(m, 'tap'), noteUp);
+const freeKb = makeKeyboard($('#freeKb'), (m) => noteIn(m, 'tap'), keyUp);
 freeKb.setRange(48, 76);
-const F = { notes: [] };
+const F = { notes: [], down: {} };
+// How long a tapped key was held, as a note length (free play counts at 90 beats a minute)
+const FREE_BEAT = 60000 / 90;
+const lengthOf = (ms) => { const b = ms / FREE_BEAT; return b < 0.6 ? '8' : b < 1.5 ? 'q' : b < 2.5 ? 'h' : b < 3.5 ? 'hd' : 'w'; };
+function drawFree() {
+  // low notes read better on the bass staff
+  const low = F.notes.filter((n) => n.m < 60).length > F.notes.length / 2;
+  drawStaff($('#freeStaff'), F.notes, { minWidth: FREE_W, clef: low ? 'bass' : 'treble', pack: true });
+}
 const FREE_W = 560; // room for 8 notes, so the staff stays the same size as it fills
 function openFree() {
   F.notes = [];
   drawStaff($('#freeStaff'), [], { minWidth: FREE_W, pack: true });
   bubble($('#freeBubble'), '🎹 🎤 ❓');
-  onNote = (m) => {
-    F.notes.push(noteOf(m));
+  F.down = {};
+  onNote = (m, source) => {
+    const n = noteOf(m);
+    F.notes.push(n);
     if (F.notes.length > 8) F.notes.shift();
-    // low notes read better on the bass staff
-    const low = F.notes.filter((n) => n.m < 60).length > F.notes.length / 2;
-    drawStaff($('#freeStaff'), F.notes, { minWidth: FREE_W, clef: low ? 'bass' : 'treble', pack: true });
+    // tapped keys start as quarter notes and get their real length when the finger lifts
+    if (source === 'tap') F.down[m] = { n, t: performance.now() };
+    drawFree();
     bubble($('#freeBubble'), bigLetter(m));
     freeKb.flash(m, 'hl', 600);
     act($('#freeChicken'), Math.random() < 0.3 ? 'happy' : 'peck', 500);
+  };
+  onRelease = (m) => {
+    const d = F.down[m];
+    if (!d) return;
+    delete F.down[m];
+    const len = lengthOf(performance.now() - d.t);
+    if (len !== d.n.d && F.notes.includes(d.n)) { d.n.d = len; drawFree(); }
   };
 }
 
@@ -794,9 +837,10 @@ document.addEventListener('keydown', (e) => {
   const m = KEYMAP[e.key.toLowerCase()];
   if (m) { startAudio(); [playKb, lessonKb, freeKb].forEach((kb) => kb.flash(m, 'down', 180)); noteIn(m, 'tap'); }
 });
-document.addEventListener('keyup', (e) => { const m = KEYMAP[e.key.toLowerCase()]; if (m) noteUp(m); });
+document.addEventListener('keyup', (e) => { const m = KEYMAP[e.key.toLowerCase()]; if (m) keyUp(m); });
 
 renderHome();
 window.__cp = { say, show, openSong, openLesson, noteIn, jumpTo, P, L, progress, LEVELS, SONGS };
 window.__cpMs = ms;
 window.__cpHeard = () => heardCount;
+window.__cpFree = () => F.notes;
