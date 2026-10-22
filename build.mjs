@@ -21,7 +21,9 @@ const res = await build({ entryPoints: ['src/main.js'], bundle: true, minify: tr
 const js = res.outputFiles[0].text.replace(/<\/script/gi, '<\\/script');
 // build stamp shown small on the home screen, so a bug report says which version was running
 const stamp = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
-const html = fs.readFileSync('src/index.html', 'utf8').replace('<!--APP-->', () => `<script>${js}</script>`).replace('<!--VERSION-->', stamp);
+const html = fs.readFileSync('src/index.html', 'utf8').replace('<!--APP-->', () => `<script>${js}</script>`).replace('<!--VERSION-->', stamp)
+  // the bundled libraries' licenses travel with the built page
+  .replace('</body>', () => `<!--\nChicken Piano, MIT License, Copyright (c) 2026 Chris Strahl\n\n${fs.readFileSync('THIRD_PARTY_NOTICES.md', 'utf8').replace(/--/g, '- -')}-->\n</body>`);
 fs.mkdirSync('dist', { recursive: true });
 fs.writeFileSync('dist/index.html', html);
 // Artifact version: claude.ai wraps the page in its own <html>/<head>/<body>, so ship only the inner parts.

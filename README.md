@@ -3,14 +3,21 @@
 A simple piano teacher for kids. Prop a tablet or phone on the keyboard like sheet music, tap 🎤, and play.
 It listens through the microphone, shows which key to press, and shows the real notes on a staff.
 
-- 10 songs with chicken lyrics, easiest first: Moonlight Chicks, Scrambled Eggs, Clucky's Egg, Happy Hens, Jingle Clucks, When the Chicks Go Marching In, The Coop Is Falling Down, Old MacDonald's Chicks, Twinkle Little Chick, Roll Roll Roll Your Egg
-- 4 lessons: finding C, the musical alphabet, the staff, note lengths
+- 10 levels, 4 hands-on lessons each: finding keys, finger numbers, note lengths and rests, reading the staff,
+  3/4 time, eighth notes, sharps and flats, bass clef, scales and chords
+- 50 songs with chicken lyrics, 5 per level; each finished lesson opens more of its level's songs
+- Tap any note in the music to jump back to it
 - Free play: see the name and staff position of anything you play
 - Eggs for finished songs and lessons; every 3 eggs hatch a chick
 
 Built with [Tone.js](https://tonejs.github.io/) (sound), [Pitchy](https://github.com/ianprime0509/pitchy) (pitch detection),
 [VexFlow](https://www.vexflow.com/) (sheet music) and piano samples from
 [tonejs-instruments](https://github.com/nbrosowsky/tonejs-instruments).
+
+## License
+
+MIT, see [LICENSE](LICENSE). The bundled libraries and piano samples have their own licenses;
+the piano samples are CC BY 3.0 and need credit. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ## Build
 
