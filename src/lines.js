@@ -11,13 +11,17 @@ export const letsPlay = (title, label) => `Let's play ${title}! Start on ${noteW
 export const oopsFind = (label) => `Oops! Find ${noteWords(label)}.`;
 export const openSongsAsk = (level) => `Open all the songs in level ${level}?`;
 export const songDone = (eggs) => ['', 'You did it! One egg!', 'You did it! Two eggs!', 'Perfect! Three eggs!'][eggs];
-export const coop = (eggs) => (eggs
-  ? ['This is your chicken coop!', eggs === 1 ? 'You have one egg.' : `You have ${eggs} eggs.`, 'Every three eggs hatch a baby chick. Win more eggs in lessons and songs!']
-  : 'This is your chicken coop! Win eggs in lessons and songs. Every three eggs hatch a baby chick!');
-export const lessonDone = (newSongs, newLevel) => [
+export const coop = (eggs, chicks) => [
+  'This is your chicken coop!',
+  eggs === 1 ? 'You have one egg.' : `You have ${eggs} eggs.`,
+  ...(chicks ? [chicks === 1 ? 'And one baby chick.' : `And ${chicks} baby chicks.`] : []),
+  'Win eggs in lessons and songs. Finish a level to hatch a baby chick!',
+];
+export const LAST_LEVEL = 10;
+export const lessonDone = (newSongs, finishedLevel) => [
   'You did it! You got an egg!',
   ...newSongs.map((t) => `New song: ${t}!`),
-  ...(newLevel ? [`You finished level ${newLevel}! You got a star! Next is level ${newLevel + 1}.`] : []),
+  ...(finishedLevel ? [`You finished level ${finishedLevel}! A baby chick hatched! ${finishedLevel < LAST_LEVEL ? `Next is level ${finishedLevel + 1}.` : 'You are a piano champion!'}`] : []),
 ];
 
 // Every templated sentence the app can say, for the clip recorder.
@@ -30,11 +34,12 @@ export function templatedLines(songs, levels) {
     ...labels.map(oopsFind),
     ...labels.map(noteWords),
     ...levels.map((lv) => openSongsAsk(lv.n)),
-    ...levels.filter((lv) => lv.n < levels.length).flatMap((lv) => lessonDone([], lv.n).slice(1)),
+    ...levels.flatMap((lv) => lessonDone([], lv.n).slice(1)),
     lessonDone([], 0)[0],
     ...[1, 2, 3].map(songDone),
   ];
-  for (let e = 0; e <= maxEggs; e++) out.push(...[].concat(coop(e)));
+  for (let e = 0; e <= maxEggs; e++) out.push(...coop(e, 0));
+  for (let c = 1; c <= levels.length; c++) out.push(...coop(1, c));
   return out;
 }
 

@@ -154,6 +154,11 @@
   "spoken": "You have 309 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "06a49fb4": {
+  "text": "And one baby chick.",
+  "spoken": "And one baby chick.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "06d5dbb9": {
   "text": "You have 108 eggs.",
   "spoken": "You have 108 eggs.",
@@ -444,11 +449,6 @@
   "spoken": "You have 349 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "1d020b7a": {
-  "text": "You finished level 2! You got a star! Next is level 3.",
-  "spoken": "You finished level 2! You got a star! Next is level 3.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "1d1e1a9f": {
   "text": "New song: Three Brown Hens!",
   "spoken": "New song: Three Brown Hens!",
@@ -462,6 +462,11 @@
  "1d3a753b": {
   "text": "Let's play In the Hall of the Rooster King! Start on A.",
   "spoken": "Let's play In the Hall of the Rooster King! Start on A.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "1e0494fe": {
+  "text": "You have 0 eggs.",
+  "spoken": "You have 0 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "1e4704ee": {
@@ -609,11 +614,6 @@
   "spoken": "New song: Roll the Egg!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "2b6b594e": {
-  "text": "You finished level 7! You got a star! Next is level 8.",
-  "spoken": "You finished level 7! You got a star! Next is level 8.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "2b79b338": {
   "text": "Let's play Barn Clock! Start on A.",
   "spoken": "Let's play Barn Clock! Start on A.",
@@ -727,6 +727,11 @@
  "332f624e": {
   "text": "Oops! Find D sharp.",
   "spoken": "Oops! Find D sharp.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "34334e06": {
+  "text": "You finished level 2! A baby chick hatched! Next is level 3.",
+  "spoken": "You finished level 2! A baby chick hatched! Next is level 3.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "347a1ca5": {
@@ -879,6 +884,11 @@
   "spoken": "Let's play Merry Clucks-mas! Start on G.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "403c2519": {
+  "text": "And 6 baby chicks.",
+  "spoken": "And 6 baby chicks.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "404d9c7c": {
   "text": "You have 107 eggs.",
   "spoken": "You have 107 eggs.",
@@ -897,6 +907,11 @@
  "40c1dc29": {
   "text": "You have 276 eggs.",
   "spoken": "You have 276 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "40c96b7c": {
+  "text": "And 3 baby chicks.",
+  "spoken": "And 3 baby chicks.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "40e811b5": {
@@ -947,6 +962,11 @@
  "439596f1": {
   "text": "Let's play Rest Stop! Start on C.",
   "spoken": "Let's play Rest Stop! Start on C.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "441f9eec": {
+  "text": "You finished level 10! A baby chick hatched! You are a piano champion!",
+  "spoken": "You finished level 10! A baby chick hatched! You are a piano champion!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "448b3d0a": {
@@ -1079,6 +1099,11 @@
   "spoken": "You have 244 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "4e2901bb": {
+  "text": "You finished level 9! A baby chick hatched! Next is level 10.",
+  "spoken": "You finished level 9! A baby chick hatched! Next is level 10.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "4e406b86": {
   "text": "A hollow egg with no stick is a whole note. Four beats! Cluuuuuck! Play G and hold it a long time.",
   "spoken": "A hollow egg with no stick is a whole note. Four beats! Cluck, cluck, cluck, cluck! Play G and hold it a long time.",
@@ -1089,6 +1114,11 @@
   "spoken": "Let's play Chicken Waltz! Start on C.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "5000756f": {
+  "text": "And 4 baby chicks.",
+  "spoken": "And 4 baby chicks.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "502a3a17": {
   "text": "Let's play Line and Space Race! Start on E.",
   "spoken": "Let's play Line and Space Race! Start on E.",
@@ -1097,6 +1127,11 @@
  "502b59ce": {
   "text": "C sharp",
   "spoken": "C sharp",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "5072b968": {
+  "text": "And 7 baby chicks.",
+  "spoken": "And 7 baby chicks.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "50a76997": {
@@ -1142,11 +1177,6 @@
  "547499f1": {
   "text": "Oops! Find C sharp.",
   "spoken": "Oops! Find C sharp.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "549ddcde": {
-  "text": "You finished level 8! You got a star! Next is level 9.",
-  "spoken": "You finished level 8! You got a star! Next is level 9.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "54d6ea5c": {
@@ -1247,6 +1277,11 @@
  "5b5de666": {
   "text": "Let's play Sleepy Hen! Start on E.",
   "spoken": "Let's play Sleepy Hen! Start on E.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "5b8b5826": {
+  "text": "You finished level 8! A baby chick hatched! Next is level 9.",
+  "spoken": "You finished level 8! A baby chick hatched! Next is level 9.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "5bcde15a": {
@@ -1499,11 +1534,6 @@
   "spoken": "Is this note on a line or in a space?",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "705872aa": {
-  "text": "You finished level 6! You got a star! Next is level 7.",
-  "spoken": "You finished level 6! You got a star! Next is level 7.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "70e1101b": {
   "text": "You have 256 eggs.",
   "spoken": "You have 256 eggs.",
@@ -1544,19 +1574,9 @@
   "spoken": "Look at the top number. How many beats in each box?",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "73f7ea3f": {
-  "text": "This is your chicken coop! Win eggs in lessons and songs. Every three eggs hatch a baby chick!",
-  "spoken": "This is your chicken coop! Win eggs in lessons and songs. Every three eggs hatch a baby chick!",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "74005537": {
   "text": "You have 58 eggs.",
   "spoken": "You have 58 eggs.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "744c9286": {
-  "text": "Every three eggs hatch a baby chick. Win more eggs in lessons and songs!",
-  "spoken": "Every three eggs hatch a baby chick. Win more eggs in lessons and songs!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "745b76c5": {
@@ -2074,6 +2094,11 @@
   "spoken": "You have 33 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "90becc3b": {
+  "text": "And 8 baby chicks.",
+  "spoken": "And 8 baby chicks.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "90c64924": {
   "text": "New song: Chord Hop!",
   "spoken": "New song: Chord Hop!",
@@ -2284,11 +2309,6 @@
   "spoken": "You have 266 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "a1854936": {
-  "text": "You finished level 4! You got a star! Next is level 5.",
-  "spoken": "You finished level 4! You got a star! Next is level 5.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "a1a87fef": {
   "text": "You have 106 eggs.",
   "spoken": "You have 106 eggs.",
@@ -2297,6 +2317,16 @@
  "a224ada6": {
   "text": "You have 224 eggs.",
   "spoken": "You have 224 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "a299a68e": {
+  "text": "You finished level 7! A baby chick hatched! Next is level 8.",
+  "spoken": "You finished level 7! A baby chick hatched! Next is level 8.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "a2c1f43a": {
+  "text": "And 9 baby chicks.",
+  "spoken": "And 9 baby chicks.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "a2dfb628": {
@@ -2317,6 +2347,11 @@
  "a3ced811": {
   "text": "New song: Surprise Egg!",
   "spoken": "New song: Surprise Egg!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "a4573ece": {
+  "text": "And 5 baby chicks.",
+  "spoken": "And 5 baby chicks.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "a47c1fcb": {
@@ -2454,6 +2489,11 @@
   "spoken": "Let's play Hen House Hop! Start on C.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "abd78f36": {
+  "text": "You finished level 5! A baby chick hatched! Next is level 6.",
+  "spoken": "You finished level 5! A baby chick hatched! Next is level 6.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "ac7f5934": {
   "text": "Oops! Find F sharp.",
   "spoken": "Oops! Find F sharp.",
@@ -2539,6 +2579,11 @@
   "spoken": "Let's play When the Chicks Go Marching In! Start on C.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "b0cecfe6": {
+  "text": "You finished level 6! A baby chick hatched! Next is level 7.",
+  "spoken": "You finished level 6! A baby chick hatched! Next is level 7.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "b109b650": {
   "text": "Step up, then step down!",
   "spoken": "Step up, then step down!",
@@ -2547,6 +2592,11 @@
  "b10e290e": {
   "text": "G is right next door to F. Tap G.",
   "spoken": "G is right next door to F. Tap G.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "b12c0d36": {
+  "text": "You finished level 1! A baby chick hatched! Next is level 2.",
+  "spoken": "You finished level 1! A baby chick hatched! Next is level 2.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "b165a70b": {
@@ -2679,11 +2729,6 @@
   "spoken": "Let's play Sneaky Chick! Start on C.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "bafa9bc2": {
-  "text": "You finished level 5! You got a star! Next is level 6.",
-  "spoken": "You finished level 5! You got a star! Next is level 6.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "bbde2b7a": {
   "text": "New song: Peck Peck Peck!",
   "spoken": "New song: Peck Peck Peck!",
@@ -2712,6 +2757,11 @@
  "bf057bac": {
   "text": "New song: Feather Waltz!",
   "spoken": "New song: Feather Waltz!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "bf0a96f1": {
+  "text": "Win eggs in lessons and songs. Finish a level to hatch a baby chick!",
+  "spoken": "Win eggs in lessons and songs. Finish a level to hatch a baby chick!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "bf45b959": {
@@ -2817,6 +2867,11 @@
  "c463025b": {
   "text": "New song: Black Key Bounce!",
   "spoken": "New song: Black Key Bounce!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "c4c20676": {
+  "text": "You finished level 4! A baby chick hatched! Next is level 5.",
+  "spoken": "You finished level 4! A baby chick hatched! Next is level 5.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "c4d7f5f3": {
@@ -3244,11 +3299,6 @@
   "spoken": "This is your chicken coop!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "dd52717f": {
-  "text": "You finished level 9! You got a star! Next is level 10.",
-  "spoken": "You finished level 9! You got a star! Next is level 10.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "ddbc0765": {
   "text": "Oops! Find G sharp.",
   "spoken": "Oops! Find G sharp.",
@@ -3414,11 +3464,6 @@
   "spoken": "You have 141 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "ea8ecf12": {
-  "text": "You finished level 1! You got a star! Next is level 2.",
-  "spoken": "You finished level 1! You got a star! Next is level 2.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "eaf5abb8": {
   "text": "Let's play Peck Peck Peck! Start on E.",
   "spoken": "Let's play Peck Peck Peck! Start on E.",
@@ -3554,6 +3599,11 @@
   "spoken": "You have 60 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "f594023d": {
+  "text": "And 2 baby chicks.",
+  "spoken": "And 2 baby chicks.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "f597a852": {
   "text": "Left hand: your pinky, finger five, goes on low C. Your thumb, finger one, goes on G. Play C, D, E, F, G with your left hand.",
   "spoken": "Left hand: your pinky, finger five, goes on low C. Your thumb, finger one, goes on G. Play C, D, E, F, G with your left hand.",
@@ -3654,9 +3704,9 @@
   "spoken": "You have 264 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "fd3c9da6": {
-  "text": "You finished level 3! You got a star! Next is level 4.",
-  "spoken": "You finished level 3! You got a star! Next is level 4.",
+ "fe3dbf4e": {
+  "text": "You finished level 3! A baby chick hatched! Next is level 4.",
+  "spoken": "You finished level 3! A baby chick hatched! Next is level 4.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "fe680a43": {
@@ -3667,6 +3717,11 @@
  "fea6c3a7": {
   "text": "You have 133 eggs.",
   "spoken": "You have 133 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "fea77c94": {
+  "text": "And 10 baby chicks.",
+  "spoken": "And 10 baby chicks.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "ff0fe6da": {
