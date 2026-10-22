@@ -5,7 +5,7 @@ import { SONG_DATA } from '../src/songs.js';
 
 const STEP = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
 const BEATS = { 8: 0.5, q: 1, qd: 1.5, h: 2, hd: 3, w: 4 };
-const BAR = { '4/4': 4, '3/4': 3 };
+const BAR = { '4/4': 4, '3/4': 3, '6/8': 3 };
 const TOKEN = /^(R|[A-G][#b]?\d?(?:\+[A-G][#b]?\d?)*)(?::(8|qd|q|hd|h|w))?(~)?$/;
 const PITCH = /^([A-G])([#b]?)(\d?)$/;
 const midi = (p) => {
@@ -16,15 +16,15 @@ const NAME = (m) => ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#',
 
 // What each level may use. Features carry forward to later levels.
 const RULES = {
-  1: { lo: 'C4', hi: 'E4', durs: ['q'] },
-  2: { lo: 'C4', hi: 'G4', durs: ['q'] },
-  3: { lo: 'C4', hi: 'G4', durs: ['q', 'h', 'w'], rests: true },
+  1: { lo: 'C4', hi: 'E4', durs: ['q', 'h', 'w'] },
+  2: { lo: 'C4', hi: 'A4', durs: ['q', 'h', 'w'] },
+  3: { lo: 'C4', hi: 'A4', durs: ['q', 'h', 'w'], rests: true },
   4: { lo: 'C4', hi: 'F5', durs: ['q', 'h', 'w'], rests: true },
   5: { lo: 'G3', hi: 'F5', durs: ['q', 'h', 'w'], rests: true },
-  6: { lo: 'G3', hi: 'F5', durs: ['q', 'h', 'w', 'hd'], rests: true, waltz: true },
+  6: { lo: 'G3', hi: 'F5', durs: ['8', 'q', 'h', 'hd', 'w'], rests: true, waltz: true },
   7: { lo: 'G3', hi: 'F5', durs: ['8', 'q', 'qd', 'h', 'hd', 'w'], rests: true, waltz: true, ties: true },
   8: { lo: 'G3', hi: 'A5', durs: ['8', 'q', 'qd', 'h', 'hd', 'w'], rests: true, waltz: true, ties: true, accidentals: true },
-  9: { lo: 'C3', hi: 'G3', durs: ['8', 'q', 'qd', 'h', 'hd', 'w'], rests: true, waltz: true, ties: true, accidentals: true, bass: true },
+  9: { lo: 'C3', hi: 'A3', durs: ['8', 'q', 'qd', 'h', 'hd', 'w'], rests: true, waltz: true, ties: true, accidentals: true, bass: true },
   10: { lo: 'G3', hi: 'A5', durs: ['8', 'q', 'qd', 'h', 'hd', 'w'], rests: true, waltz: true, ties: true, accidentals: true, chords: true },
 };
 const SHARP_KEYS = ['G', 'D', 'A', 'E', 'Em', 'Bm'];
@@ -77,13 +77,13 @@ for (const s of SONG_DATA) {
     const start = pos;
     pos += beats;
     const barStart = Math.floor(start / bar + 1e-9) * bar;
-    if (!tie && pos > barStart + bar + 1e-9) err(`"${tok}" crosses a bar line at beat ${start + (s.pickup || 0)}`);
+    if (s.bars !== false && !tie && pos > barStart + bar + 1e-9) err(`"${tok}" crosses a bar line at beat ${start + (s.pickup || 0)}`);
     tied = !!tie;
   }
   const leftover = ((pos % bar) + bar) % bar;
-  if (leftover > 1e-9 && Math.abs(leftover - (bar - (s.pickup || 0))) > 1e-9) err(`last bar is incomplete (${leftover} of ${bar} beats)`);
-  const words = s.lyrics.trim().split(/\s+/);
-  if (words.length !== sounding) err(`${words.length} lyric words for ${sounding} notes`);
+  if (s.bars !== false && leftover > 1e-9 && Math.abs(leftover - (bar - (s.pickup || 0))) > 1e-9) err(`last bar is incomplete (${leftover} of ${bar} beats)`);
+  const words = s.lyrics.trim() ? s.lyrics.trim().split(/\s+/) : [];
+  if (words.length && words.length !== sounding) err(`${words.length} lyric words for ${sounding} notes`);
 }
 
 // Every note must also build as a VexFlow note (what the staff draws).
