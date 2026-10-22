@@ -1,6 +1,6 @@
 import { SONGS, LESSONS, PRAISE, COLORS, BEATS, letterOf, nameOf, isBlack } from './music.js';
 import { startAudio, playNote, playSequence, cluck, peck, bawk, say, stopTalking } from './audio.js';
-import { startMic, stopMic, micOn, micSupported } from './mic.js';
+import { startMic, stopMic, micOn, micSupported, expectNote } from './mic.js';
 import { drawStaff, focusNote } from './staff.js';
 import { makeKeyboard } from './keyboard.js';
 
@@ -70,6 +70,7 @@ function show(id) {
   $$('.screen').forEach((s) => s.classList.toggle('active', s.id === id));
   current = id;
   onNote = null;
+  expectNote(null);
   ({ home: renderHome, songs: renderSongs, learn: renderLessons, free: openFree })[id]?.();
 }
 document.addEventListener('click', (e) => {
@@ -167,6 +168,7 @@ function setCurrent() {
   const n = P.song.notes[P.i];
   focusNote(playCard, P.drawn, P.i);
   $('#playProg').style.width = (P.i / P.song.notes.length) * 100 + '%';
+  expectNote(n ? n.m : null);
   if (!n) { playKb.setTarget(null); return; }
   playKb.setTarget(n.m);
   bubble($('#playBubble'), `👉 ${bigLetter(n.m)}`);
@@ -279,6 +281,7 @@ function renderStep() {
   const les = LESSONS[L.li];
   const s = stepObj();
   L.sub = 0; L.locked = false;
+  expectNote(null);
   $('#lessonTitle').textContent = `${les.emoji} ${les.title}`;
   $('#lessonDots').innerHTML = les.steps.map((_, i) => `<i class="${i < L.step ? 'done' : i === L.step ? 'on' : ''}"></i>`).join('');
   const quiz = s.type !== 'info';
@@ -339,11 +342,13 @@ $('#btnHear').addEventListener('click', () => {
 function keyPrompt() {
   const s = stepObj();
   const m = s.targets[L.sub];
+  expectNote(m);
   bubble($('#lessonBubble'), `🎹 ${bigLetter(m)}`);
 }
 function namePrompt() {
   const s = stepObj();
   const m = s.notes[L.sub];
+  expectNote(m);
   drawStaff(lessonCard, [{ m, d: 'w' }], { letters: false, minWidth: 420 });
   bubble($('#lessonBubble'), '🤔 ❓');
   const pool = ['C', 'D', 'E', 'F', 'G'].filter((l) => l !== letterOf(m));
