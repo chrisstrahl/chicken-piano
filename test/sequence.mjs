@@ -1,4 +1,3 @@
-globalThis.__FLUX_K = process.env.FK; globalThis.__FLUX_MIN = process.env.FM; globalThis.__RISE = process.env.RI;
 // Offline test: overlapping piano notes in a row (like a real performance) must be heard once each, in order.
 // usage: node test/sequence.mjs <pcm dir>
 import fs from 'node:fs';

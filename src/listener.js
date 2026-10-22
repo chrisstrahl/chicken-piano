@@ -10,13 +10,13 @@ import { PitchDetector } from 'pitchy';
 import FFT from 'fft.js';
 
 const CLARITY = 0.8;
-const REPEAT_WAIT = +(globalThis.__RW || 180);
-const PITCH_SIZE = +(globalThis.__PS || 2048);
-const GATE = +(globalThis.__GATE || 2); // how far above the room's background noise a note must be
+const REPEAT_WAIT = 180;
+const PITCH_SIZE = 2048;
+const GATE = 2; // how far above the room's background noise a note must be
 // semitones above a held note where its own overtones show up (octave+5th, 2 octaves+3rd, ...)
 const OVERTONES = [19, 28, 31, 34];
-const FLUX_K = +(globalThis.__FLUX_K || 1.6);
-const FLUX_MIN = +(globalThis.__FLUX_MIN || 0.35);
+const FLUX_K = 1.6;
+const FLUX_MIN = 0.35;
 const TARGET_RATIO = 1.35; // expected note must beat every other note name by this much
 
 export class NoteListener {
