@@ -120,7 +120,7 @@ function renderSongs() {
   $('#songCards').innerHTML = SONGS.map((s) => {
     const used = [...new Set(s.notes.map((n) => letterOf(n.m)))].sort((a, b) => 'CDEFGAB'.indexOf(a) - 'CDEFGAB'.indexOf(b));
     const best = progress.songs[s.id] || 0;
-    return `<button class="card" data-song="${s.id}"><div class="em">${s.emoji}</div><div><div class="t">${s.title}</div><div class="s">${s.sub}</div></div>
+    return `<button class="card" data-song="${s.id}"><div class="em">${s.emoji}</div><div class="t">${s.title}</div>
       <div class="dots">${used.map((l) => `<b style="background:${COLORS[l]}">${l}</b>`).join('')}</div><div class="eggs">${eggRow(best)}</div></button>`;
   }).join('');
 }
@@ -147,7 +147,7 @@ function openSong(id) {
   show('play');
   P.song = SONGS.find((s) => s.id === id);
   $('#playTitle').textContent = `${P.song.emoji} ${P.song.title}`;
-  P.drawn = drawStaff(playCard, P.song.notes, { scroll: true, lyrics: true });
+  P.drawn = drawStaff(playCard, P.song.notes, { scroll: true, lyrics: true, bars: P.song.bars !== false });
   restartSong(true);
   onNote = playInput;
   leaveHooks.push(stopDemo);

@@ -1,0 +1,15 @@
+# Netlify config for Chicken Piano.
+# The app is one self-contained page (dist/index.html, built by `node build.mjs`).
+# The build needs ffmpeg to trim piano samples, so we commit the built dist/
+# and let Netlify publish it as-is (no build step on Netlify).
+[build]
+  publish = "dist"
+  command = ""
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Let the page ask for the microphone (pitch detection).
+    Permissions-Policy = "microphone=(self)"
+    # Always fetch the newest version so song updates show up right away.
+    Cache-Control = "public, max-age=0, must-revalidate"

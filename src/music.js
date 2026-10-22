@@ -24,7 +24,13 @@ function parse(notes, lyrics) {
   });
 }
 
+// Ordered easiest first. bars:false hides bar lines for songs whose measures don't split evenly into 4/4 here.
 export const SONGS = [
+  {
+    id: 'moon', emoji: '🌙', title: 'Moonlight Chicks', sub: 'Au Clair de la Lune', tempo: 96,
+    notes: parse('C C C D E:h D:h C E D D C:w C C C D E:h D:h C E D D C:w',
+      'In the moon- light, lit- tle chick- ens go to sleep. Snug- gle in the nest now, ti- ny chicks, good night!'),
+  },
   {
     id: 'eggs', emoji: '🍳', title: 'Scrambled Eggs', sub: 'Hot Cross Buns', tempo: 96,
     notes: parse('E D C:h E D C:h C C C C D D D D E D C:h',
@@ -36,9 +42,39 @@ export const SONGS = [
       'Clu- cky had a lit- tle egg, lit- tle egg, lit- tle egg, Clu- cky had a lit- tle egg, its shell was white as snow!'),
   },
   {
+    id: 'hens', emoji: '🐔', title: 'Happy Hens', sub: 'Ode to Joy', tempo: 100,
+    notes: parse('E E F G G F E D C C D E E D D:h E E F G G F E D C C D E D C C:h',
+      'Hap- py hens are in the hen- house, lay- ing eggs and sing- ing songs. Peck- ing corn and flap- ping feath- ers, clu- cking all the whole day long!'),
+  },
+  {
+    id: 'jingle', emoji: '🔔', title: 'Jingle Clucks', sub: 'Jingle Bells', tempo: 112,
+    notes: parse('E E E:h E E E:h E G C D E:w F F F F F E E E E D D E D:h G:h',
+      'Jin- gle clucks, jin- gle clucks, jin- gle all the way! Oh what fun it is to peck in a big red barn to- day!'),
+  },
+  {
+    id: 'march', emoji: '🥁', title: 'When the Chicks Go Marching In', sub: 'When the Saints Go Marching In', tempo: 120, bars: false,
+    notes: parse('C E F G:w C E F G:w C E F G:h E:h C:h E:h D:w E E D C:h C E G:h G F:w E F G:h E:h C:h D:h C:w',
+      'Oh when the chicks go march- ing in, oh when the chicks go march- ing in, Oh I want to be in that num- ber, when the chicks go march- ing in!'),
+  },
+  {
+    id: 'coop', emoji: '🔨', title: 'The Coop Is Falling Down', sub: 'London Bridge', tempo: 104,
+    notes: parse('G A G F E F G:h D E F:h E F G:h G A G F E F G:h D:h G:h E:h C:h',
+      'Chick- en coop is fall- ing down, fall- ing down, fall- ing down. Chick- en coop is fall- ing down, fix it, chick- ens!'),
+  },
+  {
+    id: 'farm', emoji: '🚜', title: "Old MacDonald's Chicks", sub: 'Old MacDonald Had a Farm', tempo: 108,
+    notes: parse('C C C G A A G:h E E D D C:w C C C G A A G:h E E D D C:w C C C:h G G G:h C C C G A A G:h E E D D C:w',
+      'Old Mac- Don- ald had a farm, E- I- E- I- O! On that farm he had some chicks, E- I- E- I- O! Chick chick here, chick chick there, Old Mac- Don- ald had a farm, E- I- E- I- O!'),
+  },
+  {
     id: 'twinkle', emoji: '⭐', title: 'Twinkle Little Chick', sub: 'Twinkle Twinkle Little Star', tempo: 100,
     notes: parse('C C G G A A G:h F F E E D D C:h G G F F E E D:h G G F F E E D:h C C G G A A G:h F F E E D D C:h',
       'Twin- kle twin- kle lit- tle chick, peck- ing seeds so ve- ry quick. Up a- bove the barn so high, like a feath- er in the sky. Twin- kle twin- kle lit- tle chick, peck- ing seeds so ve- ry quick!'),
+  },
+  {
+    id: 'roll', emoji: '🛶', title: 'Roll, Roll, Roll Your Egg', sub: 'Row, Row, Row Your Boat', tempo: 104,
+    notes: parse('C C C D E:h E D E F G:h C5 C5 C5 G G G E E E C C C G F E D C:w',
+      'Roll, roll, roll your egg, gent- ly down the lane. Mer- ri- ly, mer- ri- ly, mer- ri- ly, mer- ri- ly, chick- ens love the game!'),
   },
 ];
 

@@ -17,7 +17,7 @@ function svgEl(tag, attrs, parent) {
  * opts.scroll: true -> long strip that can be scrolled with scrollTo(); false -> fit inside the card.
  */
 export function drawStaff(card, notes, opts = {}) {
-  const { scroll = false, letters = true, lyrics = false, minWidth = 0 } = opts;
+  const { scroll = false, letters = true, lyrics = false, minWidth = 0, bars = true } = opts;
   const strip = card.querySelector('.strip');
   strip.innerHTML = '';
   const perBeat = scroll ? 30 : 26;
@@ -55,7 +55,7 @@ export function drawStaff(card, notes, opts = {}) {
     vnotes.push(sn);
     ticks.push(sn);
     beat += BEATS[n.d];
-    if (beat % 4 === 0 && i < notes.length - 1) ticks.push(new BarNote());
+    if (bars && beat % 4 === 0 && i < notes.length - 1) ticks.push(new BarNote());
   });
 
   const xs = [];
