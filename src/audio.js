@@ -106,7 +106,7 @@ export function bawk() {
 const held = {};
 export function noteDown(m, vel = 0.8) {
   if (!piano || !piano.loaded) return;
-  busy(2500);
+  busy(2700); // samples are trimmed to 2.5s, so a held note is silent by then
   if (held[m]) piano.triggerRelease(toNote(m));
   held[m] = true;
   piano.triggerAttack(toNote(m), undefined, vel);
@@ -115,7 +115,7 @@ export function noteUp(m) {
   if (!piano || !held[m]) return;
   held[m] = false;
   piano.triggerRelease(toNote(m), Tone.now() + 0.05);
-  busy(400, true);
+  busy(1400); // the note still rings for its release; don't let the mic hear it as a second press
 }
 
 // A silly hello: a rising "bu-bu-bu-BAWK!" with a squeaky slide at the end.

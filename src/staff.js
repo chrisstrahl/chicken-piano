@@ -71,6 +71,7 @@ export function drawStaff(card, notes, opts = {}) {
         sn.setKeyStyle(ki, { fillStyle: inkOf(k), strokeStyle: inkOf(k) });
       });
       sn.setStemStyle({ fillStyle: inkOf(n.keys[0]), strokeStyle: inkOf(n.keys[0]) });
+      sn.setFlagStyle({ fillStyle: inkOf(n.keys[0]), strokeStyle: inkOf(n.keys[0]) });
     }
     if (n.d.endsWith('d')) Dot.buildAndAttach([sn], { all: true });
     // two eighths that share a beat hold hands
@@ -91,7 +92,7 @@ export function drawStaff(card, notes, opts = {}) {
     const voice = new Voice({ num_beats: Math.max(1, Math.ceil(beat)), beat_value: 4 }).setStrict(false);
     voice.addTickables(ticks);
     const beamObjs = beams.map((b) => new Beam(b, true));
-    new Formatter().joinVoices([voice]).format([voice], pack ? Math.max(40, noteW - 44) : width - stave.getNoteStartX() - 40);
+    new Formatter().joinVoices([voice]).format([voice], pack ? Math.max(40, noteW * 1.3) : width - stave.getNoteStartX() - 40);
     voice.draw(ctx, stave);
     beamObjs.forEach((b) => b.setContext(ctx).draw());
     ties.forEach(([a, b]) => new StaveTie({ first_note: a, last_note: b, first_indices: [0], last_indices: [0] }).setContext(ctx).draw());
