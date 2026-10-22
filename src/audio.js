@@ -230,8 +230,15 @@ export function say(text, onEnd) {
     speak(parts.join(' '), id, finish);
   }
 }
+// Device voices read a lone capital letter as "capital C", so spell note names out.
+const LETTER_SOUND = { A: 'ay', B: 'bee', C: 'see', D: 'dee', E: 'ee', F: 'eff', G: 'gee' };
+export const speakable = (text) => text
+  .replace(/\b([B-G])\b(?!['’])/g, (_, l) => LETTER_SOUND[l])
+  .replace(/\bA\b(?=,|\.|!|\?| sharp\b(?! sign)| flat\b(?! sign)| and\b|$)/g, 'ay')
+  .replace(/♯/g, ' sharp').replace(/♭/g, ' flat');
 function speak(text, id, finish) {
   if (!window.speechSynthesis) { setTimeout(finish, 300); return; }
+  text = speakable(text);
   const est = 600 + text.length * 70;
   try {
     speechSynthesis.cancel();
