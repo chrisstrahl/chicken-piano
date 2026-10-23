@@ -109,6 +109,11 @@
   "spoken": "Oops! Find A.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "0399d4f2": {
+  "text": "You have 369 eggs.",
+  "spoken": "You have 369 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "03b91f23": {
   "text": "That's 27 days in a row!",
   "spoken": "That's 27 days in a row!",
@@ -244,6 +249,11 @@
   "spoken": "Let's play Rooster Rumble!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "089f512e": {
+  "text": "You have 394 eggs.",
+  "spoken": "You have 394 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "08a81f01": {
   "text": "You have 218 eggs.",
   "spoken": "You have 218 eggs.",
@@ -317,6 +327,11 @@
  "0d0ca57d": {
   "text": "You have 184 eggs.",
   "spoken": "You have 184 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "0d1d260a": {
+  "text": "No letters this time! Start on a landmark, then follow the steps and skips.",
+  "spoken": "No letters this time! Start on a landmark, then follow the steps and skips.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "0dc61f56": {
@@ -464,6 +479,11 @@
   "spoken": "That's 34 days in a row!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "139766f2": {
+  "text": "You have 387 eggs.",
+  "spoken": "You have 387 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "14761511": {
   "text": "You have 85 eggs.",
   "spoken": "You have 85 eggs.",
@@ -589,9 +609,24 @@
   "spoken": "You have 190 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "1af7d9c0": {
+  "text": "Copy cluck! Listen to my rhythm. Then play it back on any key.",
+  "spoken": "Copy cluck! Listen to my rhythm. Then play it back on any key.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "1b18e527": {
   "text": "Let's play Happy Hatch Day!",
   "spoken": "Let's play Happy Hatch Day!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "1b545b1d": {
+  "text": "You have 368 eggs.",
+  "spoken": "You have 368 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "1bbd9944": {
+  "text": "You have 385 eggs.",
+  "spoken": "You have 385 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "1bc93aa5": {
@@ -612,6 +647,11 @@
  "1ce08f01": {
   "text": "Let's play Sharp Little Chick!",
   "spoken": "Let's play Sharp Little Chick!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "1cf75cb9": {
+  "text": "You have 382 eggs.",
+  "spoken": "You have 382 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "1d1e1a9f": {
@@ -674,6 +714,11 @@
   "spoken": "That's Old rhyme, new tune!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "1feb1783": {
+  "text": "You have 407 eggs.",
+  "spoken": "You have 407 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "2036e81d": {
   "text": "Find the white key with that letter, then go one key to the left.",
   "spoken": "Find the white key with that letter, then go one key to the left.",
@@ -682,6 +727,11 @@
  "20810cfd": {
   "text": "You have 5 eggs.",
   "spoken": "You have 5 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "20e8f5fb": {
+  "text": "Twinkle twist! Play Twinkle with a new rhythm. Long cluck!",
+  "spoken": "Twinkle twist! Play Twinkle with a new rhythm. Long cluck!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "20fe3e61": {
@@ -722,6 +772,16 @@
  "223fc450": {
   "text": "Play again tomorrow for two in a row!",
   "spoken": "Play again tomorrow for two in a row!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "227c3ab7": {
+  "text": "You have 414 eggs.",
+  "spoken": "You have 414 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "22f15100": {
+  "text": "You have 411 eggs.",
+  "spoken": "You have 411 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "231d5af6": {
@@ -789,9 +849,19 @@
   "spoken": "You have 364 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "2792c99b": {
+  "text": "Barnyard games! Pick one.",
+  "spoken": "Barnyard games! Pick one.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "2803f021": {
   "text": "C flat",
   "spoken": "C flat",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "28cc9adc": {
+  "text": "Count how far a jump goes. Count both notes! C to D is a second. C to E is a third. C to F is a fourth. C to G is a fifth. Play them.",
+  "spoken": "Count how far a jump goes. Count both notes! C to D is a second. C to E is a third. C to F is a fourth. C to G is a fifth. Play them.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "28e7755c": {
@@ -827,6 +897,11 @@
  "2b4f1591": {
   "text": "You have 9 eggs.",
   "spoken": "You have 9 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "2b51ed1d": {
+  "text": "You have 386 eggs.",
+  "spoken": "You have 386 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "2b538af4": {
@@ -884,6 +959,11 @@
   "spoken": "New song: Roll, Roll, Roll Your Egg!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "2dd4a538": {
+  "text": "You have 389 eggs.",
+  "spoken": "You have 389 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "2e067f82": {
   "text": "Let's play Amazing Hens!",
   "spoken": "Let's play Amazing Hens!",
@@ -919,6 +999,11 @@
   "spoken": "You have 68 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "30332b5e": {
+  "text": "You have 413 eggs.",
+  "spoken": "You have 413 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "30710524": {
   "text": "Let's play Big Rooster Walk!",
   "spoken": "Let's play Big Rooster Walk!",
@@ -929,9 +1014,19 @@
   "spoken": "Let's play Strutting Rooster!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "30b23b9a": {
+  "text": "Your fastest time ever!",
+  "spoken": "Your fastest time ever!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "31165123": {
   "text": "New song: Hens in a Row!",
   "spoken": "New song: Hens in a Row!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "317d5878": {
+  "text": "You have 419 eggs.",
+  "spoken": "You have 419 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "3286188a": {
@@ -957,6 +1052,11 @@
  "332f624e": {
   "text": "Oops! Find D sharp.",
   "spoken": "Oops! Find D sharp.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "336ddf68": {
+  "text": "You have 420 eggs.",
+  "spoken": "You have 420 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "34334e06": {
@@ -997,6 +1097,16 @@
  "36024e2b": {
   "text": "You have 209 eggs.",
   "spoken": "You have 209 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "361ae9c0": {
+  "text": "You have 381 eggs.",
+  "spoken": "You have 381 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "3646eff9": {
+  "text": "You have 412 eggs.",
+  "spoken": "You have 412 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "36b53df3": {
@@ -1079,9 +1189,19 @@
   "spoken": "You have 44 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "3b3b996e": {
+  "text": "You have 404 eggs.",
+  "spoken": "You have 404 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "3b5a0598": {
   "text": "Let's play Chick Steps!",
   "spoken": "Let's play Chick Steps!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "3bd83606": {
+  "text": "You have 376 eggs.",
+  "spoken": "You have 376 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "3bf1ccce": {
@@ -1224,6 +1344,11 @@
   "spoken": "New song: One Two Three Eggs!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "42f6c14b": {
+  "text": "You have 388 eggs.",
+  "spoken": "You have 388 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "43ceda71": {
   "text": "Take Sunny out of the coop? Their eggs go too.",
   "spoken": "Take Sunny out of the coop? Their eggs go too.",
@@ -1247,6 +1372,11 @@
  "44bb97b7": {
   "text": "That's 12 days in a row!",
   "spoken": "That's 12 days in a row!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "450a3748": {
+  "text": "You have 374 eggs.",
+  "spoken": "You have 374 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "45837278": {
@@ -1329,6 +1459,11 @@
   "spoken": "That's 54 days in a row!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "48982f77": {
+  "text": "You have 384 eggs.",
+  "spoken": "You have 384 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "49324043": {
   "text": "You have 119 eggs.",
   "spoken": "You have 119 eggs.",
@@ -1397,6 +1532,11 @@
  "4ddde959": {
   "text": "Let's play Merry Clucks-mas!",
   "spoken": "Let's play Merry Clucks-mas!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "4dedb30c": {
+  "text": "You have 370 eggs.",
+  "spoken": "You have 370 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "4e2901bb": {
@@ -1482,6 +1622,11 @@
  "531624b3": {
   "text": "Sent! Bawk bawk!",
   "spoken": "Sent! Bawk bawk!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "537f2174": {
+  "text": "How far is the jump? Count both notes!",
+  "spoken": "How far is the jump? Count both notes!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "53bd5ff5": {
@@ -1614,6 +1759,11 @@
   "spoken": "You have 317 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "5940207a": {
+  "text": "You have 408 eggs.",
+  "spoken": "You have 408 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "5a3a9126": {
   "text": "What note is this?",
   "spoken": "What note is this?",
@@ -1654,6 +1804,11 @@
   "spoken": "Let's play Higgledy Piggledy!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "5c516087": {
+  "text": "Jumping over one key is called a skip. Hop like a kangaroo! Play C, E, G. Skip, skip!",
+  "spoken": "Jumping over one key is called a skip. Hop like a kangaroo! Play C, E, G. Skip, skip!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "5cd1004a": {
   "text": "That's 93 days in a row!",
   "spoken": "That's 93 days in a row!",
@@ -1689,6 +1844,16 @@
   "spoken": "You have 88 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "5dd7bd5b": {
+  "text": "You have 375 eggs.",
+  "spoken": "You have 375 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "5e04524d": {
+  "text": "Twinkle twist! Play Twinkle with a new rhythm. Chick-en cluck!",
+  "spoken": "Twinkle twist! Play Twinkle with a new rhythm. Chick-en cluck!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "5e112595": {
   "text": "That's 69 days in a row!",
   "spoken": "That's 69 days in a row!",
@@ -1702,6 +1867,21 @@
  "5eee35bd": {
   "text": "You have 153 eggs.",
   "spoken": "You have 153 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "5f53c143": {
+  "text": "You have 397 eggs.",
+  "spoken": "You have 397 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "5fcd2185": {
+  "text": "You have 409 eggs.",
+  "spoken": "You have 409 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "5fd5744d": {
+  "text": "Step, skip, or the same note?",
+  "spoken": "Step, skip, or the same note?",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "5ff49f71": {
@@ -1769,6 +1949,11 @@
   "spoken": "You have 277 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "64d61a49": {
+  "text": "You have 395 eggs.",
+  "spoken": "You have 395 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "65153446": {
   "text": "Listen to my note. Then find it on the piano!",
   "spoken": "Listen to my note. Then find it on the piano!",
@@ -1787,6 +1972,11 @@
  "665a6bd1": {
   "text": "You have 49 eggs.",
   "spoken": "You have 49 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "668b534d": {
+  "text": "Egg rush! Play each note as fast as you can. Ready, go!",
+  "spoken": "Egg rush! Play each note as fast as you can. Ready, go!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "66af3ec6": {
@@ -1899,6 +2089,11 @@
   "spoken": "You have 249 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "6c914e94": {
+  "text": "You have 378 eggs.",
+  "spoken": "You have 378 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "6cca879f": {
   "text": "That's 56 days in a row!",
   "spoken": "That's 56 days in a row!",
@@ -1957,6 +2152,11 @@
  "6f5494b8": {
   "text": "That's Camptown Races!",
   "spoken": "That's Camptown Races!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "6f5e833a": {
+  "text": "You have 372 eggs.",
+  "spoken": "You have 372 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "6f751660": {
@@ -2214,6 +2414,11 @@
   "spoken": "New song: Good Morning, Chicks!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "7b4bd1a1": {
+  "text": "You have 423 eggs.",
+  "spoken": "You have 423 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "7b56faee": {
   "text": "That's 88 days in a row!",
   "spoken": "That's 88 days in a row!",
@@ -2237,6 +2442,11 @@
  "7c8d4996": {
   "text": "New song: Good Hen Wenceslas!",
   "spoken": "New song: Good Hen Wenceslas!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "7c8ee094": {
+  "text": "You have 392 eggs.",
+  "spoken": "You have 392 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "7cd31492": {
@@ -2279,6 +2489,11 @@
   "spoken": "That's Jingle Bells!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "7e4f3042": {
+  "text": "You have 390 eggs.",
+  "spoken": "You have 390 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "7e7cbb39": {
   "text": "You have 12 eggs.",
   "spoken": "You have 12 eggs.",
@@ -2302,6 +2517,11 @@
  "7f418276": {
   "text": "Move your hand! Put your thumb on G, and your fingers on G, A, B, C, D. Play them all.",
   "spoken": "Move your hand! Put your thumb on G, and your fingers on G, A, B, C, D. Play them all.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "7f5c153a": {
+  "text": "You have 398 eggs.",
+  "spoken": "You have 398 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "7f903198": {
@@ -2427,6 +2647,11 @@
  "876cb95a": {
   "text": "You have 295 eggs.",
   "spoken": "You have 295 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "87b2dd5d": {
+  "text": "You have 416 eggs.",
+  "spoken": "You have 416 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "87f9c365": {
@@ -2609,6 +2834,11 @@
   "spoken": "New song: Happy Hens!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "8e664ed0": {
+  "text": "You have 396 eggs.",
+  "spoken": "You have 396 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "8e8da887": {
   "text": "A half step is the very next key, black or white. A whole step skips one key. E to F is a half step. C to D is a whole step. Play E, F, then C, D.",
   "spoken": "A half step is the very next key, black or white. A whole step skips one key. E to F is a half step. C to D is a whole step. Play E, F, then C, D.",
@@ -2632,6 +2862,11 @@
  "8f2a5d7e": {
   "text": "You have 39 eggs.",
   "spoken": "You have 39 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "8f383945": {
+  "text": "You have 373 eggs.",
+  "spoken": "You have 373 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "8f555669": {
@@ -2689,6 +2924,11 @@
   "spoken": "Your turn! Count with the pecks, then play!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "90a57ead": {
+  "text": "You have 391 eggs.",
+  "spoken": "You have 391 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "90becc3b": {
   "text": "And 8 baby chicks.",
   "spoken": "And 8 baby chicks.",
@@ -2739,6 +2979,11 @@
   "spoken": "Hi, Sunny! Let's play!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "93640ad4": {
+  "text": "You have 402 eggs.",
+  "spoken": "You have 402 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "9400a9a3": {
   "text": "New song: Chicken Walk!",
   "spoken": "New song: Chicken Walk!",
@@ -2747,6 +2992,11 @@
  "9432d88e": {
   "text": "E lives just to the right of the two black keys. Tap E.",
   "spoken": "E lives just to the right of the two black keys. Tap E.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "944e31ed": {
+  "text": "You have 401 eggs.",
+  "spoken": "You have 401 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "94dce795": {
@@ -2762,6 +3012,11 @@
  "94f69fd2": {
   "text": "Let's play Sleepy Hen!",
   "spoken": "Let's play Sleepy Hen!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "95245a82": {
+  "text": "You have 400 eggs.",
+  "spoken": "You have 400 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "95ad91f7": {
@@ -2869,6 +3124,11 @@
   "spoken": "That's Vivaldi: Spring!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "9c06b147": {
+  "text": "You have 403 eggs.",
+  "spoken": "You have 403 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "9c0709e9": {
   "text": "Waltz with the pecks! One, two, three. Then hold the last C for all three.",
   "spoken": "Waltz with the pecks! One, two, three. Then hold the last C for all three.",
@@ -2917,6 +3177,26 @@
  "9e6da20c": {
   "text": "Let's play Hen Minuet!",
   "spoken": "Let's play Hen Minuet!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "9eb84f33": {
+  "text": "You have 380 eggs.",
+  "spoken": "You have 380 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "9f32b807": {
+  "text": "You have 379 eggs.",
+  "spoken": "You have 379 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "9f35cb45": {
+  "text": "You have 399 eggs.",
+  "spoken": "You have 399 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "9f57b18b": {
+  "text": "You have 418 eggs.",
+  "spoken": "You have 418 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "9f68eb30": {
@@ -2997,6 +3277,11 @@
  "a3b72b16": {
   "text": "You have 84 eggs.",
   "spoken": "You have 84 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "a3ba7581": {
+  "text": "You have 377 eggs.",
+  "spoken": "You have 377 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "a3ced811": {
@@ -3144,6 +3429,11 @@
   "spoken": "A sharp sign means play the very next key up, to the right. C sharp is the black key just right of C! Tap C sharp.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "aa64be89": {
+  "text": "You have 405 eggs.",
+  "spoken": "You have 405 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "aa78bf56": {
   "text": "That's 80 days in a row!",
   "spoken": "That's 80 days in a row!",
@@ -3264,6 +3554,11 @@
   "spoken": "Let's play Good Hen Wenceslas!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "af304a07": {
+  "text": "You have 393 eggs.",
+  "spoken": "You have 393 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "af5a00b4": {
   "text": "Let's play Deck the Coop!",
   "spoken": "Let's play Deck the Coop!",
@@ -3272,6 +3567,11 @@
  "af916dab": {
   "text": "Let's play In the Hall of the Rooster King!",
   "spoken": "Let's play In the Hall of the Rooster King!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "afaac7bf": {
+  "text": "You have 371 eggs.",
+  "spoken": "You have 371 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "aff9fc43": {
@@ -3302,6 +3602,11 @@
  "b12c0d36": {
   "text": "You finished level 1! A baby chick hatched! Next is level 2.",
   "spoken": "You finished level 1! A baby chick hatched! Next is level 2.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "b130d38d": {
+  "text": "The treble clef curls around one line, like a snail. That line is G! G and middle C are landmarks. Find them first, then count from them. Play G.",
+  "spoken": "The treble clef curls around one line, like a snail. That line is G! G and middle C are landmarks. Find them first, then count from them. Play G.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "b165a70b": {
@@ -3497,6 +3802,11 @@
  "bdc46657": {
   "text": "Let's play Hold That Note!",
   "spoken": "Let's play Hold That Note!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "bdf79485": {
+  "text": "Twinkle twist! Play Twinkle with a new rhythm. Cluck, cluck!",
+  "spoken": "Twinkle twist! Play Twinkle with a new rhythm. Cluck, cluck!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "be1ef5b5": {
@@ -3714,6 +4024,11 @@
   "spoken": "See!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "c694ce30": {
+  "text": "Skip up, then skip down!",
+  "spoken": "Skip up, then skip down!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "c6a489ac": {
   "text": "You have 356 eggs.",
   "spoken": "You have 356 eggs.",
@@ -3742,6 +4057,11 @@
  "c7f12493": {
   "text": "Hi, Blueberry! Let's play!",
   "spoken": "Hi, Blueberry! Let's play!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "c84c356d": {
+  "text": "No letters! Start on G and play the jumps.",
+  "spoken": "No letters! Start on G and play the jumps.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "c892e75b": {
@@ -3802,6 +4122,11 @@
  "cb37b539": {
   "text": "That's Twinkle Twinkle Little Star!",
   "spoken": "That's Twinkle Twinkle Little Star!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "cb3b77e5": {
+  "text": "Twinkle twist! Play Twinkle with a new rhythm. Chick-en, chick-en!",
+  "spoken": "Twinkle twist! Play Twinkle with a new rhythm. Chick-en, chick-en!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "cbc8b7c0": {
@@ -3954,6 +4279,11 @@
   "spoken": "Start on A.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "d17a8a10": {
+  "text": "You have 406 eggs.",
+  "spoken": "You have 406 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "d17ef814": {
   "text": "You have 217 eggs.",
   "spoken": "You have 217 eggs.",
@@ -3972,6 +4302,11 @@
  "d1e28e5c": {
   "text": "One more to lay today's egg!",
   "spoken": "One more to lay today's egg!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "d2455ab9": {
+  "text": "On the staff, a step goes from a line to the very next space. A skip goes from a line to the next line, or a space to the next space. Play E, F, then E, G.",
+  "spoken": "On the staff, a step goes from a line to the very next space. A skip goes from a line to the next line, or a space to the next space. Play E, F, then E, G.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "d25d1abd": {
@@ -4014,6 +4349,11 @@
   "spoken": "You have 137 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "d3d23b1e": {
+  "text": "You have 383 eggs.",
+  "spoken": "You have 383 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "d42276af": {
   "text": "You have 267 eggs.",
   "spoken": "You have 267 eggs.",
@@ -4037,6 +4377,11 @@
  "d50c35a0": {
   "text": "You have 2 eggs.",
   "spoken": "You have 2 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "d5371126": {
+  "text": "You have 422 eggs.",
+  "spoken": "You have 422 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "d5448416": {
@@ -4199,6 +4544,11 @@
   "spoken": "Almost! Listen once more.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "da36737b": {
+  "text": "You have 421 eggs.",
+  "spoken": "You have 421 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "da84083d": {
   "text": "New song: Flat Little Hen!",
   "spoken": "New song: Flat Little Hen!",
@@ -4212,6 +4562,11 @@
  "db29f575": {
   "text": "You have 52 eggs.",
   "spoken": "You have 52 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "dc3272d5": {
+  "text": "Twinkle twist! Play Twinkle with a new rhythm. Cluck, chick-en!",
+  "spoken": "Twinkle twist! Play Twinkle with a new rhythm. Cluck, chick-en!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "dc676797": {
@@ -4319,6 +4674,11 @@
   "spoken": "That's 79 days in a row!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "e1cc8a73": {
+  "text": "You have 410 eggs.",
+  "spoken": "You have 410 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "e2e6fbaf": {
   "text": "Let's play Flat Little Hen!",
   "spoken": "Let's play Flat Little Hen!",
@@ -4337,6 +4697,11 @@
  "e36ba79e": {
   "text": "That's 26 days in a row!",
   "spoken": "That's 26 days in a row!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "e3991e2c": {
+  "text": "You have 424 eggs.",
+  "spoken": "You have 424 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "e39bd0cb": {
@@ -4544,6 +4909,11 @@
   "spoken": "You have 186 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "ed7b7232": {
+  "text": "You have 417 eggs.",
+  "spoken": "You have 417 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "ed976b81": {
   "text": "A dot makes a note longer. A dotted half note gets three beats. Play G and hold it, one, two, three!",
   "spoken": "A dot makes a note longer. A dotted half note gets three beats. Play G and hold it, one, two, three!",
@@ -4684,6 +5054,11 @@
   "spoken": "You have 48 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "f5a1a484": {
+  "text": "You have 415 eggs.",
+  "spoken": "You have 415 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "f5f0fe00": {
   "text": "On the bass staff, the line notes are G, B, D, F, A. Good Burritos Don't Fall Apart! Play low G.",
   "spoken": "On the bass staff, the line notes are G, B, D, F, A. Good Burritos Don't Fall Apart! Play low G.",
@@ -4737,6 +5112,11 @@
  "f860e076": {
   "text": "You have 260 eggs.",
   "spoken": "You have 260 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "f89bb70b": {
+  "text": "Look and listen. Is it a step, a skip, or the same note?",
+  "spoken": "Look and listen. Is it a step, a skip, or the same note?",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "f95b4284": {

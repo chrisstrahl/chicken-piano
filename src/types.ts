@@ -130,7 +130,8 @@ export type LessonStep =
       lh?: Tokens; // a left-hand part: the staff becomes a grand staff
     }
   | { type: 'key'; say: string; targets: Tokens; letters?: string; hint?: string; range?: string }
-  | { type: 'seq'; say: string; seqs: Tokens[]; range?: string }
+  // read: no letters and no glowing keys, so the child reads the staff
+  | { type: 'seq'; say: string; seqs: Tokens[]; range?: string; read?: boolean }
   | { type: 'name'; say: string; notes: Tokens; pool: string; clef?: string; range?: string }
   | { type: 'beats'; say: string; durs: string[] }
   | { type: 'choice'; say: string; rounds: ChoiceRound[] }

@@ -52,6 +52,7 @@ button{font:inherit;color:inherit;border:0;cursor:pointer;touch-action:manipulat
 .btn.red{background:var(--barn);box-shadow:0 5px 0 var(--barn-d);color:#fff}
 .btn.blue{background:var(--sky-btn);box-shadow:0 5px 0 var(--sky-btn-d);color:#fff}
 .btn.violet{background:var(--violet);box-shadow:0 5px 0 var(--violet-d);color:#fff}
+.btn.pink{background:#ff6fb0;box-shadow:0 5px 0 #d94a8c;color:#fff}
 .btn.pulse{animation:pulse 1.2s ease-in-out infinite}
 @keyframes pulse{50%{transform:scale(1.08)}}
 
@@ -438,6 +439,15 @@ body.midi #mic:not(.on){opacity:.6}
 .earcard .t{letter-spacing:-.1em}
 .earcard .pool{display:flex;gap:4px;justify-content:center}
 .earcard .pool i{width:min(2.2vh,1.6vw);height:min(2.2vh,1.6vw);border-radius:50%}
+/* barnyard games */
+.menu .tile{width:min(14vw,26vh)}
+.gamehead{grid-column:1/-1;margin:1vh 0 0;font-size:min(5vh,3.6vw);color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.25)}
+.gamecard .pool{display:flex;gap:4px;justify-content:center}
+.gamecard .pool i{width:min(2.2vh,1.6vw);height:min(2.2vh,1.6vw);border-radius:50%}
+.gamecard .t{font-size:min(2.8vh,1.9vw)}
+.gamecard .when:empty{display:none}
+.bubble .rushgoal{font-size:.55em;letter-spacing:0}
+.topbar .clock{font-size:clamp(18px,3.4vh,30px);font-weight:700;color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.25);font-variant-numeric:tabular-nums;min-width:3.5em}
 .bubble .earegg{display:inline-flex;align-items:center;justify-content:center;width:clamp(40px,8.5vh,74px);height:clamp(40px,8.5vh,74px);font-size:clamp(26px,6vh,52px)}
 .recempty{flex:1;display:flex;align-items:center;justify-content:center;gap:2vw}
 .recempty .chicken{height:min(30vh,22vw)}
@@ -474,6 +484,7 @@ body.midi #mic:not(.on){opacity:.6}
     <button class="btn violet tile" data-go="free"><span class="em">🎹</span>Play</button>
     <button class="btn red tile" data-go="recs"><span class="em">🎙️</span>Mine</button>
     <button class="btn green tile" data-go="ears"><span class="em">👂</span>Find it</button>
+    <button class="btn pink tile" data-go="games"><span class="em">🎪</span>Games</button>
   </div>
   <div class="coop" id="coop"></div>
   <div class="ver">v <!--VERSION--></div>
@@ -601,6 +612,38 @@ body.midi #mic:not(.on){opacity:.6}
       <div class="tools"><button class="btn round big green" id="earHear" aria-label="Hear it again">👂</button></div>
     </div>
     <div class="kbwrap"><div id="earKb"></div></div>
+  </div>
+</section>
+
+<section id="games" class="screen">
+  <div class="topbar"><button class="btn round" data-go="home" aria-label="Home">🏠</button><h2>🎪 Games</h2></div>
+  <div class="reclist" id="gameCards"></div>
+</section>
+
+<section id="rush" class="screen">
+  <div class="topbar"><button class="btn round" data-go="games" aria-label="Back">⬅️</button><h2 id="rushTitle">🥚💨</h2><div class="clock">⏱️ <span id="rushTime">0.0</span></div></div>
+  <div class="stage">
+    <div class="staffcard static" id="rushStaff"><div class="scroller"><div class="strip"></div></div></div>
+    <div class="coach">
+      <div data-chicken id="rushChicken"></div>
+      <div class="bubble" id="rushBubble"></div>
+      <div class="spacer"></div>
+    </div>
+    <div class="kbwrap"><div id="rushKb"></div></div>
+  </div>
+</section>
+
+<section id="beat" class="screen">
+  <div class="topbar"><button class="btn round" data-go="games" aria-label="Back">⬅️</button><h2 id="beatTitle">👏🐔</h2><div class="stepdots" id="beatDots"></div></div>
+  <div class="stage">
+    <div class="staffcard static" id="beatStaff"><div class="scroller"><div class="strip"></div></div></div>
+    <div class="coach">
+      <div data-chicken id="beatChicken"></div>
+      <div class="bubble" id="beatBubble"></div>
+      <div class="spacer"></div>
+      <div class="tools"><button class="btn round big green" id="beatHear" aria-label="Hear it again">👂</button></div>
+    </div>
+    <div class="kbwrap"><div id="beatKb"></div></div>
   </div>
 </section>
 
