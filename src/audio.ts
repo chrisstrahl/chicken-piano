@@ -33,7 +33,7 @@ function b64ToArrayBuffer(b64: string) {
 async function loadPiano() {
   const raw = Tone.getContext().rawContext as AudioContext;
   const urls: Record<string, Tone.ToneAudioBuffer> = {};
-  await Promise.all(Object.entries(SAMPLES as Record<string, string>).map(async ([note, b64]) => {
+  await Promise.all(Object.entries(SAMPLES).map(async ([note, b64]) => {
     const buf = await raw.decodeAudioData(b64ToArrayBuffer(b64));
     urls[note] = new Tone.ToneAudioBuffer(buf);
   }));
