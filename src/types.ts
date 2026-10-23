@@ -44,7 +44,7 @@ export interface Pitch {
 // A parsed token (music.js parse): a rest, or one or more keys sounding together
 export type Note =
   | { r: true; d: Duration | string; keys: []; lyric: string }
-  | { r?: undefined; m: number; keys: Pitch[]; d: Duration | string; tie: boolean; label: string; letter: string; lyric: string };
+  | { r?: undefined; m: number; keys: Pitch[]; d: Duration | string; tie?: boolean; label: string; letter: string; lyric: string };
 
 // A note of the key's scale, spelled: letter, '#' / 'b' / '', pitch class (0 = C)
 export interface ScaleNote { letter: string; acc: string; pc: number }
