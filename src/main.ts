@@ -2,7 +2,7 @@ import { SONGS, LEVELS, PRAISE, COLORS, BEATS, letterOf, nameOf, isBlack, parse,
 import { coop, openSongsAsk, letsPlay, oopsFind, songDone, lessonDone, noteWords, whoPlays, pickChicken, hello, removeAsk, originalName, dayEgg, dayTalk, SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN, RHYTHM_TURN, RHYTHM_AGAIN, RHYTHM_GOOD, RHYTHM_OK, RHYTHM_HOLD, RHYTHM_SHH } from './lines.js';
 import { startAudio, playNote, noteDown, noteUp, playSequence, cluck, peck, bawk, silly, say, stopTalking, preloadVoice, startBeat } from './audio.js';
 import { BeatJudge, phrases, SPEEDS, barBeats, peckEvery, MIC_LAG, timeline } from './beat.js';
-import { startMic, stopMic, micOn, micSupported, expectNote, micHealth } from './mic.js';
+import { startMic, stopMic, micOn, micSupported, expectNote, micHealth, lastHeardAt } from './mic.js';
 import { startMidi, midiSupported, midiAllowed } from './midi.js';
 import { drawStaff, focusX } from './staff.js';
 import { makeKeyboard, LOW, HIGH } from './keyboard.js';
@@ -179,6 +179,7 @@ micBtn.addEventListener('click', async () => {
       onNote: (m) => noteIn(m, 'mic'),
       onLevel: (v, quietMs) => {
         $('#mic .lvl i').style.width = Math.round(v * 100) + '%';
+        freeLevel && freeLevel(v);
         // nothing loud enough for 20s while waiting for notes: the tablet is probably too far from the piano
         if (quietMs! > 20000 && ['play', 'lesson'].includes(current) && performance.now() - lastQuietTip > 120000) {
           lastQuietTip = performance.now();
@@ -1623,14 +1624,33 @@ function lessonRelease(m: number) {
 const freeKb = makeKeyboard($('#freeKb'), (m) => noteIn(m, 'tap'), keyUp);
 freeKb.setRange(48, 76);
 type FreeNote = Sounding & { d: string };
-const F: { notes: FreeNote[]; down: Record<number, { n: FreeNote; t: number }>; last?: { ns: FreeNote[]; t: number } | null } = { notes: [], down: {} };
+const F: {
+  notes: FreeNote[]; down: Record<number, { n: FreeNote; t: number }>; last?: { ns: FreeNote[]; t: number } | null;
+  ring?: { ns: FreeNote[]; t: number } | null; lv: number[];
+} = { notes: [], down: {}, lv: [] };
 // Note lengths in free play, counted at 90 beats a minute. Short values come from how soon the NEXT note starts
 // (a tap is always quick, so how long a finger rests on the glass says nothing about eighths); long values come
-// from how long the key is held. Boundaries sit a bit below the halfway points (on a log scale), because
-// children let go early: when in doubt, the longer note wins.
+// from how long the key is held. Held boundaries sit a bit below the halfway points (on a log scale), because
+// children let go early: when in doubt, the longer note wins. The sixteenth/eighth boundary sits at the
+// halfway point (235 ms), since heard notes are only timed to within a few tens of ms.
 const FREE_BEAT = 60000 / 90;
 const heldLength = (ms: number) => { const b = ms / FREE_BEAT; return b < 1.3 ? 'q' : b < 2.3 ? 'h' : b < 3.2 ? 'hd' : 'w'; };
-const gapLength = (ms: number) => { const b = ms / FREE_BEAT; return b < 0.3 ? '16' : b < 0.6 ? '8' : 'q'; };
+const gapLength = (ms: number) => { const b = ms / FREE_BEAT; return b < 0.35 ? '16' : b < 0.6 ? '8' : 'q'; };
+// Heard notes (microphone) have no key-up: they last until their sound stops, or until the next note starts.
+// The sound has stopped when the meter falls near the room's noise, or drops fast (the key was let go and
+// the damper landed; a held piano note fades much more slowly than that).
+const QUIET = 0.27; // meter level of about 2.5x the room noise
+const DROP = 0.25; // meter fall within about 150 ms
+const ringLength = (ms: number) => { const b = ms / FREE_BEAT; return b < 0.6 ? gapLength(ms) : heldLength(ms); };
+let freeLevel: ((v: number) => void) | null = null;
+function endRing(now: number, stillSounding: boolean) {
+  const r = F.ring;
+  if (!r) return;
+  F.ring = null;
+  const len = stillSounding ? ringLength(now - r.t) : heldLength(now - r.t);
+  r.ns.forEach((n) => { if (F.notes.includes(n)) n.d = len; });
+  drawFree();
+}
 function drawFree() {
   // low notes read better on the bass staff
   const low = F.notes.filter((n) => n.m < 60).length > F.notes.length / 2;
@@ -1646,7 +1666,7 @@ $('#btnFreeBeat').addEventListener('click', () => {
   freeBeat = startBeat({ bpm: 90, onBeat: () => act($('#freeChicken'), 'peck', 250) });
 });
 function openFree() {
-  leaveHooks.push(stopFreeBeat);
+  leaveHooks.push(stopFreeBeat, () => { freeLevel = null; F.ring = null; });
   F.notes = [];
   drawStaff($('#freeStaff'), [], { minWidth: FREE_W, pack: true });
   bubble($('#freeBubble'), '🎹 🎤 ❓');
@@ -1654,10 +1674,13 @@ function openFree() {
   F.last = null;
   onNote = (m, source) => {
     const n = noteOf(m);
-    const now = performance.now();
+    // a heard note is recognized a little after its key was struck; time it from the strike
+    const now = source === 'mic' ? Math.min(performance.now(), Math.max(lastHeardAt(), F.last ? F.last.t : 0)) : performance.now();
     // Notes within 60 ms of each other are one chord. The chord before this one was short if this one came
     // quickly (and it wasn't held longer than a beat).
     const prev = F.last;
+    // a heard note that is still ringing lasted until this one
+    if (F.ring && now - F.ring.t >= 60) endRing(now, true);
     if (prev && now - prev.t < 60) prev.ns.push(n);
     else {
       if (prev) prev.ns.forEach((p) => { if (p.d === 'q' && F.notes.includes(p)) p.d = gapLength(now - prev.t); });
@@ -1667,10 +1690,20 @@ function openFree() {
     if (F.notes.length > 8) F.notes.shift();
     // tapped (or USB keyboard) keys start as quarter notes and get their real length when the finger lifts
     if (source !== 'mic') F.down[m] = { n, t: now };
+    else if (F.ring && now - F.ring.t < 60) F.ring.ns.push(n);
+    else { F.ring = { ns: [n], t: now }; F.lv = []; }
     drawFree();
     bubble($('#freeBubble'), bigLetter(m));
     freeKb.flash(m, 'hl', 600);
     act($('#freeChicken'), Math.random() < 0.3 ? 'happy' : 'peck', 500);
+  };
+  freeLevel = (v) => {
+    const r = F.ring;
+    if (!r) return;
+    F.lv.push(v);
+    if (F.lv.length > 4) F.lv.shift();
+    const now = performance.now();
+    if (now - r.t > 150 && (v < QUIET || Math.max(...F.lv) - v > DROP)) endRing(now, false);
   };
   onRelease = (m) => {
     const d = F.down[m];

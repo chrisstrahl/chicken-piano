@@ -28,6 +28,9 @@ onPeck((t: number) => { state.pecks.push(t); if (state.pecks.length > 16) state.
 
 export const micSupported = () => !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
 export const micOn = () => state.listening;
+// when the key of the latest heard note was struck (performance.now() ms)
+let heardAt = 0;
+export const lastHeardAt = () => heardAt;
 
 // The note the app is waiting for (MIDI number), or null. Lets the listener confirm quiet notes.
 export function expectNote(m: number | null | undefined) { state.expectPc = m == null ? null : ((m % 12) + 12) % 12; }
@@ -132,5 +135,5 @@ function tick() {
   const over = r.rms / Math.max(listener.noise, 1e-6);
   if (over > 4) state.lastLoud = now;
   state.onLevel && state.onLevel(Math.max(0, Math.min(1, Math.log(over) / Math.log(30))), now - state.lastLoud);
-  if (r.midi !== null) state.onNote && state.onNote(r.midi);
+  if (r.midi !== null) { heardAt = r.at ?? now; state.onNote && state.onNote(r.midi); }
 }

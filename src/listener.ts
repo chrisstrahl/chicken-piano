@@ -10,7 +10,9 @@ import { PitchDetector } from 'pitchy';
 import FFT from 'fft.js';
 
 const CLARITY = 0.8;
-const REPEAT_WAIT = 180;
+const REPEAT_WAIT = 150;
+const RISE = 1.2; // a repeated key must get at least this much louder
+const ACCEPT_GAP = 100; // ms between two accepted notes (fast runs come about every 150 ms)
 const PITCH_SIZE = 2048;
 const GATE = 2; // how far above the room's background noise a note must be
 const MIN_GATE = 0.0002; // absolute floor, low enough for quiet tablet mics (the noise-relative gate does the real work)
@@ -30,8 +32,9 @@ const STABLE = 3;
 const NOISE_TARGET = 0.0009;
 const MAX_GAIN = 16; // expected note must beat every other note name by this much
 
-// a frame's result: rms loudness, and midi only when a new key press was recognized
-export type Heard = { rms: number; midi: number | null };
+// a frame's result: rms loudness, and midi only when a new key press was recognized,
+// with at: about when that key was struck (recognizing it takes a few frames)
+export type Heard = { rms: number; midi: number | null; at?: number };
 
 export class NoteListener {
   size: number;
@@ -61,6 +64,10 @@ export class NoteListener {
   fluxHist: number[];
   lowFluxHist: number[];
   onsetAt: number;
+  onsetFrame = -1e9;
+  pitchSince = 0; // frame where the current steady pitch started
+  preOnset = 0; // loudness just before the latest strike
+  onsetPeak = 0; // loudest since then
   specReady: boolean;
 
   constructor(size: number) {
@@ -117,9 +124,15 @@ export class NoteListener {
     const loudJump = !peck && rms > minRecent * 1.4 && rms > this.peak * 0.6;
     // hammer strike: a burst of new energy across the spectrum, even while another note still rings
     const strike = peck ? lowFlux > lowAvg * FLUX_K && lowFlux > FLUX_MIN : flux > fluxAvg * FLUX_K && flux > FLUX_MIN;
-    if (rms > gate * 1.5 && (loudJump || strike) && now - this.lastAccept > 150) { this.armed = true; this.onsetAt = now; }
+    // A strike shows up over a frame or two; only its first frame starts a new note and the repeat clock.
+    // (Re-arming on every frame of it used to push the repeat clock late, and the next quick strike was missed.)
+    if (rms > gate * 1.5 && (loudJump || strike)) {
+      if (now - this.onsetFrame > 60) { this.armed = true; this.onsetAt = now - this.strikeAgo(buf, sr); this.preOnset = minRecent; this.onsetPeak = 0; }
+      this.onsetFrame = now;
+    }
     if (!peck) this.peak = Math.max(rms, this.peak * 0.97);
     if (!peck) this.notePeak = Math.max(this.notePeak, rms);
+    if (!peck) this.onsetPeak = Math.max(this.onsetPeak, rms);
 
     const none: Heard = { rms, midi: null };
     if (rms < gate) { this.stable = 0; this.targetHits = 0; this.lastMidi = null; return none; }
@@ -136,22 +149,29 @@ export class NoteListener {
     if (midi !== null) {
       const steady = midi === this.lastMidi && Math.abs(midiF - this.lastMidiF) <= DRIFT;
       this.stable = steady ? this.stable + 1 : 1;
+      if (this.stable === 1) this.pitchSince = now;
       this.lastMidi = midi;
       this.lastMidiF = midiF;
       if (this.stable >= STABLE) {
         // moved to a different key: only if it's loud, not an overtone showing up as a held note fades
-        if (!this.armed && midi % 12 !== this.lastPc && rms > this.notePeak * 0.35 && !OVERTONES.includes(midi - this.lastAcceptMidi)) this.armed = true;
+        if (!this.armed && midi % 12 !== this.lastPc && rms > this.notePeak * 0.35 && !OVERTONES.includes(midi - this.lastAcceptMidi)) {
+          // no strike seen (it ran into the last one): the key went down about when the new pitch showed up
+          this.armed = true;
+          this.onsetAt = this.pitchSince - 20;
+        }
         // Same note as last time? Wait a moment: right after a new key is struck, the old note
         // still rings and can hide the new one. A real repeat is still there after REPEAT_WAIT.
+        // A real repeat also gets louder; a flicker in a held note's sound doesn't.
         const repeat = midi % 12 === this.lastPc;
-        if (this.armed && now - this.lastAccept > 130 && (!repeat || now - this.onsetAt >= REPEAT_WAIT)) return this.accept(midi, rms, now);
+        const again = now - this.onsetAt >= REPEAT_WAIT && this.onsetPeak > this.preOnset * RISE;
+        if (this.armed && now - this.lastAccept > ACCEPT_GAP && (!repeat || again)) return this.accept(midi, rms, now);
       }
     } else {
       this.stable = 0;
     }
 
     // fallback: is the note we're waiting for clearly the strongest in the spectrum?
-    if (expectPc !== null && this.armed && now - this.lastAccept > 130) {
+    if (expectPc !== null && this.armed && now - this.lastAccept > ACCEPT_GAP) {
       const m = this.targetCheck(buf, sr, expectPc);
       this.targetHits = m !== null ? this.targetHits + 1 : 0;
       if (m !== null && this.targetHits >= 2) return this.accept(m, rms, now);
@@ -160,6 +180,7 @@ export class NoteListener {
   }
 
   accept(midi: number, rms: number, now: number): Heard {
+    const at = this.onsetAt > this.lastAccept && now - this.onsetAt < 300 ? this.onsetAt : now - 80;
     this.armed = false;
     this.lastAccept = now;
     this.lastPc = midi % 12;
@@ -168,7 +189,23 @@ export class NoteListener {
     this.notePeak = rms;
     this.stable = 0;
     this.targetHits = 0;
-    return { rms, midi };
+    return { rms, midi, at };
+  }
+
+  // How long ago (ms) the strike happened within the newest part of the window: the first 5 ms block that is
+  // much louder than the quiet before it. Frames are 40 ms apart, so this makes note timing ~5x sharper.
+  strikeAgo(buf: Float32Array, sr: number): number {
+    const blk = Math.round(sr * 0.005), n = Math.min(12, Math.floor(buf.length / blk));
+    const e: number[] = [];
+    for (let b = n; b > 0; b--) {
+      let sum = 0;
+      for (let i = buf.length - b * blk; i < buf.length - (b - 1) * blk; i++) sum += buf[i] * buf[i];
+      e.push(sum);
+    }
+    const top = Math.max(...e), base = Math.min(...e.slice(0, 3));
+    if (top < base * 2) return 0;
+    const i = e.findIndex((x) => x > base + (top - base) * 0.5);
+    return (n - i) * 5;
   }
 
   // Harmonic salience for every piano note A0..C8; returns a midi of the expected pitch class if it wins clearly.
