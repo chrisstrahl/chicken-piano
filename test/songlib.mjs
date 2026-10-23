@@ -82,6 +82,42 @@ for (const s of SONG_DATA) {
   }
   const leftover = ((pos % bar) + bar) % bar;
   if (s.bars !== false && leftover > 1e-9 && Math.abs(leftover - (bar - (s.pickup || 0))) > 1e-9) err(`last bar is incomplete (${leftover} of ${bar} beats)`);
+  // optional two-hand data: lh, chords, fingers, lhFingers, diff
+  const total = pos + (s.pickup || 0);
+  const parts = (str) => str.trim().split(/\s+/).map((tok) => tok.match(TOKEN));
+  const soundingOf = (str) => { let n = 0, tie = false; for (const t of parts(str)) { if (t && t[1] !== 'R' && !tie) n++; tie = !!(t && t[3]); } return n; };
+  const chordSize = (str) => { const out = []; let tie = false; for (const t of parts(str)) { if (t && t[1] !== 'R' && !tie) out.push(t[1].split('+').length); tie = !!(t && t[3]); } return out; };
+  if (s.lh !== undefined) {
+    let b = 0;
+    for (const tok of s.lh.trim().split(/\s+/)) {
+      const t = tok.match(TOKEN);
+      if (!t) { err(`bad lh token "${tok}"`); continue; }
+      b += BEATS[t[2] || 'q'];
+      if (t[1] !== 'R') for (const p of t[1].split('+')) if (midi(p) < midi('C2') || midi(p) > midi('C5')) err(`lh ${p} outside C2-C5`);
+    }
+    if (Math.abs(b - total) > 1e-9) err(`lh has ${b} beats, melody has ${total}`);
+  }
+  if (s.chords !== undefined) {
+    let b = 0;
+    for (const tok of s.chords.trim().split(/\s+/)) {
+      const m = tok.match(/^([A-G][#b]?(?:m|7|m7|maj7|dim|sus4|sus2)?)(?::(8|qd|q|hd|h|w))?$/);
+      if (!m) err(`bad chord "${tok}"`); else b += BEATS[m[2] || 'w'];
+    }
+    if (Math.abs(b - (total - (s.pickup || 0))) > 1e-9) err(`chords cover ${b} beats, song has ${total - (s.pickup || 0)} after the pickup`);
+  }
+  for (const [f, src] of [['fingers', s.notes], ['lhFingers', s.lh]]) {
+    if (s[f] === undefined) continue;
+    if (src === undefined) { err(`${f} without lh`); continue; }
+    const toks = s[f].trim().split(/\s+/), sizes = chordSize(src);
+    if (toks.length !== soundingOf(src)) err(`${f} has ${toks.length} numbers for ${soundingOf(src)} sounding notes`);
+    toks.forEach((t, i) => {
+      if (t === '_') return;
+      const ns = t.split('+');
+      if (!ns.every((n) => /^[1-5]$/.test(n))) err(`${f}: bad finger "${t}"`);
+      else if (sizes[i] && ns.length !== sizes[i]) err(`${f}: "${t}" for a ${sizes[i]}-note chord`);
+    });
+  }
+  if (s.diff !== undefined && !(Number.isInteger(s.diff) && s.diff >= 1 && s.diff <= 100)) err('diff must be a whole number 1-100');
   const words = s.lyrics.trim() ? s.lyrics.trim().split(/\s+/) : [];
   if (words.length && words.length !== sounding) err(`${words.length} lyric words for ${sounding} notes`);
 }
