@@ -2,6 +2,8 @@
   // Type checking only: esbuild (build.mjs) does the actual build and strips the types.
   // .ts files are checked strictly; .js files are allowed but not checked, so modules can move
   // to TypeScript one at a time. Run: npm run typecheck
+  // Node (22.18+) runs .ts files directly by stripping the types, so tests and tools can import
+  // src/*.ts by its .ts name; erasableSyntaxOnly keeps every .ts file strippable that way.
   "compilerOptions": {
     "target": "ES2020",
     "module": "ESNext",
@@ -12,7 +14,10 @@
     "strict": true,
     "noEmit": true,
     "isolatedModules": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true
   },
   "include": ["src/**/*.ts"]
 }
