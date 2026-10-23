@@ -124,3 +124,6 @@ export type NoteSource = 'tap' | 'mic' | 'midi';
 // Players (profiles.js)
 export interface Avatar { id: string; name: string; body: string; edge: string }
 export interface Player { id: string; avatar: string; name: string }
+
+// Ear game nests (ear.js): the keys the chicken may play (MIDI numbers) and how many it plays at once
+export interface EarStage { id: string; emoji: string; pool: number[]; len: number }

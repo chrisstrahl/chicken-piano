@@ -396,6 +396,12 @@ body.midi #mic:not(.on){opacity:.6}
 .reccard .em{font-size:min(9vh,6vw)}
 .reccard .t{font-size:min(3.2vh,2.2vw)}
 .reccard .when{font-size:min(2.6vh,1.8vw);color:var(--muted)}
+/* ear game */
+.menu .tile{width:min(16.5vw,28vh)}
+.earcard .t{letter-spacing:-.1em}
+.earcard .pool{display:flex;gap:4px;justify-content:center}
+.earcard .pool i{width:min(2.2vh,1.6vw);height:min(2.2vh,1.6vw);border-radius:50%}
+.bubble .earegg{display:inline-flex;align-items:center;justify-content:center;width:clamp(40px,8.5vh,74px);height:clamp(40px,8.5vh,74px);font-size:clamp(26px,6vh,52px)}
 .recempty{flex:1;display:flex;align-items:center;justify-content:center;gap:2vw}
 .recempty .chicken{height:min(30vh,22vw)}
 .recempty .bubble{font-size:min(8vh,6vw)}
@@ -430,6 +436,7 @@ body.midi #mic:not(.on){opacity:.6}
     <button class="btn orange tile" data-go="songs"><span class="em">🎵</span>Songs</button>
     <button class="btn violet tile" data-go="free"><span class="em">🎹</span>Play</button>
     <button class="btn red tile" data-go="recs"><span class="em">🎙️</span>Mine</button>
+    <button class="btn green tile" data-go="ears"><span class="em">👂</span>Find it</button>
   </div>
   <div class="coop" id="coop"></div>
   <div class="ver">v <!--VERSION--></div>
@@ -524,6 +531,25 @@ body.midi #mic:not(.on){opacity:.6}
       <div class="tools"><button class="btn round recbtn" id="freeRec" aria-label="Record"><span class="ic">🔴</span><span class="tm"></span></button><button class="btn round" id="btnFreeBeat" aria-label="Metronome">🥁</button></div>
     </div>
     <div class="kbwrap"><div id="freeKb"></div></div>
+  </div>
+</section>
+
+<section id="ears" class="screen">
+  <div class="topbar"><button class="btn round" data-go="home" aria-label="Home">🏠</button><h2>👂 Find it</h2></div>
+  <div class="reclist" id="earCards"></div>
+</section>
+
+<section id="ear" class="screen">
+  <div class="topbar"><button class="btn round" data-go="ears" aria-label="Back">⬅️</button><h2 id="earTitle">👂</h2><div class="stepdots" id="earDots"></div></div>
+  <div class="stage">
+    <div class="staffcard static" id="earStaff"><div class="scroller"><div class="strip"></div></div></div>
+    <div class="coach">
+      <div data-chicken id="earChicken"></div>
+      <div class="bubble" id="earBubble"></div>
+      <div class="spacer"></div>
+      <div class="tools"><button class="btn round big green" id="earHear" aria-label="Hear it again">👂</button></div>
+    </div>
+    <div class="kbwrap"><div id="earKb"></div></div>
   </div>
 </section>
 
