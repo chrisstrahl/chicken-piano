@@ -4,6 +4,7 @@ import { startAudio, playNote, noteDown, noteUp, playSequence, cluck, peck, bawk
 import { startMic, stopMic, micOn, micSupported, expectNote, micHealth } from './mic.js';
 import { drawStaff, focusNote } from './staff.js';
 import { makeKeyboard, LOW, HIGH } from './keyboard.js';
+import { setupRecordings } from './recordings.js';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -90,6 +91,7 @@ let onRelease = null; // ...and for a tapped key being let go
 let leaveHooks = [];
 let gen = 0; // bumps on every screen or step change, so late callbacks know they are stale
 function show(id) {
+  recs.leave(id);
   leaveHooks.forEach((f) => f());
   leaveHooks = [];
   stopTalking();
@@ -99,7 +101,7 @@ function show(id) {
   onNote = null;
   onRelease = null;
   expectNote(null);
-  ({ home: renderHome, songs: renderSongs, map: renderMap, level: renderLevel, free: openFree })[id]?.();
+  ({ home: renderHome, songs: renderSongs, map: renderMap, level: renderLevel, free: openFree, ...recs.screens })[id]?.();
 }
 document.addEventListener('click', (e) => {
   const b = e.target.closest('[data-go]');
@@ -109,10 +111,13 @@ document.addEventListener('click', (e) => {
 document.addEventListener('pointerdown', () => { startAudio(); }, { capture: true });
 
 function keyUp(m) {
+  recs.up(m);
   noteUp(m);
   onRelease && onRelease(m);
 }
-function noteIn(m, source) {
+// vel: how hard the key was played (0..1), when the source knows
+function noteIn(m, source, vel) {
+  recs.down(m, source, vel);
   if (source === 'tap') noteDown(m);
   const hd = $('#mic .heard');
   if (source === 'mic') heardCount++;
@@ -393,12 +398,14 @@ function finishSong() {
   const eggs = P.mistakes === 0 ? 3 : P.mistakes <= 3 ? 2 : 1;
   progress.songs[P.song.id] = Math.max(progress.songs[P.song.id] || 0, eggs);
   save();
+  const rec = recs.finish({ open: false });
   const list = songsForLevel(P.song.level);
   const nxt = list[list.indexOf(P.song) + 1];
   party(eggs, {
     again: () => openSong(P.song.id, P.back),
     next: () => (nxt && songOpen(nxt) ? openSong(nxt.id, P.back) : show('level')),
     words: songDone(eggs),
+    rec,
   });
 }
 function stopDemo() {
@@ -427,6 +434,13 @@ $('#btnListen').addEventListener('click', () => {
 $('#btnRestart').addEventListener('click', () => restartSong(false));
 window.addEventListener('resize', () => { if (current === 'play' && P.drawn) focusNote(playCard, P.drawn, P.i); });
 
+/* ---------- record and share ---------- */
+// Recordings are kept per player ('p1' is the first player; profiles will provide the real id)
+const playerId = () => 'p1';
+const recs = setupRecordings({ show, toast, ask: (...a) => ask(...a), bubble, bigLetter, player: playerId });
+recs.button($('#playRec'), () => ({ title: P.song.title, emoji: P.song.emoji, song: P.song.id }));
+recs.button($('#freeRec'), () => ({ title: 'My song', emoji: '🎹', song: null }));
+
 /* ---------- yes / no question ---------- */
 function ask(html, words, onYes) {
   $('#askText').innerHTML = html;
@@ -439,7 +453,8 @@ function ask(html, words, onYes) {
 
 /* ---------- CELEBRATION ---------- */
 // eggs won (a lesson gives 1, a song up to 3); chick: a level was just finished
-function party(eggs, { again, next, words, chick = false }) {
+// rec: a recording that just stopped with the song, to listen to from here
+function party(eggs, { again, next, words, chick = false, rec = null }) {
   $('#partyEggs').innerHTML = chick ? '<span>🥚</span><span>🐣</span>'
     : '<span>🥚</span>'.repeat(eggs) + '<span style="filter:grayscale(1) opacity(.25)">🥚</span>'.repeat(3 - eggs);
   $('#partyTitle').textContent = eggs === 3 ? 'BAWK-TASTIC!' : 'BAWK!';
@@ -452,6 +467,8 @@ function party(eggs, { again, next, words, chick = false }) {
   $('#partyAgain').onclick = () => { close(); again(); };
   $('#partyNext').onclick = () => { close(); next(); };
   $('#partyHome').onclick = () => { close(); show('home'); };
+  $('#partyRec').style.display = rec ? '' : 'none';
+  $('#partyRec').onclick = () => { close(); recs.openRec(rec.id); };
 }
 
 /* ---------- LESSON PLAYER ---------- */
@@ -843,7 +860,7 @@ document.addEventListener('keydown', (e) => {
 document.addEventListener('keyup', (e) => { const m = KEYMAP[e.key.toLowerCase()]; if (m) keyUp(m); });
 
 renderHome();
-window.__cp = { say, show, openSong, openLesson, noteIn, jumpTo, P, L, progress, LEVELS, SONGS };
+window.__cp = { recs, say, show, openSong, openLesson, noteIn, jumpTo, P, L, progress, LEVELS, SONGS };
 window.__cpMs = ms;
 window.__cpHeard = () => heardCount;
 window.__cpFree = () => F.notes;

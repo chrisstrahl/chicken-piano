@@ -1164,6 +1164,11 @@
   "spoken": "Half step or whole step?",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "531624b3": {
+  "text": "Sent! Bawk bawk!",
+  "spoken": "Sent! Bawk bawk!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "53bd5ff5": {
   "text": "You did it! You got an egg!",
   "spoken": "You did it! You got an egg!",
@@ -1242,6 +1247,11 @@
  "58455def": {
   "text": "E flat",
   "spoken": "E flat",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "58a5a9d1": {
+  "text": "Throw this song away?",
+  "spoken": "Throw this song away?",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "58e2aaba": {
@@ -1494,6 +1504,11 @@
   "spoken": "New song: Scrambled Eggs Remix!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "6bfeebd1": {
+  "text": "I saved your song! Tap play to hear it.",
+  "spoken": "I saved your song! Tap play to hear it.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "6c3a9817": {
   "text": "You have 249 eggs.",
   "spoken": "You have 249 eggs.",
@@ -1717,6 +1732,11 @@
  "7b4406b3": {
   "text": "New song: Good Morning, Chicks!",
   "spoken": "New song: Good Morning, Chicks!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "7c0857a8": {
+  "text": "Recording! Play me a song!",
+  "spoken": "Recording! Play me a song!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "7c347817": {
@@ -2609,6 +2629,11 @@
   "spoken": "A, and B are near the top of the three black keys.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "b2271868": {
+  "text": "No songs yet! Tap the red button when you play, and I will save your song.",
+  "spoken": "No songs yet! Tap the red button when you play, and I will save your song.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "b2bae8fa": {
   "text": "New song: Big Rooster Walk!",
   "spoken": "New song: Big Rooster Walk!",
@@ -3457,6 +3482,11 @@
  "e9da99c4": {
   "text": "Let's play Rooster Rumble! Start on C.",
   "spoken": "Let's play Rooster Rumble! Start on C.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "e9e5b65e": {
+  "text": "I did not hear any notes!",
+  "spoken": "I did not hear any notes!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "ea0d0e02": {

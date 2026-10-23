@@ -8,6 +8,8 @@ It listens through the microphone, shows which key to press, and shows the real 
 - 50 songs with chicken lyrics, 5 per level; each finished lesson opens more of its level's songs
 - Tap any note in the music to jump back to it
 - Free play: see the name and staff position of anything you play
+- Record and share: tap 🔴 in Free Play or a song, then listen back under 🎙️ Mine (keys light up, the music scrolls)
+  and send it with 📤 as a sound file played on the app's own piano, or 🎬 as a video of the keyboard
 - Eggs for finished songs and lessons; every 3 eggs hatch a chick
 
 Built with [Tone.js](https://tonejs.github.io/) (sound), [Pitchy](https://github.com/ianprime0509/pitchy) (pitch detection),
@@ -44,6 +46,11 @@ node build.mjs
 
 The first run downloads the model (~350 MB) into `~/.cache/chicken-piano-voice`. If a word comes out wrong,
 add a regex spelling fix to `tools/voice/pronounce.json` (it changes what the voice reads, not what the app shows).
+
+## Testing record and share
+
+`node test/recorder.mjs` checks the recording logic offline (timing, mic notes, notation, storage, wav).
+`node test/record.cjs [shotsDir]` records, plays back, renders, shares, films and deletes in headless Chromium (after `node build.mjs`).
 
 ## Testing note detection
 
