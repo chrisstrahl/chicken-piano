@@ -35,6 +35,13 @@ export const SPEED_WORDS = ['Snail speed. Nice and slow.', 'Turtle speed.', 'Bun
 export const BEAT_START = 'Wait for the pecks, then play with the beat!';
 export const ECHO_START = 'Echo time! Listen to me, then play it back.';
 export const ECHO_AGAIN = 'Listen again!';
+// Play-in-time lesson steps (rhythm): the chicken plays first, then counts in for the child
+export const RHYTHM_TURN = 'Your turn! Count with the pecks, then play!';
+export const RHYTHM_AGAIN = 'Almost! Listen once more.';
+export const RHYTHM_GOOD = 'Right on the beat!';
+export const RHYTHM_OK = 'Good try! You will get it with practice.';
+export const RHYTHM_HOLD = 'Hold long notes down until the next one!';
+export const RHYTHM_SHH = 'Shh! That was a rest.';
 // Ear game (src/eartraining.ts): the chicken plays, you find the notes. ECHO_AGAIN after a wrong key.
 export const EAR_PICK = 'Ear game! Pick a nest.';
 export const EAR_START = (len: number) => (len === 1 ? 'Listen to my note. Then find it on the piano!' : 'Listen to my notes. Then find them on the piano!');
@@ -80,6 +87,7 @@ export function templatedLines(songs: Song[], levels: Level[]): string[] {
     lessonDone([], 0)[0],
     ...[1, 2, 3].map(songDone),
     ...SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN,
+    RHYTHM_TURN, RHYTHM_AGAIN, RHYTHM_GOOD, RHYTHM_OK, RHYTHM_HOLD, RHYTHM_SHH,
     EAR_PICK, EAR_START(1), EAR_START(2), EAR_HINT,
     whoPlays,
     pickChicken,

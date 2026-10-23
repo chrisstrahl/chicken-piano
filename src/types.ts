@@ -97,13 +97,13 @@ export interface SongInput {
 }
 
 // Lesson steps (music.js). Every step asks the child to do something before moving on.
-export type StepType = 'show' | 'key' | 'seq' | 'name' | 'beats' | 'choice';
+export type StepType = 'show' | 'key' | 'seq' | 'name' | 'beats' | 'choice' | 'rhythm';
 // Which keys the on-screen keyboard shows, lights and labels during a step
 export interface KeysView {
   hl?: Tokens;
   letters?: 'none' | 'hl' | 'all';
   groups?: boolean;
-  fingers?: boolean;
+  fingers?: boolean | 'lh'; // number the lit keys 1 2 3 4 5 from the left, or 5 4 3 2 1 for the left hand
   range?: string;
 }
 export interface ChoiceRound {
@@ -126,12 +126,18 @@ export type LessonStep =
       keys?: KeysView; staff?: Tokens; clef?: string; time?: string; repeat?: boolean;
       hear?: Tokens; hearVel?: number[]; clap?: boolean;
       echo?: boolean; // the staff shows each key as it is played
+      count?: boolean; // beat numbers under the staff, each note on a band as long as it lasts
+      lh?: Tokens; // a left-hand part: the staff becomes a grand staff
     }
   | { type: 'key'; say: string; targets: Tokens; letters?: string; hint?: string; range?: string }
   | { type: 'seq'; say: string; seqs: Tokens[]; range?: string }
   | { type: 'name'; say: string; notes: Tokens; pool: string; clef?: string; range?: string }
   | { type: 'beats'; say: string; durs: string[] }
-  | { type: 'choice'; say: string; rounds: ChoiceRound[] };
+  | { type: 'choice'; say: string; rounds: ChoiceRound[] }
+  // The chicken plays the rhythm with the metronome pecking, then counts in and the child plays it back in time.
+  // staff: what is drawn (and judged); lh: a left-hand part to draw (grand staff); play: what is judged
+  // instead of staff when the hands take turns; tempo: beats a minute (default 72)
+  | { type: 'rhythm'; say: string; staff: Tokens; lh?: Tokens; play?: Tokens; clef?: string; time?: string; tempo?: number; range?: string };
 
 export interface Lesson { id: string; emoji: string; title: string; steps: LessonStep[] }
 export interface Level { n: number; emoji: string; title: string; color: string; lessons: Lesson[] }
