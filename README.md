@@ -40,6 +40,8 @@ Chicken Piano started as a dad project. My 8-year-old wanted to learn piano, he 
 
 🎹 **Free Play.** Just want to noodle around? Free Play shows the name and the spot on the staff of anything you play, and how long you held it. Tap 🥁 for a metronome.
 
+🎙️ **Record and share.** Tap the big 🔴 in Free Play or a song, then find it under 🎙️ Mine. Play it back with the keys lighting up, or tap 📤 to send it to Grandma as a sound file played on the app's own piano (🎬 makes a video of the keyboard instead).
+
 🐔 **A chicken for every kid.** Each child picks their own colored chicken (and a name, if they like) and keeps their own eggs, chicks and open songs. Tap the chicken at the top left of the home screen to switch players.
 
 📲 **Works like an app, even offline.** On an iPad, open the site in Safari, tap Share, then **Add to Home Screen**. It opens full screen, and after the first visit on wifi it works without internet. New versions load automatically the next time it opens online.
@@ -99,6 +101,11 @@ node build.mjs
 The first run downloads the model (~350 MB) into `~/.cache/chicken-piano-voice`. If a word comes out wrong,
 add a regex spelling fix to `tools/voice/pronounce.json` (it changes what the voice reads, not what the app shows).
 </details>
+
+## Testing record and share
+
+`node test/recorder.mjs` checks the recording logic offline (timing, mic notes, notation, storage, wav).
+`node test/record.cjs [shotsDir]` records, plays back, renders, shares, films and deletes in headless Chromium (after `node build.mjs`).
 
 ## Home-screen icons
 

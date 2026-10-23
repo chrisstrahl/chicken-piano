@@ -12,6 +12,7 @@ export const noteWords = (label) => label[0] + ACC_WORD[label.slice(1)];
 export const letsPlay = (title, label) => `Let's play ${title}! Start on ${noteWords(label)}.`;
 export const oopsFind = (label) => `Oops! Find ${noteWords(label)}.`;
 export const openSongsAsk = (level) => `Open all the songs in level ${level}?`;
+export const throwAwayAsk = 'Throw this song away?';
 export const songDone = (eggs) => ['', 'You did it! One egg!', 'You did it! Two eggs!', 'Perfect! Three eggs!'][eggs];
 export const coop = (eggs, chicks) => [
   'This is your chicken coop!',
@@ -47,6 +48,7 @@ export function templatedLines(songs, levels) {
     ...labels.map(oopsFind),
     ...labels.map(noteWords),
     ...levels.map((lv) => openSongsAsk(lv.n)),
+    throwAwayAsk,
     ...levels.flatMap((lv) => lessonDone([], lv.n).slice(1)),
     lessonDone([], 0)[0],
     ...[1, 2, 3].map(songDone),

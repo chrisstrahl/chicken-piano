@@ -6,7 +6,9 @@ import { startMic, stopMic, micOn, micSupported, expectNote, micHealth } from '.
 import { startMidi, midiSupported, midiAllowed } from './midi.js';
 import { drawStaff, focusNote } from './staff.js';
 import { makeKeyboard, LOW, HIGH } from './keyboard.js';
-import { players, AVATARS, MAX_PLAYERS, avatarOf } from './profiles.js';
+import { setupRecordings } from './recordings.js';
+import { players, playerId, AVATARS, MAX_PLAYERS, avatarOf } from './profiles.js';
+import { deletePlayerRecordings } from './recorder.js';
 import { CHICKEN, lookOf, avatarChicken } from './chicken.js';
 import { startOffline } from './offline.js';
 
@@ -84,6 +86,7 @@ let onRelease = null; // ...and for a tapped key being let go
 let leaveHooks = [];
 let gen = 0; // bumps on every screen or step change, so late callbacks know they are stale
 function show(id) {
+  recs.leave(id);
   leaveHooks.forEach((f) => f());
   leaveHooks = [];
   stopTalking();
@@ -93,7 +96,7 @@ function show(id) {
   onNote = null;
   onRelease = null;
   expectNote(null);
-  ({ home: renderHome, who: renderWho, songs: renderSongs, map: renderMap, level: renderLevel, free: openFree })[id]?.();
+  ({ home: renderHome, who: renderWho, songs: renderSongs, map: renderMap, level: renderLevel, free: openFree, ...recs.screens })[id]?.();
 }
 document.addEventListener('click', (e) => {
   const b = e.target.closest('[data-go]');
@@ -103,6 +106,7 @@ document.addEventListener('click', (e) => {
 document.addEventListener('pointerdown', () => { startAudio(); }, { capture: true });
 
 function keyUp(m) {
+  recs.up(m);
   noteUp(m);
   onRelease && onRelease(m);
 }
@@ -110,6 +114,7 @@ function keyUp(m) {
 // vel: 0..1, only known for MIDI.
 function noteIn(m, source, vel) {
   if (source === 'mic' && midiNames.length) return; // a plugged-in keyboard is exact; don't let the mic second-guess it
+  recs.down(m, source, vel);
   if (source === 'tap') noteDown(m);
   const hd = $('#mic .heard');
   if (source === 'mic') heardCount++;
@@ -539,12 +544,14 @@ function finishSong(eggs = P.mistakes === 0 ? 3 : P.mistakes <= 3 ? 2 : 1) {
   $('#playProg').style.width = '100%';
   progress.songs[P.song.id] = Math.max(progress.songs[P.song.id] || 0, eggs);
   save();
+  const rec = recs.finish({ open: false });
   const list = songsForLevel(P.song.level);
   const nxt = list[list.indexOf(P.song) + 1];
   party(eggs, {
     again: () => { openSong(P.song.id, P.back); if (mode === 'beat') startBeatMode(); if (mode === 'echo') startEcho(); },
     next: () => (nxt && songOpen(nxt) ? openSong(nxt.id, P.back) : show('level')),
     words: songDone(eggs),
+    rec,
   });
 }
 function stopDemo() {
@@ -794,6 +801,13 @@ $('#btnEcho').addEventListener('click', () => {
 });
 window.addEventListener('resize', () => { if (current === 'play' && P.drawn) focusNote(playCard, P.drawn, P.i); });
 
+/* ---------- record and share ---------- */
+// Recordings are kept per player; a removed player's recordings go with them
+const recs = setupRecordings({ show, toast, ask: (...a) => ask(...a), bubble, bigLetter, player: playerId });
+players.onRemove(deletePlayerRecordings);
+recs.button($('#playRec'), () => ({ title: P.song.title, emoji: P.song.emoji, song: P.song.id }));
+recs.button($('#freeRec'), () => ({ title: 'My song', emoji: '🎹', song: null }));
+
 /* ---------- yes / no question ---------- */
 function ask(html, words, onYes) {
   $('#askText').innerHTML = html;
@@ -806,7 +820,8 @@ function ask(html, words, onYes) {
 
 /* ---------- CELEBRATION ---------- */
 // eggs won (a lesson gives 1, a song up to 3); chick: a level was just finished
-function party(eggs, { again, next, words, chick = false }) {
+// rec: a recording that just stopped with the song, to listen to from here
+function party(eggs, { again, next, words, chick = false, rec = null }) {
   $('#partyEggs').innerHTML = chick ? '<span>🥚</span><span>🐣</span>'
     : '<span>🥚</span>'.repeat(eggs) + '<span style="filter:grayscale(1) opacity(.25)">🥚</span>'.repeat(3 - eggs);
   $('#partyTitle').textContent = eggs === 3 ? 'BAWK-TASTIC!' : 'BAWK!';
@@ -819,6 +834,8 @@ function party(eggs, { again, next, words, chick = false }) {
   $('#partyAgain').onclick = () => { close(); again(); };
   $('#partyNext').onclick = () => { close(); next(); };
   $('#partyHome').onclick = () => { close(); show('home'); };
+  $('#partyRec').style.display = rec ? '' : 'none';
+  $('#partyRec').onclick = () => { close(); recs.openRec(rec.id); };
 }
 
 /* ---------- LESSON PLAYER ---------- */
@@ -858,7 +875,9 @@ function sayThen(text, after) {
 }
 function staff(tokens, s, extra = {}) {
   lessonCard.style.display = '';
-  return drawStaff(lessonCard, tokens ? parse(tokens) : [], { minWidth: 420, clef: s.clef || 'treble', time: s.time || null, repeat: !!s.repeat, ...extra });
+  const notes = tokens ? parse(tokens) : [];
+  // one or two notes get a short staff, so they're drawn big
+  return drawStaff(lessonCard, notes, { minWidth: notes.length && notes.length <= 2 ? 240 : 420, clef: s.clef || 'treble', time: s.time || null, repeat: !!s.repeat, ...extra });
 }
 function keyboard(on, rangeTokens) {
   $('#lessonKb').parentElement.style.display = on ? '' : 'none';
@@ -946,7 +965,8 @@ function goalHtml(s) {
 function showStep() {
   const s = stepObj();
   const k = s.keys || {};
-  keyboard(true, k.range);
+  // without a range, make sure every highlighted key fits (F5 in Line Notes)
+  keyboard(true, k.range || (k.hl && `${k.hl} C E5`));
   const hl = ms(k.hl);
   lessonKb.setHL(hl);
   lessonKb.setGroups(k.groups);
@@ -1219,7 +1239,7 @@ document.addEventListener('keydown', (e) => {
 });
 document.addEventListener('keyup', (e) => { if (typing(e)) return; const m = KEYMAP[e.key.toLowerCase()]; if (m) keyUp(m); });
 
-window.__cp = { players, usePlayer, say, show, openSong, openLesson, noteIn, jumpTo, P, L, progress, LEVELS, SONGS, startBeatMode, startEcho };
+window.__cp = { recs, players, usePlayer, say, show, openSong, openLesson, noteIn, jumpTo, P, L, progress, LEVELS, SONGS, startBeatMode, startEcho };
 window.__cpMs = ms;
 window.__cpHeard = () => heardCount;
 window.__cpFree = () => F.notes;

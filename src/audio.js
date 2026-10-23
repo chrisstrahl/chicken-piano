@@ -7,6 +7,7 @@ import { VOICE } from './voice.generated.js';
 import { PECK } from './beat.js';
 
 let piano = null;
+let pianoBufs = null; // { 'C4': AudioBuffer, ... } for rendering recordings
 let fx = null;
 let started = false;
 const listeners = { busy: [], peck: [] }; // tell the mic to ignore our own sounds
@@ -31,6 +32,7 @@ async function loadPiano() {
     const buf = await raw.decodeAudioData(b64ToArrayBuffer(b64));
     urls[note] = new Tone.ToneAudioBuffer(buf);
   }));
+  pianoBufs = Object.fromEntries(Object.entries(urls).map(([n, b]) => [n, b.get()]));
   piano = new Tone.Sampler({ urls, release: 1.2 }).toDestination();
   piano.volume.value = -3;
 }
@@ -62,6 +64,10 @@ export async function startAudio() {
 }
 
 export function audioContext() { return Tone.getContext(); }
+// The decoded piano samples, once loaded (null before the first tap)
+export const pianoSamples = () => pianoBufs;
+// Silence every piano note now (stops a recording's playback)
+export function stopPiano() { if (piano) piano.releaseAll(); }
 
 const toNote = (m) => Tone.Frequency(m, 'midi').toNote();
 
