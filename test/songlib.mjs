@@ -123,6 +123,44 @@ for (const s of SONG_DATA) {
   if (words.length && words.length !== sounding) err(`${words.length} lyric words for ${sounding} notes`);
 }
 
+// Left-hand grading (Chris, 2026-10-23): every treble song has lh and chords; bass-clef songs
+// (level 9, already left hand) have none. Levels 1-2: one note a bar in C position; 3: single
+// notes; 4: single notes, root and fifth; 5-8: two keys at once at most; 10: chords. No black
+// keys before level 8, and no left-hand note crosses a bar line.
+const LH_RULES = {
+  1: { perBar: 1, lo: 'C3', hi: 'G3', max: 1 }, 2: { perBar: 1, lo: 'C3', hi: 'G3', max: 1 },
+  3: { max: 1 }, 4: { max: 1 }, 5: { max: 2 }, 6: { max: 2 }, 7: { max: 2 }, 8: { max: 2, acc: true }, 10: { max: 4, acc: true },
+};
+for (const s of SONG_DATA) {
+  const err = (msg) => errors.push(`${s.id} (L${s.level}) lh: ${msg}`);
+  if (s.clef === 'bass') { if (s.lh) err('bass-clef songs are already left hand; no lh'); continue; }
+  if (!s.lh || !s.chords) { err('missing lh or chords'); continue; }
+  if (!s.fingers || !s.lhFingers) err('missing fingers or lhFingers');
+  const R = LH_RULES[s.level];
+  const bar = BAR[s.time];
+  let pos = -(s.pickup || 0);
+  const perBar = {};
+  for (const tok of s.lh.trim().split(/\s+/)) {
+    const t = tok.match(TOKEN);
+    if (!t) continue;
+    const [, body, dur = 'q', tie] = t;
+    if (body !== 'R') {
+      const ps = body.split('+');
+      if (ps.length > R.max) err(`"${tok}" has ${ps.length} keys at once`);
+      for (const p of ps) {
+        if (/[#b]/.test(p) && !R.acc) err(`black key ${p} before level 8`);
+        if (R.lo && (midi(p) < midi(R.lo) || midi(p) > midi(R.hi))) err(`${p} outside ${R.lo}-${R.hi}`);
+      }
+      if (pos >= 0) { const b = Math.floor(pos / bar + 1e-9); perBar[b] = (perBar[b] || 0) + 1; }
+    }
+    const start = pos;
+    pos += BEATS[dur];
+    const barStart = Math.floor(start / bar + 1e-9) * bar;
+    if (s.bars !== false && !tie && pos > barStart + bar + 1e-9) err(`"${tok}" crosses a bar line`);
+  }
+  if (R.perBar && Object.values(perBar).some((n) => n > R.perBar)) err(`more than ${R.perBar} note a bar`);
+}
+
 // Difficulty: every song stores diff = tools/difficulty.mjs's score, and each level lists its
 // songs easiest first (songs unlock in that order).
 for (const s of SONG_DATA) if (s.diff !== difficulty(s)) errors.push(`${s.id}: diff is ${s.diff}, score says ${difficulty(s)} (node tools/difficulty.mjs)`);
