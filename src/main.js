@@ -578,7 +578,9 @@ $('#btnListen').addEventListener('click', () => {
     bubble($('#playBubble'), `🎵 ${bigLetter(n.m, n.label)}`);
   }, () => { P.stopDemo = null; stopDemo(); setCurrent(); });
 });
+// start over: back to the first note, mistakes forgiven
 $('#btnRestart').addEventListener('click', () => {
+  cluck(); act(playChicken(), 'happy');
   if (P.mode === 'beat') return startBeatMode();
   if (P.mode === 'echo') return startEcho();
   restartSong(false);
@@ -1186,9 +1188,13 @@ function lessonInput(m) {
 const freeKb = makeKeyboard($('#freeKb'), (m) => noteIn(m, 'tap'), keyUp);
 freeKb.setRange(48, 76);
 const F = { notes: [], down: {} };
-// How long a tapped key was held, as a note length (free play counts at 90 beats a minute)
+// Note lengths in free play, counted at 90 beats a minute. Short values come from how soon the NEXT note starts
+// (a tap is always quick, so how long a finger rests on the glass says nothing about eighths); long values come
+// from how long the key is held. Boundaries sit a bit below the halfway points (on a log scale), because
+// children let go early: when in doubt, the longer note wins.
 const FREE_BEAT = 60000 / 90;
-const lengthOf = (ms) => { const b = ms / FREE_BEAT; return b < 0.6 ? '8' : b < 1.5 ? 'q' : b < 2.5 ? 'h' : b < 3.5 ? 'hd' : 'w'; };
+const heldLength = (ms) => { const b = ms / FREE_BEAT; return b < 1.3 ? 'q' : b < 2.3 ? 'h' : b < 3.2 ? 'hd' : 'w'; };
+const gapLength = (ms) => { const b = ms / FREE_BEAT; return b < 0.3 ? '16' : b < 0.6 ? '8' : 'q'; };
 function drawFree() {
   // low notes read better on the bass staff
   const low = F.notes.filter((n) => n.m < 60).length > F.notes.length / 2;
@@ -1209,12 +1215,18 @@ function openFree() {
   drawStaff($('#freeStaff'), [], { minWidth: FREE_W, pack: true });
   bubble($('#freeBubble'), '🎹 🎤 ❓');
   F.down = {};
+  F.last = null;
   onNote = (m, source) => {
     const n = noteOf(m);
+    const now = performance.now();
+    // the note before this one was short if this one came quickly (and it wasn't held longer than a beat)
+    const prev = F.last;
+    if (prev && prev.n.d === 'q' && F.notes.includes(prev.n)) prev.n.d = gapLength(now - prev.t);
+    F.last = { n, t: now };
     F.notes.push(n);
     if (F.notes.length > 8) F.notes.shift();
     // tapped (or USB keyboard) keys start as quarter notes and get their real length when the finger lifts
-    if (source !== 'mic') F.down[m] = { n, t: performance.now() };
+    if (source !== 'mic') F.down[m] = { n, t: now };
     drawFree();
     bubble($('#freeBubble'), bigLetter(m));
     freeKb.flash(m, 'hl', 600);
@@ -1224,8 +1236,9 @@ function openFree() {
     const d = F.down[m];
     if (!d) return;
     delete F.down[m];
-    const len = lengthOf(performance.now() - d.t);
-    if (len !== d.n.d && F.notes.includes(d.n)) { d.n.d = len; drawFree(); }
+    const len = heldLength(performance.now() - d.t);
+    // only lengthen: a quick next note may already have made it shorter
+    if (len !== 'q' && F.notes.includes(d.n)) { d.n.d = len; drawFree(); }
   };
 }
 
