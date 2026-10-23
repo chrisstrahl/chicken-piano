@@ -2,7 +2,7 @@
 
 **A free, friendly piano teacher for kids, with a chicken in charge.**
 
-### ▶️ Play now: **[chicken-piano.netlify.app](https://chicken-piano.netlify.app)**
+### ▶️ Play now: **[chicken-piano.vercel.app](https://chicken-piano.vercel.app)**
 
 No download, no sign-up, no ads. Open it in a browser, prop your tablet on the piano like sheet music, and start playing.
 
@@ -58,7 +58,7 @@ When a keyboard is connected, the **🎹 button turns green** and Chicken Piano 
 | --- | --- |
 | **Laptop or desktop** (Windows, Mac, Linux) | Plug the keyboard in with a USB cable and open the site in **Chrome, Edge or Firefox**. |
 | **Android tablet or phone, Chromebook** | Use a USB cable (or USB-C adapter) and open the site in **Chrome**. |
-| **iPad or iPhone** | Safari doesn't support MIDI keyboards yet. Install the free **[MIDIWeb Browser](https://apps.apple.com/app/id6757226617)** app, open **chicken-piano.netlify.app** inside it, and connect the keyboard with a USB-C cable (or Apple's Lightning to USB Camera Adapter on older iPads). |
+| **iPad or iPhone** | Safari doesn't support MIDI keyboards yet. Install the free **[MIDIWeb Browser](https://apps.apple.com/app/id6757226617)** app, open **chicken-piano.vercel.app** inside it, and connect the keyboard with a USB-C cable (or Apple's Lightning to USB Camera Adapter on older iPads). |
 
 No USB port on your keyboard? No problem: the microphone works with any piano, acoustic or electric.
 
@@ -81,7 +81,7 @@ npm install
 node build.mjs     # writes dist/index.html (one self-contained file) plus voice clips in dist/voice
 ```
 
-The microphone needs HTTPS. The live site is hosted on Netlify, which publishes the committed `dist/` folder as-is, so run `node build.mjs` and commit `dist/` after changes. On a laptop, the keys A through ; play notes too.
+The microphone needs HTTPS. The live site is hosted on Vercel, which publishes the committed `dist/` folder as-is (see `vercel.json`; no build step runs there), so run `node build.mjs` and commit `dist/` after changes. On a laptop, the keys A through ; play notes too.
 
 <details>
 <summary><b>Regenerating the chicken's voice</b></summary>
