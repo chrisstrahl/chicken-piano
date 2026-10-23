@@ -5,20 +5,25 @@ import { BEATS } from './music.js';
 import { lineId } from './lines.js';
 import { VOICE } from './voice.generated.js';
 import { PECK } from './beat.js';
+// what playSequence needs from a note: song notes and the ear game's made-up tunes both fit
+type PlayNote = { r?: boolean; d: string; tie?: boolean; keys: { m: number }[] };
 
-let piano = null;
-let pianoBufs = null; // { 'C4': AudioBuffer, ... } for rendering recordings
-let fx = null;
+type Fx = { cluck: Tone.Synth; peck: Tone.NoiseSynth; bawk: Tone.Synth; cluckAt?: number; peckAt?: number; bawkAt?: number };
+type BusyFn = (ms: number, exact: boolean) => void;
+
+let piano: Tone.Sampler | null = null;
+let pianoBufs: Record<string, AudioBuffer> | null = null; // { 'C4': AudioBuffer, ... } for rendering recordings
+let fx: Fx | null = null;
 let started = false;
-const listeners = { busy: [], peck: [] }; // tell the mic to ignore our own sounds
+const listeners: { busy: BusyFn[]; peck: ((ms: number) => void)[] } = { busy: [], peck: [] }; // tell the mic to ignore our own sounds
 
-export function onBusy(fn) { listeners.busy.push(fn); }
+export function onBusy(fn: BusyFn) { listeners.busy.push(fn); }
 // fn(ms): a metronome peck plays at performance.now() time ms
-export function onPeck(fn) { listeners.peck.push(fn); }
+export function onPeck(fn: (ms: number) => void) { listeners.peck.push(fn); }
 // exact: replace the current quiet time instead of extending it (speech ended early, so listen again sooner)
-function busy(ms, exact = false) { listeners.busy.forEach((f) => f(ms, exact)); }
+function busy(ms: number, exact = false) { listeners.busy.forEach((f) => f(ms, exact)); }
 
-function b64ToArrayBuffer(b64) {
+function b64ToArrayBuffer(b64: string) {
   const bin = atob(b64);
   const out = new Uint8Array(bin.length);
   for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
@@ -26,13 +31,13 @@ function b64ToArrayBuffer(b64) {
 }
 
 async function loadPiano() {
-  const raw = Tone.getContext().rawContext;
-  const urls = {};
-  await Promise.all(Object.entries(SAMPLES).map(async ([note, b64]) => {
+  const raw = Tone.getContext().rawContext as AudioContext;
+  const urls: Record<string, Tone.ToneAudioBuffer> = {};
+  await Promise.all(Object.entries(SAMPLES as Record<string, string>).map(async ([note, b64]) => {
     const buf = await raw.decodeAudioData(b64ToArrayBuffer(b64));
     urls[note] = new Tone.ToneAudioBuffer(buf);
   }));
-  pianoBufs = Object.fromEntries(Object.entries(urls).map(([n, b]) => [n, b.get()]));
+  pianoBufs = Object.fromEntries(Object.entries(urls).map(([n, b]) => [n, b.get()!]));
   piano = new Tone.Sampler({ urls, release: 1.2 }).toDestination();
   piano.volume.value = -3;
 }
@@ -69,10 +74,10 @@ export const pianoSamples = () => pianoBufs;
 // Silence every piano note now (stops a recording's playback)
 export function stopPiano() { if (piano) piano.releaseAll(); }
 
-const toNote = (m) => Tone.Frequency(m, 'midi').toNote();
+const toNote = (m: number) => Tone.Frequency(m, 'midi').toNote();
 
 // m: one MIDI number or a list (chord). vel: 0..1 (soft..loud)
-export function playNote(m, dur = 0.9, when, vel = 0.8) {
+export function playNote(m: number | number[], dur = 0.9, when?: number, vel = 0.8) {
   if (!piano || !piano.loaded) return;
   busy(dur * 1000 + 350);
   const ms = Array.isArray(m) ? m : [m];
@@ -114,15 +119,15 @@ export function bawk() {
 }
 
 // Held keys: the note rings while the key is down (up to the sample's length) and stops on release.
-const held = {};
-export function noteDown(m, vel = 0.8) {
+const held: Record<number, boolean> = {};
+export function noteDown(m: number, vel = 0.8) {
   if (!piano || !piano.loaded) return;
   busy(2700); // samples are trimmed to 2.5s, so a held note is silent by then
   if (held[m]) piano.triggerRelease(toNote(m));
   held[m] = true;
   piano.triggerAttack(toNote(m), undefined, vel);
 }
-export function noteUp(m) {
+export function noteUp(m: number) {
   if (!piano || !held[m]) return;
   held[m] = false;
   piano.triggerRelease(toNote(m), Tone.now() + 0.05);
@@ -136,7 +141,7 @@ export function silly() {
   const t = Math.max(Tone.now() + 0.05, fx.bawkAt || 0);
   fx.bawkAt = t + 1.2;
   [0, 0.14, 0.28].forEach((d, i) => {
-    fx.cluck.triggerAttackRelease(700 + i * 120, 0.06, t + d);
+    fx!.cluck.triggerAttackRelease(700 + i * 120, 0.06, t + d);
   });
   fx.cluckAt = t + 0.45;
   const s = t + 0.45;
@@ -148,10 +153,10 @@ export function silly() {
 
 // Plays parsed notes (rests, chords and ties too); calls onNote(i) as each starts. Returns a stop() function.
 // vel: one velocity, or a list with one per note.
-export function playSequence(notes, tempo, onNote, onDone, vel = 0.8) {
+export function playSequence(notes: PlayNote[], tempo: number, onNote?: ((i: number) => void) | null, onDone?: (() => void) | null, vel: number | number[] = 0.8) {
   const beat = 60 / tempo;
   let i = 0;
-  let timer = null;
+  let timer: ReturnType<typeof setTimeout> | null = null;
   let stopped = false;
   const step = () => {
     if (stopped) return;
@@ -168,12 +173,12 @@ export function playSequence(notes, tempo, onNote, onDone, vel = 0.8) {
     timer = setTimeout(step, beats * beat * 1000);
   };
   step();
-  return () => { stopped = true; clearTimeout(timer); };
+  return () => { stopped = true; clearTimeout(timer!); };
 }
 
 // Talking chicken. Lines are pre-recorded with a natural voice (tools/voice, clips in dist/voice);
 // anything without a clip falls back to the device's built-in speech.
-let voice = null;
+let voice: SpeechSynthesisVoice | null = null;
 function pickVoice() {
   const vs = window.speechSynthesis ? speechSynthesis.getVoices() : [];
   const en = vs.filter((v) => /^en[-_]/i.test(v.lang));
@@ -183,28 +188,28 @@ if (window.speechSynthesis) {
   pickVoice();
   speechSynthesis.onvoiceschanged = pickVoice;
 }
-const clips = new Map(); // line id -> Promise<AudioBuffer>
-function clip(text) {
+const clips = new Map<string, Promise<AudioBuffer>>(); // line id -> Promise<AudioBuffer>
+function clip(text: string) {
   const id = lineId(text);
   if (!VOICE.has(id)) return null;
   if (!clips.has(id)) {
     const p = fetch(`voice/${id}.mp3`)
-      .then((r) => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
-      .then((b) => Tone.getContext().rawContext.decodeAudioData(b));
+      .then((r) => { if (!r.ok) throw new Error(r.status as any); return r.arrayBuffer(); })
+      .then((b) => (Tone.getContext().rawContext as AudioContext).decodeAudioData(b));
     p.catch(() => clips.delete(id));
     clips.set(id, p);
   }
-  return clips.get(id);
+  return clips.get(id)!;
 }
 // Fetch clips ahead of time so the chicken answers right away (e.g. every line of a lesson).
-export function preloadVoice(lines) { lines.flat().forEach((t) => t && clip(t)); }
+export function preloadVoice(lines: (string | string[] | null | undefined)[]) { lines.flat().forEach((t) => t && clip(t)); }
 
 let talkId = 0; // only the newest sentence may un-mute the mic when it ends
-let talking = null; // the clip that is playing now
+let talking: { id: number; stop: () => void } | null = null; // the clip that is playing now
 // text is a sentence or a list of sentences (played back to back).
 // onEnd runs when the chicken stops talking (or about when it should have, if speech is missing).
-export function say(text, onEnd) {
-  const parts = [].concat(text || []).filter(Boolean);
+export function say(text: string | string[] | null | undefined, onEnd?: (() => void) | null) {
+  const parts = ([] as string[]).concat(text || []).filter(Boolean);
   let done = false;
   const finish = () => { if (!done) { done = true; onEnd && onEnd(); } };
   if (!parts.length) { setTimeout(finish, 0); return; }
@@ -215,9 +220,9 @@ export function say(text, onEnd) {
   busy(1200);
   const loads = started && Tone.getContext().state === 'running' ? parts.map(clip) : [];
   if (loads.length && loads.every(Boolean)) {
-    Promise.all(loads).then((bufs) => {
+    Promise.all(loads as Promise<AudioBuffer>[]).then((bufs) => {
       if (id !== talkId) return finish();
-      const ctx = Tone.getContext().rawContext;
+      const ctx = Tone.getContext().rawContext as AudioContext;
       const out = ctx.createGain();
       out.connect(ctx.destination);
       let t = ctx.currentTime + 0.03;
@@ -240,12 +245,12 @@ export function say(text, onEnd) {
   }
 }
 // Device voices read a lone capital letter as "capital C", so spell note names out.
-const LETTER_SOUND = { A: 'ay', B: 'bee', C: 'see', D: 'dee', E: 'ee', F: 'eff', G: 'gee' };
-export const speakable = (text) => text
+const LETTER_SOUND: Record<string, string> = { A: 'ay', B: 'bee', C: 'see', D: 'dee', E: 'ee', F: 'eff', G: 'gee' };
+export const speakable = (text: string): string => text
   .replace(/\b([B-G])\b(?!['’])/g, (_, l) => LETTER_SOUND[l])
   .replace(/\bA\b(?=,|\.|!|\?| sharp\b(?! sign)| flat\b(?! sign)| and\b|$)/g, 'ay')
   .replace(/♯/g, ' sharp').replace(/♭/g, ' flat');
-function speak(text, id, finish) {
+function speak(text: string, id: number, finish: () => void) {
   if (!window.speechSynthesis) { setTimeout(finish, 300); return; }
   text = speakable(text);
   const est = 600 + text.length * 70;
@@ -274,9 +279,10 @@ export function stopTalking() {
 // bpm: quarter beats a minute; every: quarter beats between pecks; accent(k): true for a louder peck
 // onBeat(k, ms): runs at each peck (for the bouncing chicken). Returns { t0, stop } where t0 is the
 // performance.now() time of peck 0.
-let peckBuf = null;
-export function startBeat({ bpm, every = 1, accent = (k) => k % 4 === 0, onBeat, sound = true, lead = 0.25 }) {
-  const ctx = Tone.getContext().rawContext;
+let peckBuf: AudioBuffer | null = null;
+type BeatOptions = { bpm: number; every?: number; accent?: (k: number) => boolean; onBeat?: (k: number, ms: number) => void; sound?: boolean; lead?: number };
+export function startBeat({ bpm, every = 1, accent = (k) => k % 4 === 0, onBeat, sound = true, lead = 0.25 }: BeatOptions) {
+  const ctx = Tone.getContext().rawContext as AudioContext;
   if (!peckBuf) {
     const n = Math.round(ctx.sampleRate * PECK.len);
     peckBuf = ctx.createBuffer(1, n, ctx.sampleRate);
@@ -288,14 +294,14 @@ export function startBeat({ bpm, every = 1, accent = (k) => k % 4 === 0, onBeat,
   // performance.now() time when peck 0 is heard (the speaker's own delay included where the browser knows it)
   const p0 = performance.now() + (lead + (ctx.outputLatency || 0)) * 1000;
   let k = 0;
-  const timers = [];
+  const timers: ReturnType<typeof setTimeout>[] = [];
   const pump = () => {
     // schedule the pecks due in the next 150 ms on the audio clock (steady even if the page is busy)
     while (a0 + k * gap < ctx.currentTime + 0.15) {
       const a = a0 + k * gap, p = p0 + k * gap * 1000, kk = k;
       if (sound && a >= ctx.currentTime) {
         const src = ctx.createBufferSource();
-        src.buffer = peckBuf;
+        src.buffer = peckBuf!;
         const hp = ctx.createBiquadFilter();
         hp.type = 'highpass';
         hp.frequency.value = PECK.hz;

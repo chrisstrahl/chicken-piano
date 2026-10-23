@@ -146,7 +146,7 @@ export function setupRecordings(app: RecordingsApp) {
   function samplesReady() {
     return new Promise<NonNullable<ReturnType<typeof pianoSamples>>>((res, rej) => {
       const t0 = Date.now();
-      const check = () => (pianoSamples() ? res(pianoSamples()) : Date.now() - t0 > 15000 ? rej(new Error('no piano')) : setTimeout(check, 200));
+      const check = () => (pianoSamples() ? res(pianoSamples()!) : Date.now() - t0 > 15000 ? rej(new Error('no piano')) : setTimeout(check, 200));
       check();
     });
   }
