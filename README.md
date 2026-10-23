@@ -26,13 +26,19 @@ Chicken Piano started as a dad project. My 8-year-old wanted to learn piano, he 
 
 🗺️ **10 levels, 40 bite-sized lessons.** Start by finding middle C and work all the way up to finger numbers, note lengths and rests, reading the staff, waltz time, eighth notes, sharps and flats, the bass clef, scales and chords. Each lesson is hands-on: you learn it by playing it.
 
-🎶 **108 songs to play.** Favorites get a chicken makeover: *Scrambled Eggs* (Hot Cross Buns), *Twinkle Little Chick*, *Jingle Clucks*, *Happy Hens* (Ode to Joy), *The Coop Is Falling Down* (London Bridge), *Happy Hatch Day* and lots more. The original name is always shown underneath, so grown-ups know the tune.
+🎶 **101 songs to play, easiest first in every level.** Favorites get a chicken makeover: *Scrambled Eggs* (Hot Cross Buns), *Twinkle Little Chick*, *Jingle Clucks*, *Happy Hens* (Ode to Joy), *The Coop Is Falling Down* (London Bridge), *Happy Hatch Day* and lots more. The original name is always shown underneath, so grown-ups know the tune.
 
 🥚 **Eggs and chicks to collect.** Finish a lesson, earn an egg. Play a song well, earn up to three. Complete a whole level and a chick hatches into your coop.
 
 🗣️ **A warm, friendly voice.** The chicken talks kids through every step, so there's almost nothing to read. Big buttons, bright pictures and sounds make it work for pre-readers too.
 
-🎹 **Free Play.** Just want to noodle around? Free Play shows the name and the spot on the staff of anything you play, and how long you held it.
+🥁 **Play with the beat.** Tap the drum and the chicken pecks out a gentle metronome, counts you in, and the song moves along in time. Every note is scored for the right key *and* the right moment. (The peck is a tiny high "tick" the microphone knows to ignore, so it never gets mistaken for a piano note.)
+
+🦜 **Echo mode.** The chicken plays a short phrase, you play it back by ear, then the next one. Great for little ones who don't read notes yet.
+
+🐇 🐢 🐌 **Slow it down.** Play songs at full, three-quarter or half speed: Listen, play-with-the-beat and echo all follow it.
+
+🎹 **Free Play.** Just want to noodle around? Free Play shows the name and the spot on the staff of anything you play, and how long you held it. Tap 🥁 for a metronome.
 
 🎙️ **Record and share.** Tap the big 🔴 in Free Play or a song, then find it under 🎙️ Mine. Play it back with the keys lighting up, or tap 📤 to send it to Grandma as a sound file played on the app's own piano (🎬 makes a video of the keyboard instead).
 
@@ -118,7 +124,15 @@ mkdir -p /tmp/pcm && for f in node_modules/tonejs-instrument-piano-mp3/*.mp3; do
   ffmpeg -loglevel error -y -i $f -t 2 -ac 1 -ar 48000 -f f32le /tmp/pcm/$(basename $f .mp3).f32; done
 EXPECT=0 GAIN=0.05 NOISE=0.004 HPF=250 REVERB=0.6 node test/octaves.mjs /tmp/pcm
 OVERLAP=0.25 node test/sequence.mjs /tmp/pcm
+node test/metronome.mjs /tmp/pcm   # the metronome's peck must not change what is heard
 ```
+
+The metronome tick is a "peck": a 30 ms burst of hiss above 5 kHz (`src/beat.js`), well above every piano note
+the songs use. The app tells the listener when each peck plays; while one is in the listener's window it ignores
+loudness jumps and the hiss and only looks for a key strike below 2.5 kHz, so keys played on the beat still count.
+`test/metronome.mjs` plays the test tunes on the beat with a peck on every beat (as loud as the piano and 3x
+louder, 0–100 ms speaker delay) and checks the listener hears exactly the same notes as without it.
+`test/practice.cjs` plays through play-with-the-beat, echo and the speed button in a headless browser.
 </details>
 
 ### Credits
