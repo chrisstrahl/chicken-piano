@@ -1,0 +1,25 @@
+# Runs on every pull request to main. The "typecheck" job is the required check.
+# Only the quick tests that need no browser, ffmpeg-decoded samples or network run here.
+name: Check
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - name: Song library check
+        run: node test/songlib.mjs
+      - name: Recorder check
+        run: node test/recorder.mjs
