@@ -144,6 +144,27 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
   await page.click('#askYes'); await wait(300);
   check((await page.locator('#recCards [data-rec]').count()) === 2, 'deleted');
 
+  // 9. Each player has their own shelf; removing a player removes their recordings
+  const per = await page.evaluate(() => {
+    const { players, recs } = window.__cp;
+    const first = players.current().id;
+    const kid2 = players.add(players.list()[0].avatar, 'Kid two');
+    window.__cp.usePlayer ? window.__cp.usePlayer(kid2.id) : players.use(kid2.id);
+    window.__cp.show('recs');
+    const shelf2 = document.querySelectorAll('#recCards [data-rec]').length;
+    window.__cp.show('free');
+    document.querySelector('#freeRec').click();
+    window.__cp.noteIn(60, 'tap');
+    document.querySelector('#freeRec').click();
+    const mine2 = JSON.parse(localStorage.getItem('chicken-piano-recordings-v1'))[kid2.id].length;
+    players.use(first);
+    players.remove(kid2.id);
+    const all = JSON.parse(localStorage.getItem('chicken-piano-recordings-v1'));
+    return { first, shelf2, mine2, gone: !(kid2.id in all), kept: all[first].length };
+  });
+  check(per.shelf2 === 0 && per.mine2 === 1, `a second player starts with an empty shelf and saves their own (${per.shelf2}, ${per.mine2})`);
+  check(per.gone && per.kept === 2, `removing a player removes only their recordings (kept ${per.kept})`);
+
   check(!errs.length, `no page errors ${errs.join(' | ')}`);
   console.log(fails ? `${fails} FAILED` : 'all passed');
   await browser.close();

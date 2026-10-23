@@ -384,6 +384,11 @@
   "spoken": "You have 352 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "16ac9b78": {
+  "text": "Take Rosie out of the coop? Their eggs go too.",
+  "spoken": "Take Rosie out of the coop? Their eggs go too.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "16d386be": {
   "text": "You have 347 eggs.",
   "spoken": "You have 347 eggs.",
@@ -547,6 +552,11 @@
  "26633d90": {
   "text": "You have 147 eggs.",
   "spoken": "You have 147 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "26c5db2d": {
+  "text": "Hi, Pickle! Let's play!",
+  "spoken": "Hi, Pickle! Let's play!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "275cfdb1": {
@@ -964,6 +974,11 @@
   "spoken": "Let's play Rest Stop! Start on C.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "43ceda71": {
+  "text": "Take Sunny out of the coop? Their eggs go too.",
+  "spoken": "Take Sunny out of the coop? Their eggs go too.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "441f9eec": {
   "text": "You finished level 10! A baby chick hatched! You are a piano champion!",
   "spoken": "You finished level 10! A baby chick hatched! You are a piano champion!",
@@ -1152,6 +1167,11 @@
  "51a22e12": {
   "text": "You have 343 eggs.",
   "spoken": "You have 343 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "51bf1484": {
+  "text": "Take Nugget out of the coop? Their eggs go too.",
+  "spoken": "Take Nugget out of the coop? Their eggs go too.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "522a67d5": {
@@ -1409,6 +1429,11 @@
   "spoken": "New song: Cluck Cluck Song!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "63ce653c": {
+  "text": "Who is playing?",
+  "spoken": "Who is playing?",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "648bdc8e": {
   "text": "You have 277 eggs.",
   "spoken": "You have 277 eggs.",
@@ -1432,6 +1457,11 @@
  "665a6bd1": {
   "text": "You have 49 eggs.",
   "spoken": "You have 49 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "66af3ec6": {
+  "text": "Take Blueberry out of the coop? Their eggs go too.",
+  "spoken": "Take Blueberry out of the coop? Their eggs go too.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "66b87551": {
@@ -2144,6 +2174,11 @@
   "spoken": "You have 275 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "92e7fe96": {
+  "text": "Hi, Sunny! Let's play!",
+  "spoken": "Hi, Sunny! Let's play!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "938711f3": {
   "text": "Let's play One Two Three Eggs! Start on C.",
   "spoken": "Let's play One Two Three Eggs! Start on C.",
@@ -2369,6 +2404,16 @@
   "spoken": "New song: Surprise Egg!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "a42281a1": {
+  "text": "Take Clucky out of the coop? Their eggs go too.",
+  "spoken": "Take Clucky out of the coop? Their eggs go too.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "a44059e1": {
+  "text": "Hi, Rosie! Let's play!",
+  "spoken": "Hi, Rosie! Let's play!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "a4573ece": {
   "text": "And 5 baby chicks.",
   "spoken": "And 5 baby chicks.",
@@ -2549,6 +2594,11 @@
   "spoken": "You have 66 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "ad5b99dd": {
+  "text": "Hi, Nugget! Let's play!",
+  "spoken": "Hi, Nugget! Let's play!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "adbc4c25": {
   "text": "You have 27 eggs.",
   "spoken": "You have 27 eggs.",
@@ -2697,6 +2747,11 @@
  "b54aff45": {
   "text": "New song: This Old Hen!",
   "spoken": "New song: This Old Hen!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "b5a90266": {
+  "text": "Hi, Clucky! Let's play!",
+  "spoken": "Hi, Clucky! Let's play!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "b7492c6b": {
@@ -2869,6 +2924,11 @@
   "spoken": "Let's play Dancing Hens! Start on E.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "c3cd396b": {
+  "text": "Pick your chicken!",
+  "spoken": "Pick your chicken!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "c3d6ff06": {
   "text": "You have 303 eggs.",
   "spoken": "You have 303 eggs.",
@@ -2947,6 +3007,11 @@
  "c70bfb85": {
   "text": "B",
   "spoken": "Bee!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "c7f12493": {
+  "text": "Hi, Blueberry! Let's play!",
+  "spoken": "Hi, Blueberry! Let's play!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "c82ed22e": {
@@ -3162,6 +3227,11 @@
  "d49e15e2": {
   "text": "You have 228 eggs.",
   "spoken": "You have 228 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "d4d22244": {
+  "text": "Take Pickle out of the coop? Their eggs go too.",
+  "spoken": "Take Pickle out of the coop? Their eggs go too.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "d50c35a0": {

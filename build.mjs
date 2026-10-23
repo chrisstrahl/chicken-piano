@@ -29,6 +29,17 @@ const html = fs.readFileSync('src/index.html', 'utf8').replace('<!--APP-->', () 
   .replace('</body>', () => `<!--\nChicken Piano, MIT License, Copyright (c) 2026 Chris Strahl\n\n${fs.readFileSync('THIRD_PARTY_NOTICES.md', 'utf8').replace(/--/g, '- -')}-->\n</body>`);
 fs.mkdirSync('dist', { recursive: true });
 fs.writeFileSync('dist/index.html', html);
+// Home-screen app: manifest and the offline service worker (icons come from tools/icons.cjs)
+fs.writeFileSync('dist/manifest.webmanifest', JSON.stringify({
+  name: 'Chicken Piano', short_name: 'Chicken Piano', id: './', start_url: './', scope: './',
+  display: 'standalone', orientation: 'landscape', background_color: '#ffd84d', theme_color: '#ffd84d',
+  icons: [
+    { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+    { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+    { src: 'icons/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+  ],
+}, null, 1) + '\n');
+fs.writeFileSync('dist/sw.js', fs.readFileSync('src/sw.js', 'utf8').replace('__BUILD__', stamp));
 // Artifact version: claude.ai wraps the page in its own <html>/<head>/<body>, so ship only the inner parts.
 const head = html.match(/<head>([\s\S]*?)<\/head>/)[1].replace(/<meta charset[^>]*>\s*/, '').replace(/<meta name="viewport"[^>]*>\s*/, '');
 const body = html.match(/<body>([\s\S]*)<\/body>/)[1];
