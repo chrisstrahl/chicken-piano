@@ -244,6 +244,14 @@ body.midi #mic:not(.on){opacity:.6}
 .staffcard.static .strip svg{width:100%;height:100%}
 .staffcard .cur{fill:#ffe48a;opacity:.75;rx:14px}
 .staffcard .vf-stavenote.done{opacity:.28}
+/* play with the beat: missed notes fade grey; echo mode fades the phrases still to come */
+.staffcard .vf-stavenote.miss{opacity:.28;filter:grayscale(1)}
+.staffcard .later{opacity:.15}
+.coach .tools .btn.on{background:var(--good);box-shadow:0 5px 0 #239a50}
+.bubble .count{display:inline-flex;gap:.35em}
+.bubble .count i{font-style:normal;opacity:.25}
+.bubble .count i.on{opacity:1;transform:scale(1.3)}
+.bubble .grade{font-size:.8em}
 .staffcard .lt{font-weight:700;font-family:'Fredoka',sans-serif}
 .staffcard .ly{font-family:'Fredoka',sans-serif;fill:var(--muted);font-weight:600}
 .staffcard .ly.done,.staffcard .ltg.done{opacity:.3}
@@ -458,6 +466,9 @@ body.midi #mic:not(.on){opacity:.6}
       <div class="tools">
         <button class="btn round recbtn" id="playRec" aria-label="Record"><span class="ic">🔴</span><span class="tm"></span></button>
         <button class="btn round blue" id="btnListen" aria-label="Listen">👂</button>
+        <button class="btn round" id="btnBeat" aria-label="Play with the beat">🥁</button>
+        <button class="btn round" id="btnEcho" aria-label="Echo: listen, then copy">🦜</button>
+        <button class="btn round" id="btnSpeed" aria-label="Speed">🐇</button>
         <button class="btn round" id="btnRestart" aria-label="Start over">⏮️</button>
         <button class="btn round" id="btnLetters" aria-label="Letters">🔤</button>
       </div>
@@ -497,7 +508,7 @@ body.midi #mic:not(.on){opacity:.6}
       <div data-chicken id="freeChicken"></div>
       <div class="bubble" id="freeBubble"></div>
       <div class="spacer"></div>
-      <div class="tools"><button class="btn round recbtn" id="freeRec" aria-label="Record"><span class="ic">🔴</span><span class="tm"></span></button></div>
+      <div class="tools"><button class="btn round recbtn" id="freeRec" aria-label="Record"><span class="ic">🔴</span><span class="tm"></span></button><button class="btn round" id="btnFreeBeat" aria-label="Metronome">🥁</button></div>
     </div>
     <div class="kbwrap"><div id="freeKb"></div></div>
   </div>
