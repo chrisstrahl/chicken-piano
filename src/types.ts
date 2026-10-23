@@ -29,6 +29,7 @@ export interface SongData {
   chords?: string; // 'C:w F:h G:h', from after the pickup
   fingers?: string; // one per sounding melody note, '_' none, '1+3+5' for a chord
   lhFingers?: string;
+  lhStyle?: string; // for tools/lefthand.mjs: 'own' keeps a hand-written lh, 'block' plays chords as blocks
 }
 
 // One pitch inside a parsed note
