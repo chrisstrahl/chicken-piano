@@ -156,7 +156,7 @@ button{font:inherit;color:inherit;border:0;cursor:pointer;touch-action:manipulat
 .keybtn.holding{background:var(--good);transition:background 2s}
 
 /* one level */
-.lvbody{flex:1;display:flex;flex-direction:column;justify-content:center;gap:2.6vh;padding-bottom:2vh;min-height:0}
+.lvbody{flex:1;display:flex;flex-direction:column;justify-content:safe center;gap:2.6vh;padding-bottom:2vh;min-height:0;overflow-y:auto}
 .lvsec{display:flex;align-items:center;gap:1.4vw}
 .lvlbl{font-size:min(7vh,5vw);width:min(8vh,6vw);text-align:center}
 .lvrowc{flex:1;display:grid;grid-template-columns:repeat(5,1fr);gap:1.4vw}
@@ -170,7 +170,14 @@ button{font:inherit;color:inherit;border:0;cursor:pointer;touch-action:manipulat
 .card.next{animation:pulse 1.4s ease-in-out infinite}
 
 /* all songs, by level */
-.songlist{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:1.6vh;padding:1vh 4px 3vh;-webkit-overflow-scrolling:touch}
+.songlist{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:1.6vh;padding:1vh 4px 3vh}
+/* long lists scroll: momentum on iPad, a chunky scrollbar where browsers show one, and a fade at the bottom edge
+   while there's more below (main.js sets .more) so kids can see the list keeps going */
+.lvbody,.songlist{-webkit-overflow-scrolling:touch;overscroll-behavior:contain;scrollbar-width:auto;scrollbar-color:var(--accent) rgba(255,255,255,.4)}
+.lvbody::-webkit-scrollbar,.songlist::-webkit-scrollbar{width:12px}
+.lvbody::-webkit-scrollbar-thumb,.songlist::-webkit-scrollbar-thumb{background:var(--accent);border-radius:6px}
+.lvbody.more,.songlist.more{-webkit-mask-image:linear-gradient(#000 85%,transparent);mask-image:linear-gradient(#000 85%,transparent)}
+.lvtag{grid-row:span 3}
 .lvrow{display:grid;grid-template-columns:min(9vh,6vw) repeat(5,1fr);gap:1.2vw;align-items:stretch}
 .lvtag{border-radius:20px;background:var(--lc);color:#fff;font-weight:700;font-size:min(5vh,3.4vw);display:flex;flex-direction:column;align-items:center;justify-content:center}
 .lvtag small{font-size:.7em}

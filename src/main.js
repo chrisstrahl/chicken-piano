@@ -187,6 +187,16 @@ $('#start').addEventListener('pointerdown', async () => {
   setTimeout(() => act($('#home .chicken'), 'happy', 900), 500);
 }, { once: true });
 
+// Fade the bottom of a scrolling list while there's more below.
+function moreHint(el) {
+  const upd = () => el.classList.toggle('more', el.scrollHeight - el.scrollTop - el.clientHeight > 8);
+  el.addEventListener('scroll', upd, { passive: true });
+  window.addEventListener('resize', upd);
+  return upd;
+}
+const moreLevel = moreHint($('#level .lvbody'));
+const moreSongs = moreHint($('#songCards'));
+
 /* ---------- LEVEL MAP ---------- */
 function renderMap() {
   const cur = currentLevel();
@@ -244,6 +254,8 @@ function renderLevel() {
       <div class="t">${l.title}</div><div class="badge">${done ? '✅' : i === nx ? '👉' : ''}</div></button>`;
   }).join('');
   $('#levelSongs').innerHTML = songsForLevel(lv.n).map(songCard).join('');
+  $('#level .lvbody').scrollTop = 0;
+  requestAnimationFrame(moreLevel);
   $('#levelPrev').style.visibility = lv.n > 1 ? '' : 'hidden';
   $('#levelNext').style.visibility = lv.n < 10 ? '' : 'hidden';
   $('#levelNext').classList.toggle('pulse', levelDone(lv) && lv.n < 10);
@@ -277,6 +289,7 @@ $('#levelSongs').addEventListener('click', songTap);
 function renderSongs() {
   $('#songCards').innerHTML = LEVELS.map((lv) => `<div class="lvrow" style="--lc:${lv.color}"><div class="lvtag">${lv.n}<small>${lv.emoji}</small></div>
     ${songsForLevel(lv.n).map(songCard).join('')}</div>`).join('');
+  requestAnimationFrame(moreSongs);
 }
 $('#songCards').addEventListener('click', songTap);
 
