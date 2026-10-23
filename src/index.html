@@ -260,6 +260,11 @@ body.midi #mic:not(.on){opacity:.6}
 .staffcard .lt{font-weight:700;font-family:'Fredoka',sans-serif}
 .staffcard .ly{font-family:'Fredoka',sans-serif;fill:var(--muted);font-weight:600}
 .staffcard .ly.done,.staffcard .ltg.done{opacity:.3}
+/* beat counting under lesson staffs: each note sits on a band as long as it lasts; the beat now pops */
+.staffcard .cband{opacity:.4}
+.staffcard .cband.rest{opacity:1}
+.staffcard .cnum{font-family:'Fredoka',sans-serif;font-weight:700;fill:#5b4a3a;transition:font-size .1s}
+.staffcard .cnum.on{fill:#e8322f;font-size:24px}
 .staffcard .dim{opacity:.3}
 .staffcard .chordsym{font-family:'Fredoka',sans-serif;font-weight:700;fill:#7447d9}
 .shake{animation:shake .4s}

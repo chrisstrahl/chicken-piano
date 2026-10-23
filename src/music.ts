@@ -69,6 +69,10 @@ export const songById = (id: string): Song | undefined => SONGS.find((s) => s.id
   name:   "what note is this?" pick an egg (or play it)                     { notes, pool, clef, say }
   beats:  "how many beats?"                                                 { durs, say }
   choice: listen or look, then pick an answer                               { say, rounds:[{ staff, hear, tempo, vel, hl, options, answer }] }
+  rhythm: the chicken plays it with the pecks, then the child plays it in time { staff, lh, play, clef, time, tempo, range, say }
+ A show step with count: true numbers the beats under its staff, so you can see how long each note lasts.
+ The left hand comes in a little at a time: low C (level 1), its finger numbers (2), below middle C (5),
+ then level 9 is all about it: bass clef, its notes, left-hand position, and both hands on the grand staff.
 ------------------------------------------------------------------------------------------------ */
 const L = (id: string, emoji: string, title: string, steps: LessonStep[]): Lesson => ({ id, emoji, title, steps });
 const C_POS = 'C D E F G';
@@ -95,6 +99,8 @@ export const LEVELS: Level[] = [
           { hear: 'E:h F:h', options: ['⬆️', '⬇️'], answer: '⬆️' },
           { hear: 'G:h C:h', options: ['⬆️', '⬇️'], answer: '⬇️' },
         ] },
+        { type: 'show', text: '🫲 = 🐓', say: 'Your left hand plays the low keys, like a big rooster! Put your left pinky on low C and play it.', keys: { hl: 'C3', letters: 'hl', range: 'C3 G4' }, goal: 'C3', times: 2 },
+        { type: 'rhythm', say: 'Left hand! Play low C and hold it for four pecks. Then play it again.', staff: 'C3:w C3:w', clef: 'bass', range: 'C3 G4', tempo: 80 },
       ]),
       L('walk', '🐾', 'Chicken Walk', [
         { type: 'show', text: 'C D E ➡️', say: 'Walk up the keys: C, D, E. Each step sounds a little higher. Tap the three glowing keys.', keys: { hl: 'C D E', letters: 'hl' }, hear: 'C D E', goal: 'C D E', times: 3 },
@@ -123,6 +129,12 @@ export const LEVELS: Level[] = [
           { hl: 'D', options: ['1', '2', '3', '4', '5'], answer: '2' },
           { hl: 'F', options: ['1', '2', '3', '4', '5'], answer: '4' },
         ] },
+        { type: 'show', text: '🫲 5 4 3 2 1', say: 'Your left hand has numbers too! Thumb is one, pinky is five. Put your left pinky on low C and play C, D, E, F, G with fingers five, four, three, two, one.', keys: { hl: 'C3 D3 E3 F3 G3', letters: 'hl', fingers: 'lh', range: 'C3 G4' }, goal: C_POS, times: 5 },
+        { type: 'choice', say: 'Left pinky on low C. Which finger plays this key?', rounds: [
+          { hl: 'G3', options: ['1', '2', '3', '4', '5'], answer: '1' },
+          { hl: 'E3', options: ['1', '2', '3', '4', '5'], answer: '3' },
+          { hl: 'D3', options: ['1', '2', '3', '4', '5'], answer: '4' },
+        ] },
       ]),
       L('steps', '👣', 'Steps', [
         { type: 'show', text: 'step = next door', say: 'Going from a key to the very next key is called a step. One little chicken step! Step up from C to G.', staff: C_POS, keys: { hl: C_POS, letters: 'hl' }, goal: C_POS, times: 5 },
@@ -134,13 +146,14 @@ export const LEVELS: Level[] = [
     n: 3, emoji: '⏱️', title: 'Beat Keepers', color: '#9b5de5',
     lessons: [
       L('beats', '⏱️', 'How Long?', [
-        { type: 'show', text: '♩ = 1 👏', say: 'A filled in note with a stick is a quarter note. It gets one beat. Cluck! Play G four times.', staff: 'G G G G', hear: 'G G G G', clap: true, keys: { hl: 'G', letters: 'hl' }, goal: 'G', times: 4 },
-        { type: 'show', text: '𝅗𝅥 = 2 👏👏', say: 'A hollow note with a stick is a half note. Two beats. Clu, uck! Play G and hold it.', staff: 'G:h G:h', hear: 'G:h G:h', clap: true, keys: { hl: 'G', letters: 'hl' }, goal: 'G', times: 2 },
-        { type: 'show', text: '𝅝 = 4 👏👏👏👏', say: 'A hollow egg with no stick is a whole note. Four beats! Cluuuuuck! Play G and hold it a long time.', staff: 'G:w', hear: 'G:w', clap: true, keys: { hl: 'G', letters: 'hl' }, goal: 'G', times: 1 },
+        { type: 'show', text: '♩ = 1 👏', say: 'A filled in note with a stick is a quarter note. It gets one beat. Cluck! Play G four times.', staff: 'G G G G', hear: 'G G G G', clap: true, count: true, keys: { hl: 'G', letters: 'hl' }, goal: 'G', times: 4 },
+        { type: 'show', text: '𝅗𝅥 = 2 👏👏', say: 'A hollow note with a stick is a half note. Two beats. Clu, uck! Play G and hold it.', staff: 'G:h G:h', hear: 'G:h G:h', clap: true, count: true, keys: { hl: 'G', letters: 'hl' }, goal: 'G', times: 2 },
+        { type: 'show', text: '𝅝 = 4 👏👏👏👏', say: 'A hollow egg with no stick is a whole note. Four beats! Cluuuuuck! Play G and hold it a long time.', staff: 'G:w', hear: 'G:w', clap: true, count: true, keys: { hl: 'G', letters: 'hl' }, goal: 'G', times: 1 },
+        { type: 'rhythm', say: 'Now play with the pecks! A quarter note gets one peck. The half note gets two, so hold it!', staff: 'G G G:h' },
         { type: 'beats', durs: ['h', 'q', 'w', 'h', 'q'], say: 'How many beats?' },
       ]),
       L('rests', '🤫', 'Shh! Rests', [
-        { type: 'show', text: '𝄽 = 🤫', say: 'A rest means be quiet! This squiggle is a quarter rest. Stay quiet for one beat. Play C, then shh!', staff: 'C R:q C R:q', hear: 'C R:q C R:q', clap: true, keys: { hl: 'C', letters: 'hl' }, goal: 'C', times: 2 },
+        { type: 'show', text: '𝄽 = 🤫', say: 'A rest means be quiet! This squiggle is a quarter rest. Stay quiet for one beat. Play C, then shh!', staff: 'C R:q C R:q', hear: 'C R:q C R:q', clap: true, count: true, keys: { hl: 'C', letters: 'hl' }, goal: 'C', times: 2 },
         { type: 'show', text: '🎩 2 · 🕳️ 4', say: 'A half rest sits on the line like a hat. Two quiet beats. A whole rest hangs down like a hole. Four quiet beats! Play C to keep going.', staff: 'R:h R:h R:w', keys: { hl: 'C', letters: 'hl' }, goal: 'C' },
         { type: 'choice', say: 'Note or rest? Should you play, or be quiet?', rounds: [
           { staff: 'R:q', options: ['🎹', '🤫'], answer: '🤫' },
@@ -148,9 +161,10 @@ export const LEVELS: Level[] = [
           { staff: 'R:h', options: ['🎹', '🤫'], answer: '🤫' },
           { staff: 'G:h', options: ['🎹', '🤫'], answer: '🎹' },
         ] },
+        { type: 'rhythm', say: 'Play on one and three. Be quiet on two and four!', staff: 'C R:q C R:q C:h R:h' },
       ]),
       L('measures', '📦', 'Measures', [
-        { type: 'show', text: '| 1 2 3 4 |', say: 'Bar lines cut music into little boxes called measures. Each box is like a nest that holds four beats. Play the notes in the first box: C, D, E, F.', staff: 'C D E F G:h G:h E:w', time: '4/4', keys: { hl: 'C D E F', letters: 'hl' }, goal: 'C D E F', times: 4 },
+        { type: 'show', text: '| 1 2 3 4 |', say: 'Bar lines cut music into little boxes called measures. Each box is like a nest that holds four beats. Play the notes in the first box: C, D, E, F.', staff: 'C D E F G:h G:h E:w', time: '4/4', count: true, keys: { hl: 'C D E F', letters: 'hl' }, goal: 'C D E F', times: 4 },
         { type: 'show', text: '4/4', say: 'The two numbers at the start are the time signature. The top 4 means four beats in every box. Tap C to go on.', staff: 'C C C C', time: '4/4', keys: { hl: 'C', letters: 'hl' }, goal: 'C' },
         { type: 'choice', say: 'Count the beats!', rounds: [
           { staff: 'C D', options: ['2', '3', '4'], answer: '2' },
@@ -158,9 +172,12 @@ export const LEVELS: Level[] = [
           { staff: 'C:h C:h', options: ['2', '3', '4'], answer: '4' },
           { staff: 'C D E F', options: ['2', '3', '4'], answer: '4' },
         ] },
+        { type: 'rhythm', say: 'Play two measures with the pecks. Count one, two, three, four in every box!', staff: 'C D E F G:h G:h', time: '4/4' },
       ]),
       L('clap', '👏', 'Clap and Play', [
-        { type: 'show', text: '👂 then 🎹', say: 'Listen to the rhythm, then play it on C. Short, short, long!', staff: 'C C C:h', hear: 'C C C:h', clap: true, keys: { hl: 'C', letters: 'hl' }, goal: 'C', times: 3 },
+        { type: 'rhythm', say: 'Listen to the rhythm, then play it on C. Short, short, long!', staff: 'C C C:h' },
+        { type: 'rhythm', say: 'Now long, short, short. Hold the long one for two pecks!', staff: 'C:h C C' },
+        { type: 'rhythm', say: 'Short, short, shh, short. Then hold a whole note for four pecks!', staff: 'C C R:q C C:w' },
         { type: 'choice', say: 'Listen. Which rhythm did you hear?', rounds: [
           { hear: 'C C C:h', options: ['♩ ♩ 𝅗𝅥', '𝅗𝅥 𝅗𝅥'], answer: '♩ ♩ 𝅗𝅥' },
           { hear: 'C:h C:h', options: ['♩ ♩ 𝅗𝅥', '𝅗𝅥 𝅗𝅥'], answer: '𝅗𝅥 𝅗𝅥' },
@@ -218,6 +235,7 @@ export const LEVELS: Level[] = [
       L('ledger', '🪜', 'Below the Staff', [
         { type: 'show', text: 'B A G ⬇️', say: 'Notes can climb down below the fence on little extra lines, called ledger lines. Below middle C are B, A and G. Play them going down.', staff: 'C B3 A3 G3', keys: { hl: 'C B3 A3 G3', letters: 'hl', range: 'C3 E5' }, goal: 'C B A G', times: 4 },
         { type: 'name', notes: 'B3 G3 A3 C B3', pool: 'GABC', say: 'What note is this?', range: 'C3 E5' },
+        { type: 'seq', say: 'Low notes are easy for your left hand! Put your left thumb on middle C and walk down. Then walk back up.', seqs: ['C B3 A3 G3', 'G3 A3 B3 C'], range: 'C3 E5' },
       ]),
       L('gpos', '🤚', 'G Position', [
         { type: 'show', text: '👍 on G', say: 'Move your hand! Put your thumb on G, and your fingers on G, A, B, C, D. Play them all.', keys: { hl: 'G A B C5 D5', letters: 'hl' }, goal: 'G A B C D', times: 5 },
@@ -238,15 +256,17 @@ export const LEVELS: Level[] = [
         ] },
       ]),
       L('three', '3️⃣', '3/4 Time', [
-        { type: 'show', text: '1 2 3 · 1 2 3', say: 'In three four time, every box has three beats. One, two, three! One, two, three! It feels like a dance. Play C, E, G.', staff: 'C E G C E G', time: '3/4', hear: 'C E G C E G', clap: true, keys: { hl: 'C E G', letters: 'hl' }, goal: 'C E G', times: 3 },
+        { type: 'show', text: '1 2 3 · 1 2 3', say: 'In three four time, every box has three beats. One, two, three! One, two, three! It feels like a dance. Play C, E, G.', staff: 'C E G C E G', time: '3/4', hear: 'C E G C E G', clap: true, count: true, keys: { hl: 'C E G', letters: 'hl' }, goal: 'C E G', times: 3 },
         { type: 'choice', say: 'Look at the top number. How many beats in each box?', rounds: [
           { staff: 'C E G', time: '3/4', options: ['3', '4'], answer: '3' },
           { staff: 'C E G C', time: '4/4', options: ['3', '4'], answer: '4' },
           { staff: 'G:hd', time: '3/4', options: ['3', '4'], answer: '3' },
         ] },
+        { type: 'rhythm', say: 'Waltz with the pecks! One, two, three. Then hold the last C for all three.', staff: 'C E G C:hd', time: '3/4', tempo: 84 },
       ]),
       L('dotted', '🥚', 'Dotted Half Note', [
-        { type: 'show', text: '𝅗𝅥. = 3', say: 'A dot makes a note longer. A dotted half note gets three beats. Play G and hold it, one, two, three!', staff: 'G:hd', time: '3/4', hear: 'G:hd', clap: true, keys: { hl: 'G', letters: 'hl' }, goal: 'G', times: 2 },
+        { type: 'show', text: '𝅗𝅥. = 3', say: 'A dot makes a note longer. A dotted half note gets three beats. Play G and hold it, one, two, three!', staff: 'G:hd', time: '3/4', hear: 'G:hd', clap: true, count: true, keys: { hl: 'G', letters: 'hl' }, goal: 'G', times: 2 },
+        { type: 'rhythm', say: 'Hold G for three pecks. Then E for two, and one more E.', staff: 'G:hd E:h E', time: '3/4', tempo: 84 },
         { type: 'beats', durs: ['hd', 'h', 'q', 'hd', 'w'], say: 'How many beats?' },
       ]),
       L('tempo', '🐇', 'Fast and Slow', [
@@ -265,16 +285,18 @@ export const LEVELS: Level[] = [
     lessons: [
       L('eighths', '🐤', 'Eighth Notes', [
         { type: 'show', text: '♫ = 1 beat', say: 'Two eighth notes holding hands make one beat. Say chick-en, chick-en! Play C eight quick times.', staff: 'C:8 C:8 C:8 C:8 C:8 C:8 C:8 C:8', hear: 'C:8 C:8 C:8 C:8 C:8 C:8 C:8 C:8', keys: { hl: 'C', letters: 'hl' }, goal: 'C', times: 8 },
+        { type: 'rhythm', say: 'Two eighth notes fit in one peck. Chick, en! Play C, then chick en, then hold.', staff: 'C C:8 C:8 C:h', tempo: 60 },
         { type: 'beats', durs: ['8', 'q', 'h', '8', 'w'], say: 'How many beats?' },
       ]),
       L('count8', '🔢', 'One-and, Two-and', [
-        { type: 'show', text: '1 & 2 & 3 & 4 &', say: 'Count eighth notes with and: one and two and three and four and! Play these notes.', staff: 'C:8 D:8 E:8 F:8 G:h', hear: 'C:8 D:8 E:8 F:8 G:h', keys: { hl: C_POS, letters: 'hl' }, goal: C_POS, times: 5 },
+        { type: 'show', text: '1 & 2 & 3 & 4 &', say: 'Count eighth notes with and: one and two and three and four and! Play these notes.', staff: 'C:8 D:8 E:8 F:8 G:h', hear: 'C:8 D:8 E:8 F:8 G:h', count: true, keys: { hl: C_POS, letters: 'hl' }, goal: C_POS, times: 5 },
         { type: 'choice', say: 'How many beats in all?', rounds: [
           { staff: 'C:8 C:8', options: ['1', '2', '3'], answer: '1' },
           { staff: 'C:8 C:8 C', options: ['1', '2', '3'], answer: '2' },
           { staff: 'C:8 C:8 C:8 C:8', options: ['1', '2', '3'], answer: '2' },
           { staff: 'C:h C:8 C:8', options: ['1', '2', '3'], answer: '3' },
         ] },
+        { type: 'rhythm', say: 'One and two and, then hold for three and four!', staff: 'C:8 D:8 E:8 F:8 G:h', tempo: 60 },
       ]),
       L('ties', '🎀', 'Ties', [
         { type: 'show', text: '𝅗𝅥‿𝅗𝅥 = 4', say: 'A tie is a curved line that glues two notes on the same key together. Play it once and hold it for both! Play G and hold.', staff: 'G:h~ G:h', hear: 'G:w', keys: { hl: 'G', letters: 'hl' }, goal: 'G', times: 2 },
@@ -330,24 +352,30 @@ export const LEVELS: Level[] = [
     lessons: [
       L('bass', '🐻', 'Bass Clef', [
         { type: 'show', text: '𝄢 = low', say: 'This is the bass clef. It is for low notes, usually played by your left hand. Its two dots hug the F line! Play low F.', staff: 'F3:w', clef: 'bass', keys: { hl: 'F3', letters: 'hl', range: 'C3 C5' }, goal: 'F', times: 2 },
-        { type: 'show', text: 'C D E F G', say: 'Here are C, D, E, F, G down low, on the bass staff. Play them with your left hand.', staff: 'C3 D3 E3 F3 G3', clef: 'bass', keys: { hl: 'C3 D3 E3 F3 G3', letters: 'hl', range: 'C3 C5' }, goal: C_POS, times: 5 },
+        { type: 'show', text: 'C D E F G', say: 'Here are C, D, E, F, G down low, on the bass staff. Play them with your left hand.', staff: 'C3 D3 E3 F3 G3', clef: 'bass', keys: { hl: 'C3 D3 E3 F3 G3', letters: 'hl', fingers: 'lh', range: 'C3 C5' }, goal: C_POS, times: 5 },
+        { type: 'rhythm', say: 'Left hand, play with the pecks. C, E, G, then hold C for two.', staff: 'C3 E3 G3 E3 C3:h R:h', clef: 'bass', range: 'C3 C5' },
       ]),
       L('bassnotes', '🎯', 'Bass Notes', [
         { type: 'show', text: 'G B D F A', say: 'On the bass staff, the line notes are G, B, D, F, A. Good Burritos Don\'t Fall Apart! Play low G.', staff: 'G2 B2 D3 F3 A3', clef: 'bass', keys: { hl: 'G3', letters: 'hl', range: 'C3 C5' }, goal: 'G', times: 1 },
-        { type: 'name', notes: 'C3 E3 G3 D3 F3', pool: 'CDEFG', clef: 'bass', say: 'What low note is this?', range: 'C3 C5' },
+        { type: 'show', text: 'A C E G', say: 'The space notes on the bass staff are A, C, E, G. All Cows Eat Grass! Play C, E and G.', staff: 'A2 C3 E3 G3', clef: 'bass', keys: { hl: 'C3 E3 G3', letters: 'hl', range: 'C3 C5' }, goal: 'C E G', times: 3 },
+        { type: 'name', notes: 'C3 E3 G3 D3 F3 A3 B3', pool: 'CDEFGAB', clef: 'bass', say: 'What low note is this?', range: 'C3 C5' },
       ]),
       L('lefthand', '🤚', 'Left Hand C', [
-        { type: 'show', text: '5 on C · 1 on G', say: 'Left hand: your pinky, finger five, goes on low C. Your thumb, finger one, goes on G. Play C, D, E, F, G with your left hand.', keys: { hl: 'C3 D3 E3 F3 G3', letters: 'hl', range: 'C3 C5' }, goal: C_POS, times: 5 },
+        { type: 'show', text: '5 on C · 1 on G', say: 'Left hand: your pinky, finger five, goes on low C. Your thumb, finger one, goes on G. Play C, D, E, F, G with your left hand.', keys: { hl: 'C3 D3 E3 F3 G3', letters: 'hl', fingers: 'lh', range: 'C3 C5' }, goal: C_POS, times: 5 },
         { type: 'seq', say: 'Left hand, up and down!', seqs: ['C3 D3 E3 F3 G3', 'G3 F3 E3 D3 C3'], range: 'C3 C5' },
+        { type: 'rhythm', say: 'In songs, the left hand often plays long notes. Hold C for two, G for two, then C for four!', staff: 'C3:h G3:h C3:w', clef: 'bass', range: 'C3 C5' },
+        { type: 'rhythm', say: 'Now a walking bass. One note on every peck!', staff: 'C3 D3 E3 F3 G3 F3 E3 D3 C3:w', clef: 'bass', range: 'C3 C5', tempo: 80 },
       ]),
-      L('whichclef', '🔀', 'Treble or Bass?', [
-        { type: 'show', text: '𝄞 high · 𝄢 low', say: 'Treble clef is for high notes, often the right hand. Bass clef is for low notes, often the left hand. Play a high C and a low C.', keys: { hl: 'C3 C5', letters: 'hl', range: 'C3 C5' }, goal: 'C', times: 2 },
+      L('whichclef', '🙌', 'Two Hands', [
+        { type: 'show', text: '𝄞 + 𝄢', say: 'Put the two staffs together and you get the grand staff! The top is for your right hand, the bottom is for your left hand. Middle C sits right between them. Play middle C.', staff: 'C:w', lh: 'R:w', keys: { hl: 'C', letters: 'hl', range: 'C3 C5' }, goal: 'C', times: 2 },
         { type: 'choice', say: 'Treble clef or bass clef?', rounds: [
           { staff: 'G', options: ['𝄞', '𝄢'], answer: '𝄞' },
           { staff: 'C3', clef: 'bass', options: ['𝄞', '𝄢'], answer: '𝄢' },
           { staff: 'E5', options: ['𝄞', '𝄢'], answer: '𝄞' },
           { staff: 'F3', clef: 'bass', options: ['𝄞', '𝄢'], answer: '𝄢' },
         ] },
+        { type: 'rhythm', say: 'Hands take turns! Your right hand plays C, E, G. Then your left hand plays low C.', staff: 'C E G R:q', lh: 'R:q R:q R:q C3', play: 'C E G C3', range: 'C3 C5' },
+        { type: 'rhythm', say: 'Now both hands at once! Your left hand holds low C while your right hand walks up C, D, E, F.', staff: 'C D E F', lh: 'C3:w', play: 'C3+C D E F', range: 'C3 C5', tempo: 66 },
       ]),
     ],
   },

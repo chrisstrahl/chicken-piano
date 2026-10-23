@@ -10,15 +10,22 @@ import type { Note, Pitch, KeySig, Finger, ChordSpan } from './types.ts';
 type Part = { voice: Voice; vnotes: StaveNote[]; beams: StaveNote[][]; ties: [StaveNote, StaveNote][]; beats: number[]; beamObjs?: Beam[] };
 // Where one hand's notes were drawn: x per note, their SVG elements, and each note's beat
 export type DrawnPart = { xs: number[]; noteEls: (SVGElement | undefined)[]; letterEls: SVGElement[]; lyricEls: SVGElement[]; beats: number[] };
-export type Drawn = DrawnPart & { width: number; svg: SVGSVGElement; cur: SVGElement; H: number; lh: DrawnPart | null; beatX: (beat: number) => number };
+export type Drawn = DrawnPart & {
+  width: number; svg: SVGSVGElement; cur: SVGElement; H: number; lh: DrawnPart | null; beatX: (beat: number) => number;
+  countEls: SVGElement[]; // with opts.counts: one "1 2 3 4" number per beat
+  countAt: (beat: number) => number; // where a beat sits, also in the middle of a long note
+};
 export interface StaffOpts {
   scroll?: boolean; letters?: boolean; lyrics?: boolean; minWidth?: number; bars?: boolean; clef?: string;
   time?: string | null; pickup?: number; repeat?: boolean;
   onTap?: ((i: number) => void) | null; onTapBeat?: ((beat: number) => void) | null;
   pack?: boolean; key?: string | null; sig?: KeySig; lh?: Note[] | null;
+  counts?: boolean; // count the beats under the staff, with a band under each note as long as it lasts
   chords?: Pick<ChordSpan, 'beat' | 'chord'>[] | null; fingers?: Finger[] | null; lhFingers?: Finger[] | null;
 }
 
+// VexFlow counts 16384 ticks in a whole note
+const QUARTER_TICKS = 16384 / 4;
 const SVGNS = 'http://www.w3.org/2000/svg';
 const H1 = 165; // one staff
 const H2 = 280; // grand staff
@@ -101,6 +108,9 @@ function buildPart(notes: Note[], { clef, sig = {}, perBar, pickup, bars }: { cl
   return { voice, vnotes, beams, ties, beats };
 }
 
+// the beat right after a hand's last note
+const lastEnd = (p: DrawnPart, notes: Note[]) => (notes.length ? p.beats[notes.length - 1] + (BEATS[notes[notes.length - 1].d] || 1) : 0);
+
 // Letter bubbles (with a small finger number) and lyrics for one hand
 function labels(svg: SVGSVGElement, part: Part, notes: Note[], y: number, { letters, fingers, lyricsY }: { letters: boolean; fingers: Finger[] | null; lyricsY: number }): DrawnPart {
   const out: DrawnPart = { xs: [], noteEls: [], letterEls: [], lyricEls: [], beats: part.beats };
@@ -151,13 +161,16 @@ function labels(svg: SVGSVGElement, part: Part, notes: Note[], y: number, { lett
  * opts.pack: keep notes at a steady spacing from the left (free play) instead of spreading them across the width.
  * opts.key: key signature ('F', 'G', 'Am'...), sig: its accidentals. opts.chords: [{ beat, chord: { sym } }].
  * opts.fingers / lhFingers: finger number per note (null = none).
- * Returns { width, svg, cur, H, xs, noteEls, letterEls, lyricEls, beats, lh, beatX(beat) } (top level = right hand).
+ * opts.counts: beat numbers under the staff (1 2 3 4, starting over each bar), each note (or rest) sitting on a band
+ *   as wide as its beats, so a half note's band holds "1 2".
+ * Returns { width, svg, cur, H, xs, noteEls, letterEls, lyricEls, beats, lh, beatX(beat), countEls, countAt(beat) }
+ * (top level = right hand).
  */
 export function drawStaff(card: HTMLElement, notes: Note[], opts: StaffOpts = {}): Drawn {
   const {
     scroll = false, letters = true, lyrics = false, minWidth = 0, bars = true, clef = 'treble', time = null, pickup = 0,
     repeat = false, onTap = null, onTapBeat = null, pack = false, key = null, sig = {}, lh = null, chords = null,
-    fingers = null, lhFingers = null,
+    fingers = null, lhFingers = null, counts = false,
   } = opts;
   const strip = card.querySelector<HTMLElement>('.strip')!;
   strip.innerHTML = '';
@@ -230,7 +243,12 @@ export function drawStaff(card: HTMLElement, notes: Note[], opts: StaffOpts = {}
       const x0 = tcs[0].getX(), last = tcs[tcs.length - 1];
       const room = width - startX - 40 - last.getWidth();
       const k = (room - x0) / (last.getX() - x0 || 1);
-      if (k > 1.02) tcs.forEach((tc) => tc.setX(x0 + (tc.getX() - x0) * k));
+      if (counts) {
+        // counting beats: space the notes by how long they last, so every beat gets the same room
+        const total = Math.max(...[notes, lh || []].map((ns) => ns.reduce((a, n) => a + (BEATS[n.d] || 1), 0)));
+        const per = (width - startX - 34 - x0) / (total || 1);
+        list.forEach((t) => map[t].setX(x0 + (t / QUARTER_TICKS) * per));
+      } else if (k > 1.02) tcs.forEach((tc) => tc.setX(x0 + (tc.getX() - x0) * k));
     }
     const parts: [Part, Stave][] = [[rh, top]];
     if (lp && bot) parts.push([lp, bot]);
@@ -276,6 +294,36 @@ export function drawStaff(card: HTMLElement, notes: Note[], opts: StaffOpts = {}
     });
   }
 
+  // in between notes: spread the beats evenly from one note to the next (and to the end of the staff after the last)
+  const countAt = (b: number) => {
+    const before = [...marks].reverse().find((m) => m[0] <= b + 1e-6);
+    const after = marks.find((m) => m[0] > b + 1e-6);
+    if (!before) return after ? after[1] : 0;
+    const [b1, x1] = after || [Math.max(...[R, Lh].flatMap((p) => (p ? [lastEnd(p, p === R ? notes : lh!)] : []))), width - 34];
+    return before[1] + ((x1 - before[1]) * (b - before[0])) / (b1 - before[0] || 1);
+  };
+  const countEls: SVGElement[] = [];
+  if (counts && rh) {
+    const y = grand ? H - 12 : top.getYForLine(4) + (letters ? 72 : 40) + dropR + stackR;
+    const total = Math.max(...[R, Lh].flatMap((p) => (p ? [lastEnd(p, p === R ? notes : lh!)] : [])));
+    // one band per note of the top part (one staff only: two hands would need two rows)
+    if (!grand) notes.forEach((n, i) => {
+      const b = R.beats[i], len = BEATS[n.d] || 1;
+      const x0 = countAt(b) - 13, x1 = countAt(b + len - 1) + 13;
+      svgEl('rect', { x: x0, y: y - 19, width: Math.max(26, x1 - x0), height: 26, rx: 13, class: n.r ? 'cband rest' : 'cband', fill: n.r ? '#e9e2d6' : bubbleOf(n.keys[0]) }, svg);
+    });
+    for (let b = 0; b < total - 1e-6; b++) {
+      const num = (((b - pickup) % perBar) + perBar) % perBar + 1;
+      const t = svgEl('text', { x: countAt(b), y, 'text-anchor': 'middle', 'font-size': 17, class: 'cnum' }, svg);
+      t.textContent = String(Math.floor(num));
+      countEls.push(t);
+    }
+    // eighth notes off the beat are counted "and"
+    new Set([R, Lh].flatMap((p) => (p ? p.beats : [])).filter((b) => Math.abs(b % 1 - 0.5) < 1e-6)).forEach((b) => {
+      svgEl('text', { x: countAt(b), y, 'text-anchor': 'middle', 'font-size': 15, class: 'cnum and' }, svg).textContent = '&';
+    });
+  }
+
   // big invisible tap targets on top
   const taps: [number, number][] = onTapBeat ? [...new Map(marks.map(([b, x]) => [b, x])).entries()].sort((a, b) => a[0] - b[0]) : onTap ? R.xs.map((x, i) => [i, x]) : [];
   if (taps.length) {
@@ -293,11 +341,11 @@ export function drawStaff(card: HTMLElement, notes: Note[], opts: StaffOpts = {}
     });
   }
   // nothing under the staff (note-reading quizzes): crop to the staff so the note is drawn big
-  if (!scroll && !letters && !lyrics && !grand) {
+  if (!scroll && !letters && !lyrics && !grand && !counts) {
     const y0 = top.getYForLine(0) - 36;
     svg.setAttribute('viewBox', `0 ${y0} ${width} ${top.getYForLine(4) + 36 - y0}`);
   }
-  return { width, svg, cur, H, ...R, lh: Lh, beatX };
+  return { width, svg, cur, H, ...R, lh: Lh, beatX, countEls, countAt };
 }
 
 // Move the highlight to x and scroll so it sits about 30% from the left.
