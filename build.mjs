@@ -20,7 +20,7 @@ const voiceIds = fs.existsSync('dist/voice/manifest.json') ? Object.keys(JSON.pa
 fs.writeFileSync('src/voice.generated.js', `export const VOICE = new Set(${JSON.stringify(voiceIds)});\n`);
 fs.writeFileSync('src/samples.generated.js', `export const SAMPLES = ${JSON.stringify(samples)};\n`);
 
-const res = await build({ entryPoints: ['src/main.js'], bundle: true, minify: true, format: 'iife', write: false, target: ['es2020'], legalComments: 'none', mainFields: ['module', 'main'] });
+const res = await build({ entryPoints: ['src/main.ts'], bundle: true, minify: true, format: 'iife', write: false, target: ['es2020'], legalComments: 'none', mainFields: ['module', 'main'] });
 const js = res.outputFiles[0].text.replace(/<\/script/gi, '<\\/script');
 // build stamp shown small on the home screen, so a bug report says which version was running
 const stamp = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';

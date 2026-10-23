@@ -202,7 +202,7 @@ function clip(text: string) {
   return clips.get(id)!;
 }
 // Fetch clips ahead of time so the chicken answers right away (e.g. every line of a lesson).
-export function preloadVoice(lines: (string | string[] | null | undefined)[]) { lines.flat().forEach((t) => t && clip(t)); }
+export function preloadVoice(lines: (string | (string | null | undefined)[] | null | undefined)[]) { lines.flat().forEach((t) => t && clip(t)); }
 
 let talkId = 0; // only the newest sentence may un-mute the mic when it ends
 let talking: { id: number; stop: () => void } | null = null; // the clip that is playing now
