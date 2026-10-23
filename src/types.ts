@@ -113,6 +113,14 @@ export type LessonStep =
 export interface Lesson { id: string; emoji: string; title: string; steps: LessonStep[] }
 export interface Level { n: number; emoji: string; title: string; color: string; lessons: Lesson[] }
 
+// Recordings (recorder.js): each played note is [start ms, MIDI note, length ms, velocity 0..1]
+export type RecNote = [number, number, number, number];
+// What is being recorded: a song, or Free Play (song null)
+export interface RecInfo { title: string; emoji: string; song: string | null }
+export interface Recording extends RecInfo { id: string; at: number; notes: RecNote[] }
+// Where a played note came from
+export type NoteSource = 'tap' | 'mic' | 'midi';
+
 // Players (profiles.js)
 export interface Avatar { id: string; name: string; body: string; edge: string }
 export interface Player { id: string; avatar: string; name: string }

@@ -1,5 +1,6 @@
 // The chicken mascot. Its feathers follow --ck-body/--ck-edge, so each player's chicken has their color.
 import { avatarOf } from './profiles.js';
+import type { Player } from './types';
 
 const BODY = 'style="fill:var(--ck-body,#fff);stroke:var(--ck-edge,#eadcc6)"';
 export const CHICKEN = `<svg class="chicken" viewBox="0 0 120 125" aria-hidden="true"><g class="ck-all"><g class="ck-body">
@@ -14,6 +15,6 @@ export const CHICKEN = `<svg class="chicken" viewBox="0 0 120 125" aria-hidden="
 <g stroke="#ffa31a" stroke-width="4" stroke-linecap="round" fill="none"><path d="M48 109v10M48 119l-6 3M48 119l6 3M72 109v10M72 119l-6 3M72 119l6 3"/></g></g></svg>`;
 
 // CSS for one player's colors (on an element, or on :root for the whole app)
-export const lookOf = (p) => { const a = avatarOf(p); return `--ck-body:${a.body};--ck-edge:${a.edge}`; };
+export const lookOf = (p: Pick<Player, 'avatar'> | null | undefined): string => { const a = avatarOf(p); return `--ck-body:${a.body};--ck-edge:${a.edge}`; };
 // a chicken in an avatar's colors, by avatar id
-export const avatarChicken = (avatar, cls = '') => `<span class="av ${cls}" style="${lookOf({ avatar })}">${CHICKEN}</span>`;
+export const avatarChicken = (avatar: string, cls = ''): string => `<span class="av ${cls}" style="${lookOf({ avatar })}">${CHICKEN}</span>`;
