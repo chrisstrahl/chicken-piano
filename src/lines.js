@@ -2,6 +2,8 @@
 // tools/voice-lines.mjs calls these same functions to list every possible line, so each one gets a
 // pre-recorded clip. A line can be a list of sentences: each is its own clip, played back to back.
 
+import { AVATARS } from './profiles.js';
+
 const LETTERS = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 const ACC_WORD = { '': '', '#': ' sharp', 'b': ' flat', '♯': ' sharp', '♭': ' flat' };
 
@@ -23,6 +25,11 @@ export const SPEED_WORDS = ['Snail speed. Nice and slow.', 'Turtle speed.', 'Bun
 export const BEAT_START = 'Wait for the pecks, then play with the beat!';
 export const ECHO_START = 'Echo time! Listen to me, then play it back.';
 export const ECHO_AGAIN = 'Listen again!';
+// players (profiles.js): a typed name has no recorded clip, so the device voice says those
+export const whoPlays = 'Who is playing?';
+export const pickChicken = 'Pick your chicken!';
+export const hello = (name) => `Hi, ${name}! Let's play!`;
+export const removeAsk = (name) => `Take ${name} out of the coop? Their eggs go too.`;
 export const LAST_LEVEL = 10;
 export const lessonDone = (newSongs, finishedLevel) => [
   'You did it! You got an egg!',
@@ -44,6 +51,10 @@ export function templatedLines(songs, levels) {
     lessonDone([], 0)[0],
     ...[1, 2, 3].map(songDone),
     ...SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN,
+    whoPlays,
+    pickChicken,
+    ...AVATARS.map((a) => hello(a.name)),
+    ...AVATARS.map((a) => removeAsk(a.name)),
   ];
   for (let e = 0; e <= maxEggs; e++) out.push(...coop(e, 0));
   for (let c = 1; c <= levels.length; c++) out.push(...coop(1, c));

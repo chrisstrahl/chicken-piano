@@ -1,10 +1,14 @@
 import { SONGS, LEVELS, PRAISE, COLORS, BEATS, letterOf, nameOf, isBlack, parse, songById, songsForLevel } from './music.js';
-import { coop, openSongsAsk, letsPlay, oopsFind, songDone, lessonDone, noteWords, SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN } from './lines.js';
+import { coop, openSongsAsk, letsPlay, oopsFind, songDone, lessonDone, noteWords, whoPlays, pickChicken, hello, removeAsk, SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN } from './lines.js';
 import { startAudio, playNote, noteDown, noteUp, playSequence, cluck, peck, bawk, silly, say, stopTalking, preloadVoice, startBeat } from './audio.js';
 import { BeatJudge, phrases, SPEEDS, barBeats, peckEvery, MIC_LAG } from './beat.js';
 import { startMic, stopMic, micOn, micSupported, expectNote, micHealth } from './mic.js';
+import { startMidi, midiSupported, midiAllowed } from './midi.js';
 import { drawStaff, focusNote } from './staff.js';
 import { makeKeyboard, LOW, HIGH } from './keyboard.js';
+import { players, AVATARS, MAX_PLAYERS, avatarOf } from './profiles.js';
+import { CHICKEN, lookOf, avatarChicken } from './chicken.js';
+import { startOffline } from './offline.js';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -14,11 +18,10 @@ const pc = (m) => ((m % 12) + 12) % 12;
 const ms = (tokens) => (tokens ? parse(tokens).filter((n) => !n.r).flatMap((n) => n.keys.map((k) => k.m)) : []);
 const range = (tokens) => { const r = ms(tokens); return r.length ? [Math.min(...r), Math.max(...r)] : [LOW, HIGH]; };
 
-/* ---------- progress (per device) ---------- */
-const KEY = 'chicken-piano-v1';
-let progress = { songs: {}, lessons: {}, letters: true, all: false };
-try { progress = { ...progress, ...JSON.parse(localStorage.getItem(KEY) || '{}') }; } catch (e) {}
-const save = () => { try { localStorage.setItem(KEY, JSON.stringify(progress)); } catch (e) {} };
+/* ---------- progress (per player, see profiles.js) ---------- */
+const loadProgress = () => ({ songs: {}, lessons: {}, letters: true, all: false, ...players.progress() });
+let progress = loadProgress();
+const save = () => players.save(progress);
 const totalEggs = () => Object.values(progress.songs).reduce((a, b) => a + b, 0) + Object.keys(progress.lessons).length;
 
 // Progress: any level can be picked. The "current" level is the first one with lessons left, and the map
@@ -32,16 +35,6 @@ const songsOpenIn = (lv) => (progress.all || (progress.open || {})[lv.n] ? Infin
 const songOpen = (s) => songsForLevel(s.level).indexOf(s) < songsOpenIn(LEVELS[s.level - 1]);
 
 /* ---------- chicken mascot ---------- */
-const CHICKEN = `<svg class="chicken" viewBox="0 0 120 125" aria-hidden="true"><g class="ck-all"><g class="ck-body">
-<circle cx="47" cy="29" r="8" fill="#ff4d4d"/><circle cx="60" cy="23" r="9.5" fill="#ff4d4d"/><circle cx="73" cy="29" r="8" fill="#ff4d4d"/>
-<g class="ck-wl"><ellipse cx="22" cy="76" rx="11" ry="19" fill="#fff" stroke="#eadcc6" stroke-width="2.5"/></g>
-<g class="ck-wr"><ellipse cx="98" cy="76" rx="11" ry="19" fill="#fff" stroke="#eadcc6" stroke-width="2.5"/></g>
-<ellipse cx="60" cy="71" rx="40" ry="40" fill="#fff" stroke="#eadcc6" stroke-width="2.5"/>
-<g class="ck-eyes"><circle cx="46" cy="58" r="6.5" fill="#2b1d0e"/><circle cx="74" cy="58" r="6.5" fill="#2b1d0e"/><circle cx="48.5" cy="55.5" r="2.2" fill="#fff"/><circle cx="76.5" cy="55.5" r="2.2" fill="#fff"/></g>
-<circle cx="35" cy="72" r="6" fill="#ffb3c1" opacity=".8"/><circle cx="85" cy="72" r="6" fill="#ffb3c1" opacity=".8"/>
-<path d="M51 66 L69 66 L60 79 Z" fill="#ffa31a" stroke="#e08600" stroke-width="2" stroke-linejoin="round"/>
-<ellipse cx="60" cy="85" rx="4" ry="6" fill="#ff4d4d"/></g>
-<g stroke="#ffa31a" stroke-width="4" stroke-linecap="round" fill="none"><path d="M48 109v10M48 119l-6 3M48 119l6 3M72 109v10M72 119l-6 3M72 119l6 3"/></g></g></svg>`;
 $$('[data-chicken]').forEach((el) => { el.outerHTML = CHICKEN.replace('class="chicken"', `class="chicken"${el.id ? ` id="${el.id}"` : ''}`); });
 function act(chicken, cls, ms = 700) {
   if (!chicken) return;
@@ -100,7 +93,7 @@ function show(id) {
   onNote = null;
   onRelease = null;
   expectNote(null);
-  ({ home: renderHome, songs: renderSongs, map: renderMap, level: renderLevel, free: openFree })[id]?.();
+  ({ home: renderHome, who: renderWho, songs: renderSongs, map: renderMap, level: renderLevel, free: openFree })[id]?.();
 }
 document.addEventListener('click', (e) => {
   const b = e.target.closest('[data-go]');
@@ -113,7 +106,10 @@ function keyUp(m) {
   noteUp(m);
   onRelease && onRelease(m);
 }
-function noteIn(m, source) {
+// source: 'tap' (screen or computer keys), 'mic', or 'midi' (a USB keyboard, which makes its own sound).
+// vel: 0..1, only known for MIDI.
+function noteIn(m, source, vel) {
+  if (source === 'mic' && midiNames.length) return; // a plugged-in keyboard is exact; don't let the mic second-guess it
   if (source === 'tap') noteDown(m);
   const hd = $('#mic .heard');
   if (source === 'mic') heardCount++;
@@ -162,6 +158,56 @@ micBtn.addEventListener('click', async () => {
   }
 });
 
+/* ---------- USB keyboard (Web MIDI) ---------- */
+// The 🎹 button only appears where the browser can talk to a keyboard (not iPad/iPhone Safari).
+// First time: tap it to allow MIDI. After that it connects by itself whenever a keyboard is plugged in.
+const midiBtn = $('#midi');
+let midiNames = [];
+let midiStarted = false;
+let midiCount = 0;
+async function connectMidi(asked) {
+  if (midiStarted) return;
+  try {
+    await startMidi({
+      onDown: (m, vel) => { midiCount++; [playKb, lessonKb, freeKb].forEach((kb) => kb.flash(m, 'down', 180)); noteIn(m, 'midi', vel); },
+      onUp: (m) => keyUp(m),
+      onChange: (names) => {
+        const was = midiNames.length;
+        midiNames = names;
+        midiBtn.classList.toggle('on', !!names.length);
+        document.body.classList.toggle('midi', !!names.length);
+        if (names.length && !was) cluck(2);
+        else if (!names.length && was && micOn()) toast('🎤 Keyboard unplugged. Clucky is listening with the microphone again.', 4000);
+      },
+    });
+    midiStarted = true;
+    if (asked && !midiNames.length) toast('🔌🎹 Plug the piano in with a USB cable!', 5000);
+  } catch (e) {
+    console.warn(e);
+    if (asked) toast('🎹 The browser said no. Allow MIDI in the site settings, then tap 🎹 again.', 6000);
+  }
+}
+if (midiSupported()) {
+  midiBtn.classList.add('can');
+  midiAllowed().then((ok) => ok && connectMidi(false));
+}
+// Grown-ups: hold 🎹 for 1.5s to see which keyboard is connected.
+{
+  let t = null, held = false;
+  midiBtn.addEventListener('pointerdown', () => {
+    held = false;
+    t = setTimeout(() => { held = true; toast(`🎹 ${midiStarted ? 'allowed' : 'not allowed yet'} · ${midiNames.join(', ') || 'no keyboard'} · notes ${midiCount}`, 8000); }, 1500);
+  });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) => midiBtn.addEventListener(ev, () => clearTimeout(t)));
+  midiBtn.addEventListener('click', () => {
+    if (held) return;
+    startAudio();
+    if (!midiStarted) connectMidi(true);
+    else if (!midiNames.length) toast('🔌🎹 Plug the piano in with a USB cable!', 5000);
+    else cluck(1);
+  });
+}
+
 /* ---------- HOME ---------- */
 function renderHome() {
   $('#homeLevel').textContent = currentLevel();
@@ -185,8 +231,88 @@ $('#start').addEventListener('pointerdown', async () => {
   $('#start').classList.add('hatch');
   silly();
   setTimeout(() => $('#start').remove(), 700);
+  // two or more kids share the tablet: ask who is playing first
+  if (players.list().length > 1) { show('who'); setTimeout(() => current === 'who' && say(whoPlays), 900); return; }
   setTimeout(() => act($('#home .chicken'), 'happy', 900), 500);
 }, { once: true });
+
+/* ---------- PLAYERS: who is playing? ---------- */
+// Each kid has their own chicken (and eggs, chicks, open songs). Every chicken in the app wears the player's colors.
+function lookLikePlayer() {
+  const p = players.current();
+  lookOf(p).split(';').forEach((d) => { const [k, v] = d.split(':'); document.documentElement.style.setProperty(k, v); });
+  $('#btnWho').innerHTML = `${avatarChicken(p.avatar)}<span class="nm">${p.name}</span>`;
+}
+function usePlayer(id) {
+  players.use(id);
+  progress = loadProgress();
+  window.__cp.progress = progress;
+  lookLikePlayer();
+}
+$('#btnWho').addEventListener('click', () => { show('who'); say(whoPlays); });
+function renderWho() {
+  const cur = players.current().id;
+  $('#players').innerHTML = players.list().map((p) => `<div class="player${p.id === cur ? ' cur' : ''}">
+    <button class="pick" data-player="${p.id}">${avatarChicken(p.avatar)}<span class="nm">${p.name}</span></button>
+    <button class="btn round edit" data-edit="${p.id}" aria-label="Change">✏️</button></div>`).join('')
+    + (players.list().length < MAX_PLAYERS ? '<div class="player"><button class="pick add" data-edit="new" aria-label="New player"><span class="plus">➕</span></button></div>' : '');
+}
+function startAs(id) {
+  usePlayer(id);
+  show('home');
+  act($('#home .chicken'), 'happy', 900);
+  cluck(2);
+  say(hello(players.current().name));
+}
+$('#players').addEventListener('click', (e) => {
+  const ed = e.target.closest('[data-edit]');
+  if (ed) return openEditor(ed.dataset.edit === 'new' ? null : ed.dataset.edit);
+  const b = e.target.closest('[data-player]');
+  if (b) startAs(b.dataset.player);
+});
+// New player, or change a player's chicken and name. Typing a name is optional: the chicken's own name is used.
+const ED = { id: null, avatar: null };
+function openEditor(id) {
+  const p = players.list().find((x) => x.id === id);
+  const used = players.list().map((x) => x.avatar);
+  ED.id = p ? p.id : null;
+  ED.avatar = p ? p.avatar : (AVATARS.find((a) => !used.includes(a.id)) || AVATARS[0]).id;
+  $('#edName').value = p && p.name !== avatarOf(p).name ? p.name : '';
+  $('#edDel').style.display = p && players.list().length > 1 ? '' : 'none';
+  paintEditor();
+  $('#editor').classList.add('show');
+  say(pickChicken);
+}
+function paintEditor() {
+  $('#edAvatars').innerHTML = AVATARS.map((a) => `<button class="avbtn${a.id === ED.avatar ? ' on' : ''}" data-av="${a.id}" aria-label="${a.name}">${avatarChicken(a.id)}</button>`).join('');
+  $('#edName').placeholder = avatarOf(ED).name;
+}
+const closeEditor = () => { $('#editor').classList.remove('show'); $('#edName').blur(); stopTalking(); };
+$('#edAvatars').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-av]');
+  if (!b) return;
+  ED.avatar = b.dataset.av;
+  paintEditor();
+  cluck(1);
+  act($(`#edAvatars [data-av="${ED.avatar}"] .chicken`), 'happy');
+});
+$('#edNo').addEventListener('click', closeEditor);
+$('#edYes').addEventListener('click', () => {
+  closeEditor();
+  if (!ED.id) { const p = players.add(ED.avatar, $('#edName').value); if (p) startAs(p.id); return; }
+  players.update(ED.id, ED.avatar, $('#edName').value);
+  if (ED.id === players.current().id) lookLikePlayer();
+  renderWho();
+});
+$('#edDel').addEventListener('click', () => {
+  const p = players.list().find((x) => x.id === ED.id);
+  closeEditor();
+  ask(`🗑️ ${avatarChicken(p.avatar, 'mini')} ${p.name}`, removeAsk(p.name), () => {
+    players.remove(p.id);
+    usePlayer(players.current().id);
+    renderWho();
+  });
+});
 
 // Fade the bottom of a scrolling list while there's more below.
 function moreHint(el) {
@@ -1067,8 +1193,8 @@ function openFree() {
     const n = noteOf(m);
     F.notes.push(n);
     if (F.notes.length > 8) F.notes.shift();
-    // tapped keys start as quarter notes and get their real length when the finger lifts
-    if (source === 'tap') F.down[m] = { n, t: performance.now() };
+    // tapped (or USB keyboard) keys start as quarter notes and get their real length when the finger lifts
+    if (source !== 'mic') F.down[m] = { n, t: performance.now() };
     drawFree();
     bubble($('#freeBubble'), bigLetter(m));
     freeKb.flash(m, 'hl', 600);
@@ -1085,15 +1211,19 @@ function openFree() {
 
 /* ---------- computer keyboard (for grown-ups testing on a laptop) ---------- */
 const KEYMAP = { a: 60, w: 61, s: 62, e: 63, d: 64, f: 65, t: 66, g: 67, y: 68, h: 69, u: 70, j: 71, k: 72, o: 73, l: 74, p: 75, ';': 76 };
+const typing = (e) => e.target && e.target.tagName === 'INPUT';
 document.addEventListener('keydown', (e) => {
-  if (e.repeat || e.metaKey || e.ctrlKey) return;
+  if (e.repeat || e.metaKey || e.ctrlKey || typing(e)) return;
   const m = KEYMAP[e.key.toLowerCase()];
   if (m) { startAudio(); [playKb, lessonKb, freeKb].forEach((kb) => kb.flash(m, 'down', 180)); noteIn(m, 'tap'); }
 });
-document.addEventListener('keyup', (e) => { const m = KEYMAP[e.key.toLowerCase()]; if (m) keyUp(m); });
+document.addEventListener('keyup', (e) => { if (typing(e)) return; const m = KEYMAP[e.key.toLowerCase()]; if (m) keyUp(m); });
 
-renderHome();
-window.__cp = { say, show, openSong, openLesson, noteIn, jumpTo, P, L, progress, LEVELS, SONGS, startBeatMode, startEcho };
+window.__cp = { players, usePlayer, say, show, openSong, openLesson, noteIn, jumpTo, P, L, progress, LEVELS, SONGS, startBeatMode, startEcho };
 window.__cpMs = ms;
 window.__cpHeard = () => heardCount;
 window.__cpFree = () => F.notes;
+window.__cpMidi = () => ({ names: midiNames, started: midiStarted, count: midiCount });
+lookLikePlayer();
+renderHome();
+startOffline();
