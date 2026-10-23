@@ -43,7 +43,7 @@ export function drawStaff(card, notes, opts = {}) {
   if (!scroll) svg.setAttribute('preserveAspectRatio', pack ? 'xMinYMid meet' : 'xMidYMid meet');
 
   // highlight box lives behind everything
-  const cur = svgEl('rect', { class: 'cur', x: -100, y: 4, width: 44, height: H - 8, rx: 14 }, svg);
+  const cur = svgEl('rect', { class: 'cur', x: -10000, y: 4, width: 44, height: H - 8, rx: 14 }, svg);
 
   const stave = new Stave(4, 0, width - 10);
   stave.addClef(clef);
@@ -136,13 +136,18 @@ export function drawStaff(card, notes, opts = {}) {
       });
     }
   }
+  // nothing under the staff (note-reading quizzes): crop to the staff so the note is drawn big
+  if (!scroll && !letters && !lyrics) {
+    const y0 = stave.getYForLine(0) - 36;
+    svg.setAttribute('viewBox', `0 ${y0} ${width} ${stave.getYForLine(4) + 36 - y0}`);
+  }
   return { xs, noteEls, letterEls, lyricEls, width, svg, cur };
 }
 
 // Move the highlight to note i and scroll so it sits about 30% from the left.
 export function focusNote(card, drawn, i) {
   const x = drawn.xs[i];
-  if (x === undefined) { drawn.cur.setAttribute('x', -100); return; }
+  if (x === undefined) { drawn.cur.setAttribute('x', -10000); return; }
   drawn.cur.setAttribute('x', x - 22);
   const strip = card.querySelector('.strip');
   const scale = card.clientHeight / H;
