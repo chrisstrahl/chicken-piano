@@ -7,7 +7,11 @@ It listens through the microphone, shows which key to press, and shows the real 
   3/4 time, eighth notes, sharps and flats, bass clef, scales and chords
 - 50 songs with chicken lyrics, 5 per level; each finished lesson opens more of its level's songs
 - Tap any note in the music to jump back to it
-- Free play: see the name and staff position of anything you play
+- 🥁 Play with the beat: the chicken pecks a metronome (one bar to count in), the song moves along in time,
+  and every note is scored for the right key at the right moment
+- 🦜 Echo: the chicken plays a phrase (a bar or two), you play it back by ear, then the next phrase
+- 🐇 🐢 🐌 Speed: full, three-quarter or half speed for Listen, play-with-the-beat and echo
+- Free play: see the name and staff position of anything you play, with an optional 🥁 metronome
 - Eggs for finished songs and lessons; every 3 eggs hatch a chick
 
 Built with [Tone.js](https://tonejs.github.io/) (sound), [Pitchy](https://github.com/ianprime0509/pitchy) (pitch detection),
@@ -55,4 +59,13 @@ mkdir -p /tmp/pcm && for f in node_modules/tonejs-instrument-piano-mp3/*.mp3; do
   ffmpeg -loglevel error -y -i $f -t 2 -ac 1 -ar 48000 -f f32le /tmp/pcm/$(basename $f .mp3).f32; done
 EXPECT=0 GAIN=0.05 NOISE=0.004 HPF=250 REVERB=0.6 node test/octaves.mjs /tmp/pcm
 OVERLAP=0.25 node test/sequence.mjs /tmp/pcm
+node test/metronome.mjs /tmp/pcm   # the metronome's peck must not change what is heard
 ```
+
+The metronome tick is a "peck": a 30 ms burst of hiss above 5 kHz (`src/beat.js`), well above every piano note
+the songs use. The app tells the listener when each peck plays; while one is in the listener's window it ignores
+loudness jumps and the hiss and only looks for a key strike below 2.5 kHz, so keys played on the beat still count.
+`test/metronome.mjs` plays the test tunes on the beat with a peck on every beat (as loud as the piano and 3x
+louder, 0–100 ms speaker delay) and checks the listener hears exactly the same notes as without it.
+
+`test/practice.cjs` plays through play-with-the-beat, echo and the speed button in a headless browser.

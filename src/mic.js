@@ -4,18 +4,21 @@
 // Turning the ears "off" only pauses listening. The microphone stream stays open, because closing and
 // reopening it on iPad/iPhone Safari can leave the new stream silent.
 import { NoteListener } from './listener.js';
-import { Tone, onBusy } from './audio.js';
+import { Tone, onBusy, onPeck } from './audio.js';
+import { peckMask } from './beat.js';
 
 const SIZE = 4096;
 const state = {
   open: false, listening: false, opening: null, stream: null, source: null, analyser: null, listener: null, timer: null,
-  ignoreUntil: 0, expectPc: null, onNote: null, onLevel: null,
+  ignoreUntil: 0, expectPc: null, onNote: null, onLevel: null, pecks: [],
 };
 
 onBusy((ms, exact) => {
   const t = performance.now() + ms;
   state.ignoreUntil = exact ? t : Math.max(state.ignoreUntil, t);
 });
+// Metronome pecks: the listener keeps listening (keys are played on the beat!) but knows the hiss is ours.
+onPeck((t) => { state.pecks.push(t); if (state.pecks.length > 16) state.pecks.shift(); });
 
 export const micSupported = () => !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
 export const micOn = () => state.listening;
@@ -116,7 +119,7 @@ function tick() {
   if (!state.open) { watchdog(now, null); return; }
   const buf = state.analyser.getValue();
   watchdog(now, buf);
-  const r = state.listener.process(buf, Tone.getContext().sampleRate, now, now < state.ignoreUntil, state.expectPc);
+  const r = state.listener.process(buf, Tone.getContext().sampleRate, now, now < state.ignoreUntil, state.expectPc, peckMask(state.pecks, now));
   // meter: how far above the room's noise, on a log scale (30x above noise = full), so a quiet but usable
   // signal still reads mid-meter. lastLoud lets the app say "come closer" if nothing is ever loud enough.
   const over = r.rms / Math.max(state.listener.noise, 1e-6);

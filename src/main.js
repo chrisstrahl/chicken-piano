@@ -1,6 +1,7 @@
 import { SONGS, LEVELS, PRAISE, COLORS, BEATS, letterOf, nameOf, isBlack, parse, songById, songsForLevel } from './music.js';
-import { coop, openSongsAsk, letsPlay, oopsFind, songDone, lessonDone, noteWords } from './lines.js';
-import { startAudio, playNote, noteDown, noteUp, playSequence, cluck, peck, bawk, silly, say, stopTalking, preloadVoice } from './audio.js';
+import { coop, openSongsAsk, letsPlay, oopsFind, songDone, lessonDone, noteWords, SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN } from './lines.js';
+import { startAudio, playNote, noteDown, noteUp, playSequence, cluck, peck, bawk, silly, say, stopTalking, preloadVoice, startBeat } from './audio.js';
+import { BeatJudge, phrases, SPEEDS, barBeats, peckEvery, MIC_LAG } from './beat.js';
 import { startMic, stopMic, micOn, micSupported, expectNote, micHealth } from './mic.js';
 import { drawStaff, focusNote } from './staff.js';
 import { makeKeyboard, LOW, HIGH } from './keyboard.js';
@@ -295,7 +296,8 @@ $('#songCards').addEventListener('click', songTap);
 
 /* ---------- PLAY A SONG ---------- */
 const playKb = makeKeyboard($('#playKb'), (m) => noteIn(m, 'tap'), keyUp);
-const P = { song: null, i: 0, mistakes: 0, missed: false, wrongRow: 0, drawn: null, stopDemo: null, back: 'songs' };
+const P = { song: null, i: 0, mistakes: 0, missed: false, wrongRow: 0, drawn: null, stopDemo: null, back: 'songs',
+  mode: null, tok: null, beat: null, loop: null, judge: null, stopEcho: null, phrases: [], ph: 0, turn: false, echoWrong: 0 };
 const playCard = $('#playStaff');
 const playChicken = () => $('#playChicken');
 const notesP = () => P.song.notes;
@@ -325,11 +327,13 @@ function openSong(id, back = 'songs') {
   });
   restartSong(true);
   onNote = playInput;
-  leaveHooks.push(stopDemo);
+  leaveHooks.push(stopDemo, stopMode);
+  setSpeedBtn();
   if (!micOn()) micBtn.classList.add('nudge'), setTimeout(() => micBtn.classList.remove('nudge'), 3200);
 }
 function restartSong(first) {
   stopDemo();
+  stopMode();
   P.i = 0; P.mistakes = 0; P.missed = false; P.wrongRow = 0;
   markUpTo(0);
   setLetters();
@@ -365,7 +369,7 @@ function setCurrent(rest = false) {
 }
 // Tap a note in the music to go back (or ahead) to it.
 function jumpTo(i) {
-  if (current !== 'play') return;
+  if (current !== 'play' || P.mode) return;
   stopDemo();
   P.i = i;
   P.missed = false; P.wrongRow = 0;
@@ -375,7 +379,9 @@ function jumpTo(i) {
   const n = notesP()[P.i];
   if (n) { playNote(n.keys.map((k) => k.m), 0.7); act(playChicken(), 'peck', 300); }
 }
-function playInput(m) {
+function playInput(m, source) {
+  if (P.mode === 'beat') return beatInput(m, source);
+  if (P.mode === 'echo') return echoInput(m);
   if (P.stopDemo) return;
   const n = notesP()[P.i];
   if (!n) return;
@@ -400,16 +406,17 @@ function playInput(m) {
     if (P.wrongRow === 2) say(oopsFind(n.label));
   }
 }
-function finishSong() {
+function finishSong(eggs = P.mistakes === 0 ? 3 : P.mistakes <= 3 ? 2 : 1) {
+  const mode = P.mode;
+  stopMode();
   playKb.setTarget(null);
   $('#playProg').style.width = '100%';
-  const eggs = P.mistakes === 0 ? 3 : P.mistakes <= 3 ? 2 : 1;
   progress.songs[P.song.id] = Math.max(progress.songs[P.song.id] || 0, eggs);
   save();
   const list = songsForLevel(P.song.level);
   const nxt = list[list.indexOf(P.song) + 1];
   party(eggs, {
-    again: () => openSong(P.song.id, P.back),
+    again: () => { openSong(P.song.id, P.back); if (mode === 'beat') startBeatMode(); if (mode === 'echo') startEcho(); },
     next: () => (nxt && songOpen(nxt) ? openSong(nxt.id, P.back) : show('level')),
     words: songDone(eggs),
   });
@@ -423,13 +430,14 @@ function stopDemo() {
 // Listen plays the song from where you are (or from the start once it's finished).
 $('#btnListen').addEventListener('click', () => {
   if (P.stopDemo) { stopDemo(); setCurrent(); return; }
+  if (P.mode) { stopMode(); markUpTo(P.i); setCurrent(); }
   stopTalking();
   $('#btnListen').textContent = '⏹️';
   playChicken().classList.add('dance');
   playKb.setTarget(null);
   const from = P.i < notesP().length ? P.i : 0;
   const part = notesP().slice(from);
-  P.stopDemo = playSequence(part, P.song.tempo, (j) => {
+  P.stopDemo = playSequence(part, P.song.tempo * speed(), (j) => {
     const n = part[j];
     focusNote(playCard, P.drawn, from + j);
     if (n.r) { bubble($('#playBubble'), '🤫'); return; }
@@ -437,7 +445,227 @@ $('#btnListen').addEventListener('click', () => {
     bubble($('#playBubble'), `🎵 ${bigLetter(n.m, n.label)}`);
   }, () => { P.stopDemo = null; stopDemo(); setCurrent(); });
 });
-$('#btnRestart').addEventListener('click', () => restartSong(false));
+$('#btnRestart').addEventListener('click', () => {
+  if (P.mode === 'beat') return startBeatMode();
+  if (P.mode === 'echo') return startEcho();
+  restartSong(false);
+});
+
+/* ---------- SPEED: snail, turtle, bunny ---------- */
+// Slows down Listen, play-with-the-beat and echo. Remembered on this device.
+const speed = () => (SPEEDS.includes(progress.speed) ? progress.speed : 1);
+const SPEED_ICON = ['🐌', '🐢', '🐇'];
+function setSpeedBtn() { $('#btnSpeed').textContent = SPEED_ICON[SPEEDS.indexOf(speed())]; }
+$('#btnSpeed').addEventListener('click', () => {
+  const k = (SPEEDS.indexOf(speed()) + SPEEDS.length - 1) % SPEEDS.length; // bunny → turtle → snail → bunny
+  progress.speed = SPEEDS[k];
+  save();
+  setSpeedBtn();
+  act(playChicken(), 'happy');
+  // a running play-along starts over at the new speed; echo uses it from the next phrase
+  if (P.mode === 'beat') return startBeatMode();
+  if (!(P.mode === 'echo' && P.turn)) say(SPEED_WORDS[k]);
+});
+
+// Leaves play-with-the-beat or echo and goes back to plain "find the next note" playing.
+function stopMode() {
+  P.tok = null;
+  if (P.beat) { P.beat.stop(); P.beat = null; }
+  clearInterval(P.loop);
+  P.loop = null;
+  if (P.stopEcho) { P.stopEcho(); P.stopEcho = null; }
+  P.mode = null; P.judge = null; P.turn = false;
+  $('#btnBeat').classList.remove('on');
+  $('#btnEcho').classList.remove('on');
+  playChicken()?.classList.remove('dance');
+  const d = P.drawn;
+  if (d) [d.noteEls, d.letterEls, d.lyricEls].forEach((list) => list.forEach((e) => e && e.classList.remove('miss', 'later')));
+}
+// start one of the modes from the top of the song; returns a token that goes stale when the mode stops
+function startMode(mode) {
+  stopTalking();
+  restartSong(false);
+  P.mode = mode;
+  P.tok = {};
+  $(mode === 'beat' ? '#btnBeat' : '#btnEcho').classList.add('on');
+  playKb.setTarget(null);
+  expectNote(null);
+  return P.tok;
+}
+
+/* ---------- PLAY WITH THE BEAT ---------- */
+// The chicken pecks the beat (one bar to count in), the song moves along in time, and each note is
+// scored for the right key at the right moment. Eggs come from how many notes were on the beat.
+function startBeatMode() {
+  const tok = startMode('beat');
+  const s = P.song;
+  const bpm = s.tempo * speed(), beatMs = 60000 / bpm;
+  const per = barBeats(s.time), every = peckEvery(s.time);
+  const lead = per - (s.pickup || 0); // beats from the first peck to the first note
+  bubble($('#playBubble'), '🥁 👂');
+  say(BEAT_START, () => {
+    if (tok !== P.tok) return;
+    P.beat = startBeat({
+      bpm, every,
+      accent: (k) => (k * every) % per === 0,
+      onBeat: (k) => {
+        if (tok !== P.tok) return;
+        act(playChicken(), 'peck', Math.min(280, beatMs * every * 0.6));
+        const b = k * every;
+        if (b < lead - 1e-6) {
+          const n = Math.ceil(lead / every);
+          bubble($('#playBubble'), `<span class="count">${Array.from({ length: n }, (_, j) => `<i class="${j === k ? 'on' : ''}">${j + 1}</i>`).join('')}</span>`);
+        }
+      },
+    });
+    P.judge = new BeatJudge(notesP(), beatMs, P.beat.t0 + lead * beatMs);
+    P.shown = -1;
+    P.loop = setInterval(beatLoop, 40);
+  });
+}
+const GRADE = { good: '🎯', early: '👍', late: '👍' };
+function paintJudge() {
+  const j = P.judge;
+  j.items.forEach((it) => {
+    if (it.result === 'miss') { markDone(it.i); P.drawn.noteEls[it.i]?.classList.add('miss'); }
+  });
+}
+function beatLoop() {
+  const j = P.judge;
+  if (!j) return;
+  const now = performance.now();
+  if (j.tick(now).length) paintJudge();
+  if (j.done) return finishSong(j.eggs());
+  const k = j.current(now);
+  if (k === null || k === P.shown) return;
+  // show the next note a moment before it's due
+  const it = j.items[k];
+  if (it.t - now > Math.max(600, j.beatMs)) return;
+  P.shown = k;
+  P.i = it.i;
+  const n = notesP()[it.i];
+  focusNote(playCard, P.drawn, it.i);
+  playKb.setTarget(n.m);
+  expectNote(n.m);
+  $('#playProg').style.width = (it.i / notesP().length) * 100 + '%';
+  bubble($('#playBubble'), `${P.grade ? `<span class="grade">${P.grade}</span> ` : ''}👉 ${bigLetter(n.m, n.label)}`);
+  P.grade = '';
+}
+function beatInput(m, source) {
+  const j = P.judge;
+  if (!j) return; // still counting in
+  const r = j.input(m, performance.now() - (source === 'mic' ? MIC_LAG : 0));
+  if (!r) return;
+  if (r.grade === 'wrong') { playKb.flash(m, 'bad', 400); act(playChicken(), 'oops'); return; }
+  const i = j.items[r.k].i;
+  markDone(i);
+  paintJudge();
+  playKb.flash(notesP()[i].m, 'good', 300);
+  P.grade = GRADE[r.grade];
+  if (r.grade === 'good') act(playChicken(), 'happy', 400);
+  if (j.done) setTimeout(() => P.judge === j && finishSong(j.eggs()), 400);
+}
+$('#btnBeat').addEventListener('click', () => {
+  if (P.mode === 'beat') { stopMode(); restartSong(false); return; }
+  stopDemo();
+  startBeatMode();
+});
+
+/* ---------- ECHO: the chicken plays a bit, you play it back ---------- */
+function startEcho() {
+  const tok = startMode('echo');
+  P.phrases = phrases(notesP(), P.song);
+  P.ph = 0;
+  bubble($('#playBubble'), '🦜 👂');
+  say(ECHO_START, () => tok === P.tok && echoPlay());
+}
+function echoPlay() {
+  const tok = P.tok;
+  const [a, b] = P.phrases[P.ph];
+  const d = P.drawn;
+  P.turn = false;
+  P.echoWrong = 0;
+  P.missed = false;
+  markUpTo(a);
+  [d.noteEls, d.letterEls, d.lyricEls].forEach((list) => list.forEach((e, j) => e && e.classList.toggle('later', j >= b)));
+  playKb.setTarget(null);
+  expectNote(null);
+  $('#playProg').style.width = (a / notesP().length) * 100 + '%';
+  playChicken().classList.add('dance');
+  bubble($('#playBubble'), '🐔 🎵');
+  const part = notesP().slice(a, b);
+  P.stopEcho = playSequence(part, P.song.tempo * speed(), (j) => {
+    focusNote(playCard, P.drawn, a + j);
+    part[j].r || part[j].keys.forEach((k) => playKb.flash(k.m, 'hl', 350));
+  }, () => {
+    P.stopEcho = null;
+    if (tok !== P.tok) return;
+    playChicken().classList.remove('dance');
+    P.i = a;
+    settle();
+    P.turn = true;
+    focusNote(playCard, P.drawn, P.i);
+    expectNote(notesP()[P.i].m);
+    act(playChicken(), 'happy');
+    bubble($('#playBubble'), '🐣 👉 🎹');
+  });
+}
+function echoInput(m) {
+  if (!P.turn) return;
+  const [, b] = P.phrases[P.ph];
+  const n = notesP()[P.i];
+  if (matches(n, m)) {
+    markDone(P.i);
+    playKb.flash(n.m, 'good', 300);
+    act(playChicken(), 'peck', 300);
+    P.i++; P.missed = false;
+    settle();
+    if (P.i >= b) return echoPhraseDone();
+    const x = notesP()[P.i];
+    focusNote(playCard, P.drawn, P.i);
+    expectNote(x.m);
+    // after a slip, the glowing key shows the way; otherwise it's all by ear
+    playKb.setTarget(P.echoWrong ? x.m : null);
+    if (P.echoWrong) bubble($('#playBubble'), `👉 ${bigLetter(x.m, x.label)}`);
+  } else {
+    if (!P.missed) P.mistakes++;
+    P.missed = true;
+    P.echoWrong++;
+    playKb.flash(m, 'bad', 500);
+    act(playChicken(), 'oops');
+    playCard.classList.remove('shake'); void playCard.offsetWidth; playCard.classList.add('shake');
+    if (P.echoWrong >= 3) {
+      // hear it again from the top of the phrase
+      P.turn = false;
+      const tok = P.tok;
+      bubble($('#playBubble'), '🔁 👂');
+      say(ECHO_AGAIN, () => tok === P.tok && echoPlay());
+      return;
+    }
+    playKb.setTarget(n.m);
+    bubble($('#playBubble'), `${bigLetter(m)} 🙈 👉 ${bigLetter(n.m, n.label)}`);
+  }
+}
+function echoPhraseDone() {
+  const tok = P.tok;
+  P.turn = false;
+  playKb.setTarget(null);
+  expectNote(null);
+  act(playChicken(), 'happy');
+  cluck(2);
+  bubble($('#playBubble'), `✅ ${pick(PRAISE)}`);
+  setTimeout(() => {
+    if (tok !== P.tok) return;
+    P.ph++;
+    if (P.ph >= P.phrases.length) finishSong();
+    else echoPlay();
+  }, 1200);
+}
+$('#btnEcho').addEventListener('click', () => {
+  if (P.mode === 'echo') { stopMode(); restartSong(false); return; }
+  stopDemo();
+  startEcho();
+});
 window.addEventListener('resize', () => { if (current === 'play' && P.drawn) focusNote(playCard, P.drawn, P.i); });
 
 /* ---------- yes / no question ---------- */
@@ -821,7 +1049,16 @@ function drawFree() {
   drawStaff($('#freeStaff'), F.notes, { minWidth: FREE_W, clef: low ? 'bass' : 'treble', pack: true });
 }
 const FREE_W = 560; // room for 8 notes, so the staff stays the same size as it fills
+// Free play metronome: pecks at free play's own 90 beats a minute, so held notes come out the right length.
+let freeBeat = null;
+function stopFreeBeat() { if (freeBeat) freeBeat.stop(); freeBeat = null; $('#btnFreeBeat').classList.remove('on'); }
+$('#btnFreeBeat').addEventListener('click', () => {
+  if (freeBeat) return stopFreeBeat();
+  $('#btnFreeBeat').classList.add('on');
+  freeBeat = startBeat({ bpm: 90, onBeat: () => act($('#freeChicken'), 'peck', 250) });
+});
 function openFree() {
+  leaveHooks.push(stopFreeBeat);
   F.notes = [];
   drawStaff($('#freeStaff'), [], { minWidth: FREE_W, pack: true });
   bubble($('#freeBubble'), '🎹 🎤 ❓');
@@ -856,7 +1093,7 @@ document.addEventListener('keydown', (e) => {
 document.addEventListener('keyup', (e) => { const m = KEYMAP[e.key.toLowerCase()]; if (m) keyUp(m); });
 
 renderHome();
-window.__cp = { say, show, openSong, openLesson, noteIn, jumpTo, P, L, progress, LEVELS, SONGS };
+window.__cp = { say, show, openSong, openLesson, noteIn, jumpTo, P, L, progress, LEVELS, SONGS, startBeatMode, startEcho };
 window.__cpMs = ms;
 window.__cpHeard = () => heardCount;
 window.__cpFree = () => F.notes;

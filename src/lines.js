@@ -17,6 +17,12 @@ export const coop = (eggs, chicks) => [
   ...(chicks ? [chicks === 1 ? 'And one baby chick.' : `And ${chicks} baby chicks.`] : []),
   'Win eggs in lessons and songs. Finish a level to hatch a baby chick!',
 ];
+// Speed button: snail, turtle, bunny (src/beat.js SPEEDS)
+export const SPEED_WORDS = ['Snail speed. Nice and slow.', 'Turtle speed.', 'Bunny speed!'];
+// Play with the beat, and echo mode
+export const BEAT_START = 'Wait for the pecks, then play with the beat!';
+export const ECHO_START = 'Echo time! Listen to me, then play it back.';
+export const ECHO_AGAIN = 'Listen again!';
 export const LAST_LEVEL = 10;
 export const lessonDone = (newSongs, finishedLevel) => [
   'You did it! You got an egg!',
@@ -37,6 +43,7 @@ export function templatedLines(songs, levels) {
     ...levels.flatMap((lv) => lessonDone([], lv.n).slice(1)),
     lessonDone([], 0)[0],
     ...[1, 2, 3].map(songDone),
+    ...SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN,
   ];
   for (let e = 0; e <= maxEggs; e++) out.push(...coop(e, 0));
   for (let c = 1; c <= levels.length; c++) out.push(...coop(1, c));
