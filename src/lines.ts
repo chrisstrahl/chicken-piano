@@ -2,56 +2,59 @@
 // tools/voice-lines.mjs calls these same functions to list every possible line, so each one gets a
 // pre-recorded clip. A line can be a list of sentences: each is its own clip, played back to back.
 
-import { AVATARS } from './profiles.js';
+import { AVATARS } from './profiles.ts';
+import type { Song, Level } from './types.ts';
 
 const LETTERS = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
-const ACC_WORD = { '': '', '#': ' sharp', 'b': ' flat', '♯': ' sharp', '♭': ' flat' };
+const ACC_WORD: Record<string, string> = { '': '', '#': ' sharp', 'b': ' flat', '♯': ' sharp', '♭': ' flat' };
 
 // "C", "F sharp", "B flat" from a note label like F♯
-export const noteWords = (label) => label[0] + ACC_WORD[label.slice(1)];
+export const noteWords = (label: string): string => label[0] + ACC_WORD[label.slice(1)];
 // The tune a chicken song comes from ("Twinkle Twinkle Little Star"), or null for songs written for the app
-export const originalName = (song) => (song.sub && song.sub !== 'New song' && song.sub !== song.title ? song.sub : null);
-const spokenOriginal = (sub) => sub.replace(/\s*\(.*?\)/g, '');
-export const letsPlay = (song, label) => [
-  `Let's play ${song.title}!`,
-  ...(originalName(song) ? [`That's ${spokenOriginal(originalName(song))}!`] : []),
-  startOn(label),
-];
-export const startOn = (label) => `Start on ${noteWords(label)}.`;
-export const oopsFind = (label) => `Oops! Find ${noteWords(label)}.`;
-export const openSongsAsk = (level) => `Open all the songs in level ${level}?`;
+export const originalName = (song: Pick<Song, 'sub' | 'title'>): string | null => (song.sub && song.sub !== 'New song' && song.sub !== song.title ? song.sub : null);
+const spokenOriginal = (sub: string) => sub.replace(/\s*\(.*?\)/g, '');
+export const letsPlay = (song: Pick<Song, 'sub' | 'title'>, label: string): string[] => {
+  const orig = originalName(song);
+  return [`Let's play ${song.title}!`, ...(orig ? [`That's ${spokenOriginal(orig)}!`] : []), startOn(label)];
+};
+export const startOn = (label: string) => `Start on ${noteWords(label)}.`;
+export const oopsFind = (label: string) => `Oops! Find ${noteWords(label)}.`;
+export const openSongsAsk = (level: number) => `Open all the songs in level ${level}?`;
 export const throwAwayAsk = 'Throw this song away?';
-export const songDone = (eggs) => ['', 'You did it! One egg!', 'You did it! Two eggs!', 'Perfect! Three eggs!'][eggs];
-export const coop = (eggs, chicks) => [
+export const songDone = (eggs: number) => ['', 'You did it! One egg!', 'You did it! Two eggs!', 'Perfect! Three eggs!'][eggs];
+export const coop = (eggs: number, chicks: number): string[] => [
   'This is your chicken coop!',
   eggs === 1 ? 'You have one egg.' : `You have ${eggs} eggs.`,
   ...(chicks ? [chicks === 1 ? 'And one baby chick.' : `And ${chicks} baby chicks.`] : []),
   'Win eggs in lessons and songs. Finish a level to hatch a baby chick!',
 ];
-// Speed button: snail, turtle, bunny (src/beat.js SPEEDS)
+// Speed button: snail, turtle, bunny (src/beat.ts SPEEDS)
 export const SPEED_WORDS = ['Snail speed. Nice and slow.', 'Turtle speed.', 'Bunny speed!'];
 // Play with the beat, and echo mode
 export const BEAT_START = 'Wait for the pecks, then play with the beat!';
 export const ECHO_START = 'Echo time! Listen to me, then play it back.';
 export const ECHO_AGAIN = 'Listen again!';
-// players (profiles.js): a typed name has no recorded clip, so the device voice says those
+// players (profiles.ts): a typed name has no recorded clip, so the device voice says those
 export const whoPlays = 'Who is playing?';
 export const pickChicken = 'Pick your chicken!';
-export const hello = (name) => `Hi, ${name}! Let's play!`;
-export const removeAsk = (name) => `Take ${name} out of the coop? Their eggs go too.`;
+export const hello = (name: string) => `Hi, ${name}! Let's play!`;
+export const removeAsk = (name: string) => `Take ${name} out of the coop? Their eggs go too.`;
 export const LAST_LEVEL = 10;
-export const lessonDone = (newSongs, finishedLevel) => [
+export const lessonDone = (newSongs: string[], finishedLevel: number): string[] => [
   'You did it! You got an egg!',
   ...newSongs.map((t) => `New song: ${t}!`),
   ...(finishedLevel ? [`You finished level ${finishedLevel}! A baby chick hatched! ${finishedLevel < LAST_LEVEL ? `Next is level ${finishedLevel + 1}.` : 'You are a piano champion!'}`] : []),
 ];
 
+// the first key a song asks for
+const firstLabel = (s: Song) => { const n = s.notes.find((x) => !x.r); return n && !n.r ? n.label : 'C'; };
+
 // Every templated sentence the app can say, for the clip recorder.
-export function templatedLines(songs, levels) {
+export function templatedLines(songs: Song[], levels: Level[]): string[] {
   const labels = LETTERS.flatMap((l) => [l, l + '♯', l + '♭']);
   const maxEggs = songs.length * 3 + levels.reduce((a, lv) => a + lv.lessons.length, 0);
   const out = [
-    ...songs.flatMap((s) => letsPlay(s, s.notes.find((n) => !n.r).label)),
+    ...songs.flatMap((s) => letsPlay(s, firstLabel(s))),
     ...labels.map(startOn),
     ...songs.map((s) => `New song: ${s.title}!`),
     ...labels.map(oopsFind),
@@ -73,7 +76,7 @@ export function templatedLines(songs, levels) {
 }
 
 // Short stable id for a sentence: FNV-1a hash of the normalized text. Clips are named by it.
-export function lineId(text) {
+export function lineId(text: string): string {
   const s = String(text).trim().replace(/\s+/g, ' ');
   let h = 0x811c9dc5;
   for (let i = 0; i < s.length; i++) {

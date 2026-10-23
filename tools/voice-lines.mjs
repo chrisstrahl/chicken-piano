@@ -2,7 +2,7 @@
 // Sources: say/hint text in songs and lessons, templated lines in src/lines.js, and literal say('...') calls in src/.
 import fs from 'node:fs';
 import { SONGS, LEVELS } from '../src/music.js';
-import { templatedLines, lineId } from '../src/lines.js';
+import { templatedLines, lineId } from '../src/lines.ts';
 
 const texts = new Set();
 const walk = (o) => {
