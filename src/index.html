@@ -377,6 +377,29 @@ body.midi #mic:not(.on){opacity:.6}
 @keyframes crack{50%{transform:scale(1.25) rotate(8deg)}100%{transform:scale(0) rotate(-30deg)}}
 @keyframes fadeOut{to{opacity:0}}
 .coop{cursor:pointer}
+/* COOP: practice calendar, one egg a day (streaks.ts) */
+#nest .topbar .totals{display:flex;gap:14px;font-weight:700;font-size:clamp(20px,4vh,32px);background:rgba(255,255,255,.8);border-radius:999px;padding:4px 18px}
+.nestbody{flex:1;display:flex;align-items:center;justify-content:center;gap:4vw;padding:2vh 3vw;min-height:0}
+.nestside{display:flex;flex-direction:column;align-items:center;gap:1.5vh}
+.nestside .chicken{height:min(26vh,20vw)}
+.streak{display:flex;align-items:center;gap:6px;font-weight:700;font-size:min(10vh,7vw);line-height:1}
+.streak .fire.off{filter:grayscale(1) opacity(.35)}
+.today{min-height:min(8vh,6vw);display:flex;align-items:center;font-size:min(7vh,5vw)}
+.pips{display:inline-flex;gap:.25em}
+.pips i{width:.55em;height:.7em;border-radius:50% 50% 46% 46% / 58% 58% 42% 42%;background:rgba(0,0,0,.12);display:inline-block}
+.pips i.on{background:#fffaf0;box-shadow:inset 0 -2px 0 #e7d9bd,0 0 0 2px var(--yolk)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:min(1.4vh,1vw);width:min(60vw,92vh)}
+.cal .day{position:relative;aspect-ratio:1;border-radius:22%;background:#e9cf9a;box-shadow:inset 0 -5px 0 #cfae6d;display:flex;align-items:center;justify-content:center;font-size:min(6vh,4vw)}
+.cal .day .dt{position:absolute;top:4%;left:9%;font-size:.32em;font-weight:700;color:rgba(60,35,10,.55)}
+.cal .day .pips{font-size:.6em}
+.cal .day.egg{background:#f4dc9c}
+.cal .day .em{display:inline-block}
+.cal .day.egg .em{animation:eggIn .5s backwards}
+.cal .day.today{outline:4px solid var(--accent);outline-offset:2px}
+.cal .day.future{opacity:.35}
+#party .dayrow{display:flex;align-items:center;gap:14px;font-size:min(6vh,4.5vw);font-weight:700}
+#party .dayrow .fire{display:inline-block}
+#party .dayrow.laid .fire{animation:eggIn .6s 1.2s backwards}
 #toast{position:fixed;left:50%;bottom:4vh;transform:translateX(-50%) translateY(150%);background:#3b2716;color:#fff;padding:12px 20px;border-radius:16px;
   font-size:18px;z-index:99;max-width:min(90vw,560px);text-align:center;transition:transform .3s,opacity .3s;opacity:0;pointer-events:none}
 #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
@@ -434,6 +457,18 @@ body.midi #mic:not(.on){opacity:.6}
   <div class="coop" id="coop"></div>
   <div class="ver">v <!--VERSION--></div>
   <button id="btnWho" aria-label="Who is playing?"></button>
+</section>
+
+<section id="nest" class="screen">
+  <div class="topbar"><button class="btn round" data-go="home" aria-label="Home">🏠</button><h2>🏡</h2><div class="totals" id="nestTotals"></div></div>
+  <div class="nestbody">
+    <div class="nestside">
+      <div data-chicken></div>
+      <div class="streak" id="nestStreak"></div>
+      <div class="today" id="nestToday"></div>
+    </div>
+    <div class="cal" id="nestCal"></div>
+  </div>
 </section>
 
 <section id="who" class="screen">
@@ -566,6 +601,7 @@ body.midi #mic:not(.on){opacity:.6}
   <div class="right">
     <h3 id="partyTitle">BAWK!</h3>
     <div class="eggs" id="partyEggs"></div>
+    <div class="dayrow" id="partyDay"></div>
     <div class="row">
       <button class="btn round" id="partyAgain" aria-label="Again">🔁</button>
       <button class="btn round" id="partyHome" aria-label="Home">🏠</button>

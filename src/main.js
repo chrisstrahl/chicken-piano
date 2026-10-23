@@ -1,5 +1,5 @@
 import { SONGS, LEVELS, PRAISE, COLORS, BEATS, letterOf, nameOf, isBlack, parse, songById, songsForLevel } from './music.js';
-import { coop, openSongsAsk, letsPlay, oopsFind, songDone, lessonDone, noteWords, whoPlays, pickChicken, hello, removeAsk, originalName, SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN } from './lines.js';
+import { coop, openSongsAsk, letsPlay, oopsFind, songDone, lessonDone, noteWords, whoPlays, pickChicken, hello, removeAsk, originalName, dayEgg, dayTalk, SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN } from './lines.js';
 import { startAudio, playNote, noteDown, noteUp, playSequence, cluck, peck, bawk, silly, say, stopTalking, preloadVoice, startBeat } from './audio.js';
 import { BeatJudge, phrases, SPEEDS, barBeats, peckEvery, MIC_LAG } from './beat.js';
 import { startMic, stopMic, micOn, micSupported, expectNote, micHealth } from './mic.js';
@@ -11,6 +11,7 @@ import { players, playerId, AVATARS, MAX_PLAYERS, avatarOf } from './profiles.js
 import { deletePlayerRecordings } from './recorder.js';
 import { CHICKEN, lookOf, avatarChicken } from './chicken.js';
 import { startOffline } from './offline.js';
+import { addWin, streak, todayWins, calendar, DAILY_GOAL } from './streaks.js';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -21,9 +22,11 @@ const ms = (tokens) => (tokens ? parse(tokens).filter((n) => !n.r).flatMap((n) =
 const range = (tokens) => { const r = ms(tokens); return r.length ? [Math.min(...r), Math.max(...r)] : [LOW, HIGH]; };
 
 /* ---------- progress (per player, see profiles.js) ---------- */
-const loadProgress = () => ({ songs: {}, lessons: {}, letters: true, all: false, ...players.progress() });
+const loadProgress = () => ({ songs: {}, lessons: {}, days: {}, letters: true, all: false, ...players.progress() });
 let progress = loadProgress();
 const save = () => players.save(progress);
+// a song or lesson was finished today (see streaks.ts)
+const dayWin = () => { const r = addWin(progress.days); save(); return r; };
 const totalEggs = () => Object.values(progress.songs).reduce((a, b) => a + b, 0) + Object.keys(progress.lessons).length;
 
 // Progress: any level can be picked. The "current" level is the first one with lessons left, and the map
@@ -98,7 +101,7 @@ function show(id) {
   onNote = null;
   onRelease = null;
   expectNote(null);
-  ({ home: renderHome, who: renderWho, songs: renderSongs, map: renderMap, level: renderLevel, free: openFree, ...recs.screens })[id]?.();
+  ({ home: renderHome, who: renderWho, songs: renderSongs, map: renderMap, level: renderLevel, free: openFree, nest: renderNest, ...recs.screens })[id]?.();
 }
 document.addEventListener('click', (e) => {
   const b = e.target.closest('[data-go]');
@@ -220,17 +223,29 @@ function renderHome() {
   $('#homeLevel').textContent = currentLevel();
   const eggs = totalEggs();
   const chicks = LEVELS.filter(levelDone).length;
-  $('#coop').innerHTML = `<span class="lbl">🏡</span><span class="cnt">🥚 ${eggs}</span>${chicks ? `<span class="cnt">${'🐥'.repeat(chicks)}</span>` : ''}`;
+  const days = streak(progress.days);
+  $('#coop').innerHTML = `<span class="lbl">🏡</span><span class="cnt">🥚 ${eggs}</span>${chicks ? `<span class="cnt">${'🐥'.repeat(chicks)}</span>` : ''}${days ? `<span class="cnt">🔥 ${days}</span>` : ''}`;
 }
+$('#coop').addEventListener('click', () => show('nest'));
 
-// The coop: eggs from lessons (1 each) and songs (up to 3 each), plus one chick for every finished level.
-$('#coop').addEventListener('click', () => {
+// The coop: eggs from lessons (1 each) and songs (up to 3 each), one chick for every finished level,
+// and the practice calendar: a day's egg is laid by finishing DAILY_GOAL songs or lessons that day.
+const goalPips = (wins) => Array.from({ length: DAILY_GOAL }, (_, i) => `<i class="${i < wins ? 'on' : ''}"></i>`).join('');
+function renderNest() {
   const eggs = totalEggs();
-  act($('#home .chicken'), 'happy');
-  cluck(2);
   const chicks = LEVELS.filter(levelDone).length;
-  say(coop(eggs, chicks));
-});
+  const days = streak(progress.days);
+  const wins = todayWins(progress.days);
+  const laid = wins >= DAILY_GOAL;
+  $('#nestTotals').innerHTML = `<span>🥚 ${eggs}</span>${chicks ? `<span>${'🐥'.repeat(chicks)}</span>` : ''}`;
+  $('#nestStreak').innerHTML = `<span class="fire${days ? '' : ' off'}">🔥</span><span class="n">${days}</span>`;
+  $('#nestToday').innerHTML = laid ? '<span class="egg">🥚</span>' : `<span class="pips">${goalPips(wins)}</span>`;
+  $('#nestCal').innerHTML = calendar(progress.days).map((row) => row.map((d) => `<div class="day${d.egg ? ' egg' : ''}${d.today ? ' today' : ''}${d.future ? ' future' : ''}">
+    <span class="dt">${d.date}</span>${d.egg ? '<span class="em">🥚</span>' : d.today ? `<span class="pips">${goalPips(d.wins)}</span>` : ''}</div>`).join('')).join('');
+  act($('#nest .chicken'), 'happy');
+  cluck(2);
+  say([...coop(eggs, chicks), ...dayTalk(days, laid, wins)]);
+}
 
 // First tap: browsers only allow sound after a tap, so the egg on the start screen hatches with a silly chicken noise.
 $('#start').addEventListener('pointerdown', async () => {
@@ -661,6 +676,7 @@ function finishSong(eggs = P.mistakes === 0 ? 3 : P.mistakes <= 3 ? 2 : 1) {
     next: () => (nxt && songOpen(nxt) ? openSong(nxt.id, P.back) : show('level')),
     words: songDone(eggs),
     rec,
+    day: dayWin(),
   });
 }
 function stopDemo() {
@@ -961,7 +977,8 @@ function ask(html, words, onYes) {
 /* ---------- CELEBRATION ---------- */
 // eggs won (a lesson gives 1, a song up to 3); chick: a level was just finished
 // rec: a recording that just stopped with the song, to listen to from here
-function party(eggs, { again, next, words, chick = false, rec = null }) {
+// day: today's practice (dayWin()); laying today's egg gets its own cheer
+function party(eggs, { again, next, words, chick = false, rec = null, day = null }) {
   $('#partyEggs').innerHTML = chick ? '<span>🥚</span><span>🐣</span>'
     : '<span>🥚</span>'.repeat(eggs) + '<span style="filter:grayscale(1) opacity(.25)">🥚</span>'.repeat(3 - eggs);
   $('#partyTitle').textContent = eggs === 3 ? 'BAWK-TASTIC!' : 'BAWK!';
@@ -969,6 +986,14 @@ function party(eggs, { again, next, words, chick = false, rec = null }) {
   $('#partyChicken').classList.add('dance');
   bawk();
   confetti();
+  const pd = $('#partyDay');
+  pd.style.display = day ? '' : 'none';
+  if (day) {
+    const n = streak(progress.days);
+    pd.classList.toggle('laid', day.laid);
+    pd.innerHTML = `<span class="pips">${goalPips(day.today)}</span>${day.laid ? `<span class="fire">🔥 ${n}</span>` : ''}`;
+    if (day.laid) { words = [].concat(words, dayEgg(n)); setTimeout(() => confetti(40), 2500); }
+  }
   setTimeout(() => say(words), 1300);
   const close = () => { $('#party').classList.remove('show'); $('#partyChicken').classList.remove('dance'); };
   $('#partyAgain').onclick = () => { close(); again(); };
@@ -1073,6 +1098,7 @@ function finishLesson() {
       show('level');
     },
     words,
+    day: dayWin(),
   });
 }
 function stepDone() {
