@@ -4,7 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Chicken Piano">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#ffd84d">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <title>Chicken Piano</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
@@ -114,6 +120,40 @@ body.midi #mic:not(.on){opacity:.6}
 .coop{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.8);border-radius:999px;padding:6px 18px;font-size:min(4vh,3vw);min-height:44px}
 #home .ver{position:absolute;right:max(12px,env(safe-area-inset-right));bottom:max(6px,env(safe-area-inset-bottom));font-size:11px;color:rgba(0,0,0,.4)}
 .coop .lbl{font-weight:700;margin-right:6px}
+
+/* PLAYERS: who is playing? */
+.av{display:inline-flex;align-items:center;justify-content:center}
+.av .chicken{height:100%;width:auto}
+.av.mini{height:1em;vertical-align:-.12em}
+#btnWho{position:absolute;top:max(10px,env(safe-area-inset-top));left:max(12px,env(safe-area-inset-left));display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.85);border-radius:999px;padding:4px 18px 4px 8px;box-shadow:0 4px 0 rgba(0,0,0,.12);font-weight:700;font-size:clamp(16px,2.4vw,22px);min-height:52px}
+#btnWho .av{height:clamp(40px,7vh,56px)}
+#btnWho:active{transform:translateY(3px)}
+#who{align-items:center;justify-content:center;gap:3vh;background:radial-gradient(ellipse 120% 40% at 50% 112%,var(--grass) 60%,transparent 61%)}
+.whohead{font-size:min(12vh,9vw);line-height:1}
+.players{display:flex;flex-wrap:wrap;gap:3vh 3vw;justify-content:center;max-width:94vw}
+.player{position:relative}
+.pick{width:min(20vw,32vh);aspect-ratio:1;border-radius:32px;background:var(--card);box-shadow:0 7px 0 rgba(0,0,0,.14);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6vh;padding:1.6vh;transition:transform .1s}
+.pick:active{transform:translateY(5px);box-shadow:0 2px 0 rgba(0,0,0,.14)}
+.pick .av{height:68%}
+.pick .nm{font-weight:700;font-size:min(4.2vh,2.8vw);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.player.cur .pick{box-shadow:0 7px 0 rgba(0,0,0,.14),0 0 0 6px var(--yolk)}
+.player .edit{position:absolute;top:-12px;right:-12px;width:48px;height:48px;font-size:22px}
+.pick.add{background:rgba(255,255,255,.55);box-shadow:0 7px 0 rgba(0,0,0,.08)}
+.pick .plus{font-size:min(12vh,8vw)}
+#editor{position:fixed;inset:0;z-index:84;display:none;align-items:center;justify-content:center;background:rgba(40,25,10,.45)}
+#editor.show{display:flex}
+#editor .box{background:var(--card);border-radius:32px;padding:3vh 3vw;display:flex;flex-direction:column;align-items:center;gap:3vh;
+  box-shadow:0 10px 0 rgba(0,0,0,.2);animation:bpop .3s;max-width:94vw}
+.avs{display:flex;gap:1.6vw;flex-wrap:wrap;justify-content:center}
+.avbtn{width:min(12vw,20vh);aspect-ratio:1;border-radius:24px;background:#f4ecdc;display:flex;align-items:center;justify-content:center;padding:8px}
+.avbtn .av{height:100%}
+.avbtn.on{background:var(--yolk);box-shadow:0 0 0 5px var(--accent)}
+#editor .row{display:flex;gap:2vw;align-items:center}
+#edName{font:inherit;font-weight:700;font-size:clamp(20px,4vh,32px);padding:8px 16px;border-radius:18px;border:3px solid #eadcc6;width:min(34vw,320px);
+  color:var(--ink);background:#fff;user-select:text;-webkit-user-select:text}
+#editor .btn.round{width:min(12vh,9vw);height:min(12vh,9vw);font-size:min(6vh,4.4vw)}
 
 /* SONGS / LESSONS lists */
 .cards{flex:1;display:flex;gap:2.5vw;align-items:center;justify-content:center;padding:1vh 0 2vh}
@@ -343,6 +383,12 @@ body.midi #mic:not(.on){opacity:.6}
   </div>
   <div class="coop" id="coop"></div>
   <div class="ver">v <!--VERSION--></div>
+  <button id="btnWho" aria-label="Who is playing?"></button>
+</section>
+
+<section id="who" class="screen">
+  <div class="whohead">🐔❓</div>
+  <div class="players" id="players"></div>
 </section>
 
 <section id="songs" class="screen">
@@ -444,6 +490,16 @@ body.midi #mic:not(.on){opacity:.6}
       <button class="btn round red" id="askNo" aria-label="No">✖️</button>
       <button class="btn round" id="askYes" aria-label="Yes" style="background:var(--good);box-shadow:0 5px 0 #26a352">✔️</button>
     </div>
+  </div>
+</div></div>
+
+<div id="editor"><div class="box">
+  <div class="avs" id="edAvatars"></div>
+  <div class="row">
+    <input id="edName" maxlength="12" autocomplete="off" autocapitalize="words" spellcheck="false" aria-label="Name">
+    <button class="btn round red" id="edDel" aria-label="Remove">🗑️</button>
+    <button class="btn round" id="edNo" aria-label="Cancel">✖️</button>
+    <button class="btn round" id="edYes" aria-label="OK" style="background:var(--good);box-shadow:0 5px 0 #26a352">✔️</button>
   </div>
 </div></div>
 

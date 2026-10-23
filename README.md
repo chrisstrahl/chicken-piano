@@ -34,6 +34,10 @@ Chicken Piano started as a dad project. My 8-year-old wanted to learn piano, he 
 
 🎹 **Free Play.** Just want to noodle around? Free Play shows the name and the spot on the staff of anything you play, and how long you held it.
 
+🐔 **A chicken for every kid.** Each child picks their own colored chicken (and a name, if they like) and keeps their own eggs, chicks and open songs. Tap the chicken at the top left of the home screen to switch players.
+
+📲 **Works like an app, even offline.** On an iPad, open the site in Safari, tap Share, then **Add to Home Screen**. It opens full screen, and after the first visit on wifi it works without internet. New versions load automatically the next time it opens online.
+
 👆 **Practice at your own pace.** Any level can be picked at any time, and tapping a note in the music jumps right back to it for another try.
 
 ## 🎹 Got a keyboard with USB? Plug it in!
@@ -56,7 +60,7 @@ No USB port on your keyboard? No problem: the microphone works with any piano, a
 - **Tap the 🐣 egg** on the first screen to wake up the chicken (this also lets the browser use sound and the mic).
 - **Allow the microphone** when asked. Chicken Piano only listens for notes, right on the device; no audio is ever uploaded.
 - **Turn the volume up** so kids can hear the chicken's instructions.
-- Progress is saved on the device, so each tablet keeps its own coop.
+- Progress is saved on the device, so each tablet keeps its own coop. On an iPad, the home-screen app and the Safari tab keep separate coops, so pick one.
 
 ---
 
@@ -89,6 +93,12 @@ node build.mjs
 The first run downloads the model (~350 MB) into `~/.cache/chicken-piano-voice`. If a word comes out wrong,
 add a regex spelling fix to `tools/voice/pronounce.json` (it changes what the voice reads, not what the app shows).
 </details>
+
+## Home-screen icons
+
+`node tools/icons.cjs` redraws `dist/icons` from the chicken in `src/chicken.js` (needs Playwright's Chromium).
+`node build.mjs` writes `dist/manifest.webmanifest` and `dist/sw.js` (stamped with the build time).
+`test/profiles.cjs` and `test/offline.cjs` check players and the offline cache.
 
 <details>
 <summary><b>Testing note detection</b></summary>
