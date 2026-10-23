@@ -39,9 +39,9 @@
   "spoken": "You have 7 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "0114b7ae": {
-  "text": "Let's play Oh Henrietta! Start on C.",
-  "spoken": "Let's play Oh Henrietta! Start on C.",
+ "01154f73": {
+  "text": "Let's play Peck and Rest!",
+  "spoken": "Let's play Peck and Rest!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "01558069": {
@@ -49,14 +49,24 @@
   "spoken": "You have 298 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "0191c950": {
-  "text": "Let's play The Little Red Hen! Start on C.",
-  "spoken": "Let's play The Little Red Hen! Start on C.",
+ "01be53d4": {
+  "text": "That's Row, Row, Row Your Boat!",
+  "spoken": "That's Row, Row, Row Your Boat!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "01e20c53": {
   "text": "New song: Clucky's Egg!",
   "spoken": "New song: Clucky's Egg!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "0277f4a0": {
+  "text": "Let's play Peck Peck Peck!",
+  "spoken": "Let's play Peck Peck Peck!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "02aab8ed": {
+  "text": "Start on C sharp.",
+  "spoken": "Start on C sharp.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "02b3630f": {
@@ -67,11 +77,6 @@
  "02f68303": {
   "text": "You have 331 eggs.",
   "spoken": "You have 331 eggs.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "0317c57e": {
-  "text": "Let's play Cluck Cluck Cluck CLUCK!! Start on G.",
-  "spoken": "Let's play Cluck Cluck Cluck CLUCK!! Start on G.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "03386055": {
@@ -94,11 +99,6 @@
   "spoken": "You have 124 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "04c18599": {
-  "text": "Let's play Tractor Chug! Start on C.",
-  "spoken": "Let's play Tractor Chug! Start on C.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "04d8829d": {
   "text": "You have 63 eggs.",
   "spoken": "You have 63 eggs.",
@@ -112,11 +112,6 @@
  "050436b2": {
   "text": "G sharp",
   "spoken": "G sharp",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "050d6049": {
-  "text": "Let's play Happy Hatch Day! Start on G.",
-  "spoken": "Let's play Happy Hatch Day! Start on G.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "053204d3": {
@@ -179,6 +174,11 @@
   "spoken": "You have 194 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "07e7940f": {
+  "text": "Let's play Hop and Stop!",
+  "spoken": "Let's play Hop and Stop!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "07edf3a4": {
   "text": "You have 169 eggs.",
   "spoken": "You have 169 eggs.",
@@ -187,6 +187,11 @@
  "085ac076": {
   "text": "You have 178 eggs.",
   "spoken": "You have 178 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "0861e5c4": {
+  "text": "Let's play Barnyard Waltz!",
+  "spoken": "Let's play Barnyard Waltz!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "086563db": {
@@ -199,9 +204,19 @@
   "spoken": "You have 86 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "088d3be6": {
+  "text": "Let's play Rooster Rumble!",
+  "spoken": "Let's play Rooster Rumble!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "08a81f01": {
   "text": "You have 218 eggs.",
   "spoken": "You have 218 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "08f40853": {
+  "text": "Let's play Chicken Can-Can!",
+  "spoken": "Let's play Chicken Can-Can!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "0942e2aa": {
@@ -212,6 +227,11 @@
  "09a80c7d": {
   "text": "You have 89 eggs.",
   "spoken": "You have 89 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "09b9a8a7": {
+  "text": "Let's play Jingle Clucks!",
+  "spoken": "Let's play Jingle Clucks!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "0a01021f": {
@@ -239,6 +259,11 @@
   "spoken": "Turtle speed.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "0c38f8f0": {
+  "text": "Let's play A Little Night Cluck!",
+  "spoken": "Let's play A Little Night Cluck!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "0cde1e95": {
   "text": "You have 81 eggs.",
   "spoken": "You have 81 eggs.",
@@ -252,6 +277,16 @@
  "0d0ca57d": {
   "text": "You have 184 eggs.",
   "spoken": "You have 184 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "0dc61f56": {
+  "text": "That's Mary Had a Little Lamb!",
+  "spoken": "That's Mary Had a Little Lamb!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "0dd40418": {
+  "text": "Let's play Oh Henrietta!",
+  "spoken": "Let's play Oh Henrietta!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "0e0b1cd3": {
@@ -269,9 +304,19 @@
   "spoken": "You have 6 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "0ed5491e": {
+  "text": "Let's play Chicken Waltz!",
+  "spoken": "Let's play Chicken Waltz!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "0efda81b": {
   "text": "You have 339 eggs.",
   "spoken": "You have 339 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "0f50b29b": {
+  "text": "Let's play Tractor Chug!",
+  "spoken": "Let's play Tractor Chug!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "0f552dd8": {
@@ -287,6 +332,11 @@
  "0f67d05a": {
   "text": "You have 138 eggs.",
   "spoken": "You have 138 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "0f8b3da9": {
+  "text": "That's Joy to the World!",
+  "spoken": "That's Joy to the World!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "0fa17f40": {
@@ -319,9 +369,9 @@
   "spoken": "You have 254 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "128689c9": {
-  "text": "Let's play Barnyard Waltz! Start on D.",
-  "spoken": "Let's play Barnyard Waltz! Start on D.",
+ "124e53e4": {
+  "text": "Let's play Rocking Nest!",
+  "spoken": "Let's play Rocking Nest!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "12ad430f": {
@@ -334,14 +384,14 @@
   "spoken": "You have 245 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "12d8235f": {
+  "text": "Let's play Five Little Eggs!",
+  "spoken": "Let's play Five Little Eggs!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "130a0118": {
   "text": "Listen. Which rhythm did you hear?",
   "spoken": "Listen. Which rhythm did you hear?",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "132b8c28": {
-  "text": "Let's play Amazing Hens! Start on C.",
-  "spoken": "Let's play Amazing Hens! Start on C.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "133e96de": {
@@ -349,19 +399,29 @@
   "spoken": "You have 321 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "141a83b9": {
-  "text": "Let's play Egg Hunt! Start on C.",
-  "spoken": "Let's play Egg Hunt! Start on C.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "14761511": {
   "text": "You have 85 eggs.",
   "spoken": "You have 85 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "14a547ea": {
+  "text": "That's Pop Goes the Weasel!",
+  "spoken": "That's Pop Goes the Weasel!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "14ae552c": {
   "text": "New song: Chicken Waltz!",
   "spoken": "New song: Chicken Waltz!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "151cf93c": {
+  "text": "Let's play Cluck Cluck Hen!",
+  "spoken": "Let's play Cluck Cluck Hen!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "15293097": {
+  "text": "Let's play Deep Cluck!",
+  "spoken": "Let's play Deep Cluck!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "157f2323": {
@@ -389,11 +449,6 @@
   "spoken": "Take Rosie out of the coop? Their eggs go too.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "170812f8": {
-  "text": "Let's play Chicken Ladder! Start on C.",
-  "spoken": "Let's play Chicken Ladder! Start on C.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "17370245": {
   "text": "You have 306 eggs.",
   "spoken": "You have 306 eggs.",
@@ -409,9 +464,9 @@
   "spoken": "You have 188 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "189c61e2": {
-  "text": "Let's play Big Rooster Walk! Start on C.",
-  "spoken": "Let's play Big Rooster Walk! Start on C.",
+ "18610996": {
+  "text": "Let's play Old Friends in the Coop!",
+  "spoken": "Let's play Old Friends in the Coop!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "18cdab18": {
@@ -449,6 +504,26 @@
   "spoken": "You have 190 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "1b18e527": {
+  "text": "Let's play Happy Hatch Day!",
+  "spoken": "Let's play Happy Hatch Day!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "1bc93aa5": {
+  "text": "Let's play Low Down Nest!",
+  "spoken": "Let's play Low Down Nest!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "1cb40111": {
+  "text": "That's America!",
+  "spoken": "That's America!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "1ce08f01": {
+  "text": "Let's play Sharp Little Chick!",
+  "spoken": "Let's play Sharp Little Chick!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "1d1e1a9f": {
   "text": "New song: Three Brown Hens!",
   "spoken": "New song: Three Brown Hens!",
@@ -459,9 +534,9 @@
   "spoken": "You have 162 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "1d3a753b": {
-  "text": "Let's play In the Hall of the Rooster King! Start on A.",
-  "spoken": "Let's play In the Hall of the Rooster King! Start on A.",
+ "1e00f282": {
+  "text": "Start on D sharp.",
+  "spoken": "Start on D sharp.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "1e0494fe": {
@@ -484,9 +559,14 @@
   "spoken": "Oops! Find G flat.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "1ff99f25": {
-  "text": "Let's play Hop and Stop! Start on C.",
-  "spoken": "Let's play Hop and Stop! Start on C.",
+ "1ec56163": {
+  "text": "Let's play Rest Stop!",
+  "spoken": "Let's play Rest Stop!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "1f9d99a3": {
+  "text": "That's Old rhyme, new tune!",
+  "spoken": "That's Old rhyme, new tune!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "2036e81d": {
@@ -509,9 +589,19 @@
   "spoken": "You have 100 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "213a160f": {
+  "text": "Let's play Surprise Egg!",
+  "spoken": "Let's play Surprise Egg!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "215e1e74": {
   "text": "New song: Pop Goes the Egg!",
   "spoken": "New song: Pop Goes the Egg!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "21842e19": {
+  "text": "Start on B flat.",
+  "spoken": "Start on B flat.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "221ec4f7": {
@@ -522,11 +612,6 @@
  "231d5af6": {
   "text": "New song: Oh Henrietta!",
   "spoken": "New song: Oh Henrietta!",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "245965c0": {
-  "text": "Let's play The Coop Is Falling Down! Start on G.",
-  "spoken": "Let's play The Coop Is Falling Down! Start on G.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "24c8a5f1": {
@@ -549,6 +634,16 @@
   "spoken": "D flat",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "25d22701": {
+  "text": "That's The Itsy Bitsy Spider!",
+  "spoken": "That's The Itsy Bitsy Spider!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "25e779b2": {
+  "text": "Let's play Joy to the Coop!",
+  "spoken": "Let's play Joy to the Coop!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "26633d90": {
   "text": "You have 147 eggs.",
   "spoken": "You have 147 eggs.",
@@ -569,21 +664,6 @@
   "spoken": "C flat",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "295b1f41": {
-  "text": "Let's play Hen Minuet! Start on D.",
-  "spoken": "Let's play Hen Minuet! Start on D.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "29a48125": {
-  "text": "Let's play Surprise Egg! Start on C.",
-  "spoken": "Let's play Surprise Egg! Start on C.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "29bd3e62": {
-  "text": "Let's play Corn for Lunch! Start on E.",
-  "spoken": "Let's play Corn for Lunch! Start on E.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "29dea44c": {
   "text": "Walk up the keys: C, D, E. Each step sounds a little higher. Tap the three glowing keys.",
   "spoken": "Walk up the keys: C, D, E. Each step sounds a little higher. Tap the three glowing keys.",
@@ -599,9 +679,9 @@
   "spoken": "You have 291 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "2a75d8b9": {
-  "text": "Let's play Deep Cluck! Start on G.",
-  "spoken": "Let's play Deep Cluck! Start on G.",
+ "2b3ca59a": {
+  "text": "Let's play Itsy Bitsy Chicken!",
+  "spoken": "Let's play Itsy Bitsy Chicken!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "2b4f1591": {
@@ -612,11 +692,6 @@
  "2b538af4": {
   "text": "New song: Roll the Egg!",
   "spoken": "New song: Roll the Egg!",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "2b79b338": {
-  "text": "Let's play Barn Clock! Start on A.",
-  "spoken": "Let's play Barn Clock! Start on A.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "2bb5f416": {
@@ -649,19 +724,24 @@
   "spoken": "You have 102 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "2cdca41e": {
-  "text": "Let's play Chord Clucks! Start on C.",
-  "spoken": "Let's play Chord Clucks! Start on C.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "2d25b88d": {
   "text": "You have 272 eggs.",
   "spoken": "You have 272 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "2d342ad6": {
+  "text": "Let's play Chord Hop!",
+  "spoken": "Let's play Chord Hop!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "2d3570e2": {
   "text": "New song: Roll, Roll, Roll Your Egg!",
   "spoken": "New song: Roll, Roll, Roll Your Egg!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "2e067f82": {
+  "text": "Let's play Amazing Hens!",
+  "spoken": "Let's play Amazing Hens!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "2e8e5ec8": {
@@ -674,14 +754,14 @@
   "spoken": "The notes in the spaces spell FACE! F, A, C, E. Play them going up.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "2efc6cb7": {
-  "text": "Let's play Yankee Chicken! Start on C.",
-  "spoken": "Let's play Yankee Chicken! Start on C.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "2f22d8fb": {
   "text": "You have 292 eggs.",
   "spoken": "You have 292 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "2faf3f41": {
+  "text": "Let's play Good Morning, Chicks!",
+  "spoken": "Let's play Good Morning, Chicks!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "2ff5b2fc": {
@@ -689,9 +769,14 @@
   "spoken": "You have 68 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "305cef20": {
-  "text": "Let's play Old MacDonald's Chicks! Start on C.",
-  "spoken": "Let's play Old MacDonald's Chicks! Start on C.",
+ "30710524": {
+  "text": "Let's play Big Rooster Walk!",
+  "spoken": "Let's play Big Rooster Walk!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "30815763": {
+  "text": "Let's play Strutting Rooster!",
+  "spoken": "Let's play Strutting Rooster!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "31165123": {
@@ -699,19 +784,14 @@
   "spoken": "New song: Hens in a Row!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "31399b19": {
-  "text": "Let's play Chicken Boogie! Start on C.",
-  "spoken": "Let's play Chicken Boogie! Start on C.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "321ccbb7": {
-  "text": "Let's play Rain, Rain, Go Away! Start on G.",
-  "spoken": "Let's play Rain, Rain, Go Away! Start on G.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "3286188a": {
   "text": "A tie is a curved line that glues two notes on the same key together. Play it once and hold it for both! Play G and hold.",
   "spoken": "A tie is a curved line that glues two notes on the same key together. Play it once and hold it for both! Play G and hold.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "329fbe8a": {
+  "text": "Let's play Old MacDonald's Chicks!",
+  "spoken": "Let's play Old MacDonald's Chicks!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "3313bc66": {
@@ -729,29 +809,24 @@
   "spoken": "You finished level 2! A baby chick hatched! Next is level 3.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "3433b334": {
-  "text": "Let's play Owl at the Coop! Start on C.",
-  "spoken": "Let's play Owl at the Coop! Start on C.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "347a1ca5": {
   "text": "New song: Brother Chick!",
   "spoken": "New song: Brother Chick!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "34807e71": {
-  "text": "Let's play Rooster Wake-Up! Start on G.",
-  "spoken": "Let's play Rooster Wake-Up! Start on G.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "3497ff81": {
-  "text": "Let's play Peck and Rest! Start on C.",
-  "spoken": "Let's play Peck and Rest! Start on C.",
+ "3482c104": {
+  "text": "That's Go Tell Aunt Rhody!",
+  "spoken": "That's Go Tell Aunt Rhody!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "34edefcf": {
   "text": "You have 36 eggs.",
   "spoken": "You have 36 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "34f35d73": {
+  "text": "Let's play Line and Space Race!",
+  "spoken": "Let's play Line and Space Race!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "3557999e": {
@@ -789,11 +864,6 @@
   "spoken": "You have 304 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "38011a4f": {
-  "text": "Let's play Twinkle Little Chick! Start on C.",
-  "spoken": "Let's play Twinkle Little Chick! Start on C.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "38186082": {
   "text": "Oops! Find C flat.",
   "spoken": "Oops! Find C flat.",
@@ -819,6 +889,16 @@
   "spoken": "You have 198 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "38f5dd74": {
+  "text": "That's Happy Birthday!",
+  "spoken": "That's Happy Birthday!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "390e3f34": {
+  "text": "That's Lightly Row!",
+  "spoken": "That's Lightly Row!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "399a0029": {
   "text": "Listen again!",
   "spoken": "Listen again!",
@@ -829,14 +909,24 @@
   "spoken": "You have 200 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "3a3cc7c7": {
+  "text": "Start on D flat.",
+  "spoken": "Start on D flat.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "3ada2c3e": {
+  "text": "Let's play Corn for Lunch!",
+  "spoken": "Let's play Corn for Lunch!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "3b265592": {
   "text": "You have 44 eggs.",
   "spoken": "You have 44 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "3b6e2b1d": {
-  "text": "Let's play Clucky's Egg! Start on E.",
-  "spoken": "Let's play Clucky's Egg! Start on E.",
+ "3b5a0598": {
+  "text": "Let's play Chick Steps!",
+  "spoken": "Let's play Chick Steps!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "3bf1ccce": {
@@ -849,11 +939,6 @@
   "spoken": "New song: Lightly Peck!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "3caae6ae": {
-  "text": "Let's play Roll the Egg! Start on E.",
-  "spoken": "Let's play Roll the Egg! Start on E.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "3d72d3c3": {
   "text": "D sharp",
   "spoken": "D sharp",
@@ -864,14 +949,9 @@
   "spoken": "E sharp",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "3e6ac70f": {
-  "text": "Let's play Lightly Peck! Start on G.",
-  "spoken": "Let's play Lightly Peck! Start on G.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "3e751de1": {
-  "text": "Let's play Chicken Can-Can! Start on C.",
-  "spoken": "Let's play Chicken Can-Can! Start on C.",
+ "3e22883d": {
+  "text": "That's Minuet in G!",
+  "spoken": "That's Minuet in G!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "3ee64848": {
@@ -879,14 +959,14 @@
   "spoken": "You have 110 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "3fa4b449": {
-  "text": "Let's play Goodnight, Hen! Start on E.",
-  "spoken": "Let's play Goodnight, Hen! Start on E.",
+ "3fb39ba5": {
+  "text": "Let's play Hens in a Row!",
+  "spoken": "Let's play Hens in a Row!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "402bce23": {
-  "text": "Let's play Merry Clucks-mas! Start on G.",
-  "spoken": "Let's play Merry Clucks-mas! Start on G.",
+ "40100ee3": {
+  "text": "Let's play When the Chicks Go Marching In!",
+  "spoken": "Let's play When the Chicks Go Marching In!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "403c2519": {
@@ -924,11 +1004,6 @@
   "spoken": "You have 104 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "41f5cae4": {
-  "text": "Let's play Flat Little Hen! Start on F.",
-  "spoken": "Let's play Flat Little Hen! Start on F.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "42245ca5": {
   "text": "B sharp",
   "spoken": "B sharp",
@@ -954,14 +1029,14 @@
   "spoken": "You have 32 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "42d6401b": {
+  "text": "Let's play Chicken Boogie!",
+  "spoken": "Let's play Chicken Boogie!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "42f311d7": {
   "text": "New song: One Two Three Eggs!",
   "spoken": "New song: One Two Three Eggs!",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "439596f1": {
-  "text": "Let's play Rest Stop! Start on C.",
-  "spoken": "Let's play Rest Stop! Start on C.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "43ceda71": {
@@ -974,6 +1049,11 @@
   "spoken": "You finished level 10! A baby chick hatched! You are a piano champion!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "4436a026": {
+  "text": "Let's play My Coop, 'Tis of Thee!",
+  "spoken": "Let's play My Coop, 'Tis of Thee!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "448b3d0a": {
   "text": "You have 242 eggs.",
   "spoken": "You have 242 eggs.",
@@ -984,14 +1064,14 @@
   "spoken": "New song: Moonlight Chicks!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "45c4a8c3": {
+  "text": "Let's play Sleepy Chick!",
+  "spoken": "Let's play Sleepy Chick!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "45d6df9c": {
   "text": "C lives just to the left of the two black keys. It is the chicken coop door! Tap the glowing C.",
   "spoken": "C lives just to the left of the two black keys. It is the chicken coop door! Tap the glowing C.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "4698b127": {
-  "text": "Let's play Sleepy Chick! Start on E.",
-  "spoken": "Let's play Sleepy Chick! Start on E.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "46fff7e4": {
@@ -1039,11 +1119,6 @@
   "spoken": "New song: Chickens Row the Boat Ashore!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "49e2f204": {
-  "text": "Let's play My Coop, 'Tis of Thee! Start on C.",
-  "spoken": "Let's play My Coop, 'Tis of Thee! Start on C.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "4a25c291": {
   "text": "New song: Chicken Gallop!",
   "spoken": "New song: Chicken Gallop!",
@@ -1074,19 +1149,24 @@
   "spoken": "Oops! Find F flat.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "4c7be016": {
-  "text": "Let's play Scrambled Eggs! Start on E.",
-  "spoken": "Let's play Scrambled Eggs! Start on E.",
+ "4b9c0799": {
+  "text": "Start on G sharp.",
+  "spoken": "Start on G sharp.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "4d83051f": {
-  "text": "Let's play Chicken Walk! Start on C.",
-  "spoken": "Let's play Chicken Walk! Start on C.",
+ "4c4ffc12": {
+  "text": "That's Oh! Susanna!",
+  "spoken": "That's Oh! Susanna!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "4dc20ad8": {
   "text": "You have 244 eggs.",
   "spoken": "You have 244 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "4ddde959": {
+  "text": "Let's play Merry Clucks-mas!",
+  "spoken": "Let's play Merry Clucks-mas!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "4e2901bb": {
@@ -1099,9 +1179,9 @@
   "spoken": "A hollow egg with no stick is a whole note. Four beats! Cluck, cluck, cluck, cluck! Play G and hold it a long time.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "4f14df6c": {
-  "text": "Let's play Chicken Waltz! Start on C.",
-  "spoken": "Let's play Chicken Waltz! Start on C.",
+ "4f7427be": {
+  "text": "Start on D.",
+  "spoken": "Start on D.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "4fe9c06e": {
@@ -1112,11 +1192,6 @@
  "5000756f": {
   "text": "And 4 baby chicks.",
   "spoken": "And 4 baby chicks.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "502a3a17": {
-  "text": "Let's play Line and Space Race! Start on E.",
-  "spoken": "Let's play Line and Space Race! Start on E.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "502b59ce": {
@@ -1144,6 +1219,11 @@
   "spoken": "New song: Rocking Nest!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "51750484": {
+  "text": "That's Auld Lang Syne!",
+  "spoken": "That's Auld Lang Syne!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "51a22e12": {
   "text": "You have 343 eggs.",
   "spoken": "You have 343 eggs.",
@@ -1164,6 +1244,11 @@
   "spoken": "Half step or whole step?",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "52e2f0b1": {
+  "text": "Let's play Twinkle Little Chick!",
+  "spoken": "Let's play Twinkle Little Chick!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "531624b3": {
   "text": "Sent! Bawk bawk!",
   "spoken": "Sent! Bawk bawk!",
@@ -1174,14 +1259,19 @@
   "spoken": "You did it! You got an egg!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "5463a0a2": {
-  "text": "Let's play Rocking Nest! Start on C.",
-  "spoken": "Let's play Rocking Nest! Start on C.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "547499f1": {
   "text": "Oops! Find C sharp.",
   "spoken": "Oops! Find C sharp.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "54a72444": {
+  "text": "Let's play Cluck Cluck Cluck CLUCK!!",
+  "spoken": "Let's play Cluck Cluck Cluck CLUCK!!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "54b98305": {
+  "text": "That's Yankee Doodle!",
+  "spoken": "That's Yankee Doodle!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "54d6ea5c": {
@@ -1227,6 +1317,11 @@
  "573887b6": {
   "text": "You have 282 eggs.",
   "spoken": "You have 282 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "574e9680": {
+  "text": "That's Offenbach: Can-Can!",
+  "spoken": "That's Offenbach: Can-Can!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "57552392": {
@@ -1284,9 +1379,9 @@
   "spoken": "You have 35 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "5b5de666": {
-  "text": "Let's play Sleepy Hen! Start on E.",
-  "spoken": "Let's play Sleepy Hen! Start on E.",
+ "5b2aa307": {
+  "text": "Let's play Quiet Night!",
+  "spoken": "Let's play Quiet Night!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "5b8b5826": {
@@ -1304,19 +1399,24 @@
   "spoken": "You have 278 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "5c3793af": {
+  "text": "Let's play Higgledy Piggledy!",
+  "spoken": "Let's play Higgledy Piggledy!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "5d5fcb67": {
   "text": "You have 270 eggs.",
   "spoken": "You have 270 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "5d6e5a90": {
+  "text": "That's Dvo\u0159\u00e1k: New World Symphony!",
+  "spoken": "That's Dvo\u0159\u00e1k: New World Symphony!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "5d7bd064": {
   "text": "You have 341 eggs.",
   "spoken": "You have 341 eggs.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "5d872333": {
-  "text": "Let's play Chicken March! Start on C.",
-  "spoken": "Let's play Chicken March! Start on C.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "5d8f68ae": {
@@ -1327,16 +1427,6 @@
  "5dc159d2": {
   "text": "You have 88 eggs.",
   "spoken": "You have 88 eggs.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "5e015d18": {
-  "text": "Let's play Pop Goes the Egg! Start on C.",
-  "spoken": "Let's play Pop Goes the Egg! Start on C.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "5edb60c5": {
-  "text": "Let's play Higgledy Piggledy! Start on C.",
-  "spoken": "Let's play Higgledy Piggledy! Start on C.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "5eee35bd": {
@@ -1374,9 +1464,9 @@
   "spoken": "Oops! Find D.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "631123f4": {
-  "text": "Let's play Old Friends in the Coop! Start on C.",
-  "spoken": "Let's play Old Friends in the Coop! Start on C.",
+ "61f38a49": {
+  "text": "Let's play Yankee Chicken!",
+  "spoken": "Let's play Yankee Chicken!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "6341f1d1": {
@@ -1404,19 +1494,14 @@
   "spoken": "You have 277 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "64c18cd3": {
-  "text": "Let's play F\u00fcr Eggs-lise! Start on E.",
-  "spoken": "Let's play Fur Eggs-leeze! Start on E.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "650cc31b": {
-  "text": "Let's play Sharp Little Chick! Start on G.",
-  "spoken": "Let's play Sharp Little Chick! Start on G.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "6566b1d7": {
   "text": "You have 205 eggs.",
   "spoken": "You have 205 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "661162f3": {
+  "text": "That's Skip to My Lou!",
+  "spoken": "That's Skip to My Lou!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "665a6bd1": {
@@ -1429,9 +1514,19 @@
   "spoken": "Take Blueberry out of the coop? Their eggs go too.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "66b034ff": {
+  "text": "Start on A sharp.",
+  "spoken": "Start on \"A\" sharp.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "66b87551": {
   "text": "You have 232 eggs.",
   "spoken": "You have 232 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "679ef5e7": {
+  "text": "Let's play Happy Hens!",
+  "spoken": "Let's play Happy Hens!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "67ece450": {
@@ -1442,6 +1537,11 @@
  "680d384a": {
   "text": "Thumb on C. Which finger plays this key?",
   "spoken": "Thumb on C. Which finger plays this key?",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "68407e2b": {
+  "text": "Let's play Chicken Scale March!",
+  "spoken": "Let's play Chicken Scale March!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "68bdda9f": {
@@ -1467,11 +1567,6 @@
  "6a1ac181": {
   "text": "Look for the two black keys. D is in the middle, E is on the right.",
   "spoken": "Look for the two black keys. D is in the middle, E is on the right.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "6a1e60aa": {
-  "text": "Let's play Strutting Rooster! Start on D.",
-  "spoken": "Let's play Strutting Rooster! Start on D.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "6a77f860": {
@@ -1509,6 +1604,11 @@
   "spoken": "You have 249 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "6d46d8c1": {
+  "text": "Let's play Dancing Hens!",
+  "spoken": "Let's play Dancing Hens!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "6db4da6c": {
   "text": "You have 24 eggs.",
   "spoken": "You have 24 eggs.",
@@ -1529,11 +1629,6 @@
   "spoken": "F lives just to the left of the three black keys. Tap F.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "6ecd5412": {
-  "text": "Let's play Roll, Roll, Roll Your Egg! Start on C.",
-  "spoken": "Let's play Roll, Roll, Roll Your Egg! Start on C.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "6f017e48": {
   "text": "How many beats in all?",
   "spoken": "How many beats in all?",
@@ -1544,9 +1639,34 @@
   "spoken": "Is this note on a line or in a space?",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "6f34fed1": {
+  "text": "Let's play Henny Henny!",
+  "spoken": "Let's play Henny Henny!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "6f5494b8": {
+  "text": "That's Camptown Races!",
+  "spoken": "That's Camptown Races!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "709a3a80": {
+  "text": "Start on A flat.",
+  "spoken": "Start on \"A\" flat.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "70e1101b": {
   "text": "You have 256 eggs.",
   "spoken": "You have 256 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "71721ead": {
+  "text": "Start on C.",
+  "spoken": "Start on C.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "71769bdb": {
+  "text": "Start on E.",
+  "spoken": "Start on E.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "717a844a": {
@@ -1619,6 +1739,11 @@
   "spoken": "D lives right in the middle of the two black keys, like a chick snuggled between two hens. Tap D.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "75cebf90": {
+  "text": "Let's play Hush Little Chicky!",
+  "spoken": "Let's play Hush Little Chicky!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "7663040c": {
   "text": "F flat",
   "spoken": "F flat",
@@ -1689,9 +1814,9 @@
   "spoken": "You have 74 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "795b6179": {
-  "text": "Let's play This Old Hen! Start on G.",
-  "spoken": "Let's play This Old Hen! Start on G.",
+ "79633c59": {
+  "text": "Let's play Black Key Bounce!",
+  "spoken": "Let's play Black Key Bounce!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "79651618": {
@@ -1704,14 +1829,29 @@
   "spoken": "New song: Peck and Rest!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "7a12a9c8": {
+  "text": "Let's play Chord Clucks!",
+  "spoken": "Let's play Chord Clucks!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "7a4b076c": {
   "text": "After B, the letters start over at C! Two keys with the same name sound alike, one is just higher. That is called an octave. Play both Cs.",
   "spoken": "After B, the letters start over at C! Two keys with the same name sound alike, one is just higher. That is called an octave. Play both Cs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "7af101c6": {
+  "text": "Let's play Cluck Cluck Song!",
+  "spoken": "Let's play Cluck Cluck Song!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "7b001c76": {
   "text": "A half rest sits on the line like a hat. Two quiet beats. A whole rest hangs down like a hole. Four quiet beats! Play C to keep going.",
   "spoken": "A half rest sits on the line like a hat. Two quiet beats. A whole rest hangs down like a hole. Four quiet beats! Play C to keep going.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "7b20f2be": {
+  "text": "Start on C flat.",
+  "spoken": "Start on C flat.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "7b35c379": {
@@ -1744,6 +1884,11 @@
   "spoken": "New song: Good Hen Wenceslas!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "7cd31492": {
+  "text": "Let's play Go Tell Aunt Henny!",
+  "spoken": "Let's play Go Tell Aunt Henny!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "7cf3bb9e": {
   "text": "How many beats?",
   "spoken": "How many beats?",
@@ -1757,6 +1902,21 @@
  "7dcf039c": {
   "text": "You have 240 eggs.",
   "spoken": "You have 240 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "7dcf8050": {
+  "text": "Let's play Skip to My Coop!",
+  "spoken": "Let's play Skip to My Coop!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "7e043468": {
+  "text": "Start on F sharp.",
+  "spoken": "Start on F sharp.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "7e1c4aac": {
+  "text": "That's Jingle Bells!",
+  "spoken": "That's Jingle Bells!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "7e7cbb39": {
@@ -1787,11 +1947,6 @@
  "7f903198": {
   "text": "New song: Chicken Ladder!",
   "spoken": "New song: Chicken Ladder!",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "7fa7af78": {
-  "text": "Let's play Chickens Row the Boat Ashore! Start on C.",
-  "spoken": "Let's play Chickens Row the Boat Ashore! Start on C.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "7fc32ef4": {
@@ -1837,6 +1992,11 @@
  "833319a7": {
   "text": "Oops! Find E.",
   "spoken": "Oops! Find E.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "8356d592": {
+  "text": "Let's play Chicken Ladder!",
+  "spoken": "Let's play Chicken Ladder!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "83d3df06": {
@@ -1889,11 +2049,6 @@
   "spoken": "New song: Chicken Races!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "8709f6dd": {
-  "text": "Let's play Three Brown Hens! Start on E.",
-  "spoken": "Let's play Three Brown Hens! Start on E.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "876cb95a": {
   "text": "You have 295 eggs.",
   "spoken": "You have 295 eggs.",
@@ -1927,6 +2082,11 @@
  "88b0cebe": {
   "text": "You have 156 eggs.",
   "spoken": "You have 156 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "89023b6e": {
+  "text": "That's This Old Man!",
+  "spoken": "That's This Old Man!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "890fdca7": {
@@ -1987,6 +2147,11 @@
  "8c79742f": {
   "text": "New song: Under the Fence!",
   "spoken": "New song: Under the Fence!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "8cb54174": {
+  "text": "That's Mozart: Eine kleine Nachtmusik!",
+  "spoken": "That's Mozart: Eine kleine Nachtmusik!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "8cd74b9d": {
@@ -2089,14 +2254,14 @@
   "spoken": "New song: Chord Hop!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "9123e446": {
-  "text": "Let's play Going Home to Roost! Start on E.",
-  "spoken": "Let's play Going Home to Roost! Start on E.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "9150966f": {
   "text": "You have 69 eggs.",
   "spoken": "You have 69 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "92a501b8": {
+  "text": "That's Morning Mood!",
+  "spoken": "That's Morning Mood!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "92acd513": {
@@ -2114,26 +2279,6 @@
   "spoken": "Hi, Sunny! Let's play!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "92f0f965": {
-  "text": "Let's play Chicken Gallop! Start on C.",
-  "spoken": "Let's play Chicken Gallop! Start on C.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "938711f3": {
-  "text": "Let's play One Two Three Eggs! Start on C.",
-  "spoken": "Let's play One Two Three Eggs! Start on C.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "93c6f63b": {
-  "text": "Let's play Moonlight Chicks! Start on C.",
-  "spoken": "Let's play Moonlight Chicks! Start on C.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "93f91ae9": {
-  "text": "Let's play Chicken Scale March! Start on C.",
-  "spoken": "Let's play Chicken Scale March! Start on C.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "9400a9a3": {
   "text": "New song: Chicken Walk!",
   "spoken": "New song: Chicken Walk!",
@@ -2147,6 +2292,16 @@
  "94dce795": {
   "text": "You have 34 eggs.",
   "spoken": "You have 34 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "94df6c0a": {
+  "text": "That's Au Clair de la Lune!",
+  "spoken": "That's Au Clair de la Lune!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "94f69fd2": {
+  "text": "Let's play Sleepy Hen!",
+  "spoken": "Let's play Sleepy Hen!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "95ad91f7": {
@@ -2184,9 +2339,19 @@
   "spoken": "You have 11 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "97b03e57": {
+  "text": "Let's play This Old Hen!",
+  "spoken": "Let's play This Old Hen!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "97fe51c0": {
   "text": "You have 288 eggs.",
   "spoken": "You have 288 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "9833061d": {
+  "text": "That's Oh My Darling, Clementine!",
+  "spoken": "That's Oh My Darling, Clementine!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "98c012c8": {
@@ -2202,6 +2367,11 @@
  "993df7b1": {
   "text": "You have 283 eggs.",
   "spoken": "You have 283 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "99799a12": {
+  "text": "Let's play Chickens Row the Boat Ashore!",
+  "spoken": "Let's play Chickens Row the Boat Ashore!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "9a195323": {
@@ -2229,14 +2399,24 @@
   "spoken": "New song: Sunrise in the Coop!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "9c2adf5b": {
-  "text": "Let's play Happy Hens! Start on E.",
-  "spoken": "Let's play Happy Hens! Start on E.",
+ "9bb01c25": {
+  "text": "That's Vivaldi: Spring!",
+  "spoken": "That's Vivaldi: Spring!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "9c74de11": {
   "text": "You have 30 eggs.",
   "spoken": "You have 30 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "9d3bca4f": {
+  "text": "Let's play Sunrise in the Coop!",
+  "spoken": "Let's play Sunrise in the Coop!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "9d64168c": {
+  "text": "Start on E flat.",
+  "spoken": "Start on E flat.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "9d968681": {
@@ -2254,19 +2434,14 @@
   "spoken": "You have 251 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "9f6833e6": {
-  "text": "Let's play Big Hen Waltz! Start on G.",
-  "spoken": "Let's play Big Hen Waltz! Start on G.",
+ "9e6da20c": {
+  "text": "Let's play Hen Minuet!",
+  "spoken": "Let's play Hen Minuet!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "9f68eb30": {
   "text": "You have 28 eggs.",
   "spoken": "You have 28 eggs.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "9f69c2fa": {
-  "text": "Let's play Cluck Cluck Song! Start on E.",
-  "spoken": "Let's play Cluck Cluck Song! Start on E.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "9f791bcd": {
@@ -2284,9 +2459,19 @@
   "spoken": "New song: Hen Minuet!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "a019e782": {
+  "text": "That's Beethoven: Symphony No. 5!",
+  "spoken": "That's Beethoven: Symphony No. 5!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "a0c5df86": {
   "text": "You have 219 eggs.",
   "spoken": "You have 219 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "a0d46618": {
+  "text": "That's Amazing Grace!",
+  "spoken": "That's Amazing Grace!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "a1810d3c": {
@@ -2312,11 +2497,6 @@
  "a2c1f43a": {
   "text": "And 9 baby chicks.",
   "spoken": "And 9 baby chicks.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "a2dfb628": {
-  "text": "Let's play Hush Little Chicky! Start on E.",
-  "spoken": "Let's play Hush Little Chicky! Start on E.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "a309904a": {
@@ -2369,14 +2549,34 @@
   "spoken": "New song: Chick Steps!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "a5142e86": {
+  "text": "Let's play Oh My Darling Chickentine!",
+  "spoken": "Let's play Oh My Darling Chickentine!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "a525da3e": {
+  "text": "That's Ode to Joy!",
+  "spoken": "That's Ode to Joy!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "a53d9ac3": {
+  "text": "Let's play Brother Chick!",
+  "spoken": "Let's play Brother Chick!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "a5c49342": {
+  "text": "Let's play Green Feathers!",
+  "spoken": "Let's play Green Feathers!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "a62740e3": {
   "text": "A filled in note with a stick is a quarter note. It gets one beat. Cluck! Play G four times.",
   "spoken": "A filled in note with a stick is a quarter note. It gets one beat. Cluck! Play G four times.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "a68bd33a": {
-  "text": "Let's play Black Key Bounce! Start on F sharp.",
-  "spoken": "Let's play Black Key Bounce! Start on F sharp.",
+ "a64a398d": {
+  "text": "That's F\u00fcr Elise!",
+  "spoken": "That's F\u00fcr Elise!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "a6d87b91": {
@@ -2399,11 +2599,6 @@
   "spoken": "You have 227 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "a7649f26": {
-  "text": "Let's play Go Tell Aunt Henny! Start on E.",
-  "spoken": "Let's play Go Tell Aunt Henny! Start on E.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "a822adfd": {
   "text": "You have 319 eggs.",
   "spoken": "You have 319 eggs.",
@@ -2424,16 +2619,6 @@
   "spoken": "You have 115 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "a9bc2289": {
-  "text": "Let's play Spring Chicks! Start on C.",
-  "spoken": "Let's play Spring Chicks! Start on C.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "a9f533a1": {
-  "text": "Let's play Sunrise in the Coop! Start on G.",
-  "spoken": "Let's play Sunrise in the Coop! Start on G.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "aa1d8df7": {
   "text": "You have 14 eggs.",
   "spoken": "You have 14 eggs.",
@@ -2442,11 +2627,6 @@
  "aa3a0bf6": {
   "text": "A sharp sign means play the very next key up, to the right. C sharp is the black key just right of C! Tap C sharp.",
   "spoken": "A sharp sign means play the very next key up, to the right. C sharp is the black key just right of C! Tap C sharp.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "aa63012e": {
-  "text": "Let's play Chick Steps! Start on C.",
-  "spoken": "Let's play Chick Steps! Start on C.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "aad01a6b": {
@@ -2464,11 +2644,6 @@
   "spoken": "You have 311 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "ab5de2f1": {
-  "text": "Let's play Swing High Chick! Start on G.",
-  "spoken": "Let's play Swing High Chick! Start on G.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "ab81a207": {
   "text": "How many beats do you hold?",
   "spoken": "How many beats do you hold?",
@@ -2484,9 +2659,9 @@
   "spoken": "Oops! Find F sharp.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "acbca28e": {
-  "text": "Let's play Good Hen Wenceslas! Start on C.",
-  "spoken": "Let's play Good Hen Wenceslas! Start on C.",
+ "ac89dd3b": {
+  "text": "Let's play Egg Hunt!",
+  "spoken": "Let's play Egg Hunt!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "ace30768": {
@@ -2514,14 +2689,14 @@
   "spoken": "Hi, Nugget! Let's play!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "adb9769d": {
+  "text": "Let's play Chicken March!",
+  "spoken": "Let's play Chicken March!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "adbc4c25": {
   "text": "You have 27 eggs.",
   "spoken": "You have 27 eggs.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "adc6592c": {
-  "text": "Let's play Itsy Bitsy Chicken! Start on G.",
-  "spoken": "Let's play Itsy Bitsy Chicken! Start on G.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "ae16543c": {
@@ -2534,14 +2709,34 @@
   "spoken": "You have 149 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "aeaddb51": {
-  "text": "Let's play Brother Chick! Start on C.",
-  "spoken": "Let's play Brother Chick! Start on C.",
+ "ae386e85": {
+  "text": "Let's play Lightly Peck!",
+  "spoken": "Let's play Lightly Peck!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "ae475eba": {
+  "text": "Let's play The Little Red Hen!",
+  "spoken": "Let's play The Little Red Hen!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "aeedcfd9": {
   "text": "You have 41 eggs.",
   "spoken": "You have 41 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "aefdbe78": {
+  "text": "Let's play Good Hen Wenceslas!",
+  "spoken": "Let's play Good Hen Wenceslas!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "af5a00b4": {
+  "text": "Let's play Deck the Coop!",
+  "spoken": "Let's play Deck the Coop!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "af916dab": {
+  "text": "Let's play In the Hall of the Rooster King!",
+  "spoken": "Let's play In the Hall of the Rooster King!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "aff9fc43": {
@@ -2552,11 +2747,6 @@
  "b086baac": {
   "text": "You have 222 eggs.",
   "spoken": "You have 222 eggs.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "b0c8cc71": {
-  "text": "Let's play When the Chicks Go Marching In! Start on C.",
-  "spoken": "Let's play When the Chicks Go Marching In! Start on C.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "b0cecfe6": {
@@ -2609,9 +2799,9 @@
   "spoken": "Note or rest? Should you play, or be quiet?",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "b392dc18": {
-  "text": "Let's play Joy to the Coop! Start on C.",
-  "spoken": "Let's play Joy to the Coop! Start on C.",
+ "b38c2001": {
+  "text": "Let's play Low and Slow!",
+  "spoken": "Let's play Low and Slow!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "b394fa4e": {
@@ -2629,14 +2819,14 @@
   "spoken": "You have 212 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "b4709e5b": {
-  "text": "Let's play Good Morning, Chicks! Start on G.",
-  "spoken": "Let's play Good Morning, Chicks! Start on G.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "b485f590": {
   "text": "You have 330 eggs.",
   "spoken": "You have 330 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "b4a4801a": {
+  "text": "Start on G flat.",
+  "spoken": "Start on G flat.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "b4b5d505": {
@@ -2659,14 +2849,24 @@
   "spoken": "Hi, Clucky! Let's play!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "b7492c6b": {
-  "text": "Let's play Henny Henny! Start on G.",
-  "spoken": "Let's play Henny Henny! Start on G.",
+ "b5bf94d5": {
+  "text": "Start on F flat.",
+  "spoken": "Start on F flat.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "b782b7c7": {
   "text": "New song: Rain, Rain, Go Away!",
   "spoken": "New song: Rain, Rain, Go Away!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "b800725d": {
+  "text": "Let's play One Two Three Eggs!",
+  "spoken": "Let's play One Two Three Eggs!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "b83ca070": {
+  "text": "That's Three Blind Mice!",
+  "spoken": "That's Three Blind Mice!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "b852857c": {
@@ -2684,11 +2884,6 @@
   "spoken": "You have 287 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "b9154d1a": {
-  "text": "Let's play Swing on the Gate! Start on G.",
-  "spoken": "Let's play Swing on the Gate! Start on G.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "b9c631c9": {
   "text": "You have 210 eggs.",
   "spoken": "You have 210 eggs.",
@@ -2704,14 +2899,9 @@
   "spoken": "You have 87 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "baa6b1ff": {
-  "text": "Let's play Grumpy Rooster! Start on C.",
-  "spoken": "Let's play Grumpy Rooster! Start on C.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "baad5686": {
-  "text": "Let's play Sneaky Chick! Start on C.",
-  "spoken": "Let's play Sneaky Chick! Start on C.",
+ "bb8207a1": {
+  "text": "Let's play Grumpy Rooster!",
+  "spoken": "Let's play Grumpy Rooster!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "bbde2b7a": {
@@ -2734,6 +2924,21 @@
   "spoken": "You have 109 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "bdc46657": {
+  "text": "Let's play Hold That Note!",
+  "spoken": "Let's play Hold That Note!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "be1ef5b5": {
+  "text": "Let's play Moonlight Chicks!",
+  "spoken": "Let's play Moonlight Chicks!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "bec2373c": {
+  "text": "That's When the Saints Go Marching In!",
+  "spoken": "That's When the Saints Go Marching In!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "bf0a96f1": {
   "text": "Win eggs in lessons and songs. Finish a level to hatch a baby chick!",
   "spoken": "Win eggs in lessons and songs. Finish a level to hatch a baby chick!",
@@ -2749,9 +2954,24 @@
   "spoken": "You have 248 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "bf6a6c8f": {
+  "text": "Let's play F\u00fcr Eggs-lise!",
+  "spoken": "Let's play Fur Eggs-leeze!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "bf6ebab1": {
+  "text": "That's Greensleeves!",
+  "spoken": "That's Greensleeves!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "c00bf080": {
   "text": "E",
   "spoken": "E.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "c01f2c41": {
+  "text": "Let's play Chicken Walk!",
+  "spoken": "Let's play Chicken Walk!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "c0b7d7f9": {
@@ -2772,6 +2992,16 @@
  "c10bf213": {
   "text": "D",
   "spoken": "D.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "c1656d22": {
+  "text": "That's Pachelbel: Canon!",
+  "spoken": "That's Pachelbel: Canon!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "c1753ba5": {
+  "text": "Let's play Under the Fence!",
+  "spoken": "Let's play Under the Fence!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "c197ce20": {
@@ -2807,11 +3037,6 @@
  "c3819ce1": {
   "text": "You have 23 eggs.",
   "spoken": "You have 23 eggs.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "c3a24689": {
-  "text": "Let's play Dancing Hens! Start on E.",
-  "spoken": "Let's play Dancing Hens! Start on E.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "c3cd396b": {
@@ -2859,9 +3084,14 @@
   "spoken": "Here are C, D, E, F, G down low, on the bass staff. Play them with your left hand.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "c56634c8": {
-  "text": "Let's play Chicken Races! Start on G.",
-  "spoken": "Let's play Chicken Races! Start on G.",
+ "c56a5cfd": {
+  "text": "Let's play Rooster in the Yard!",
+  "spoken": "Let's play Rooster in the Yard!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "c5d921dc": {
+  "text": "Start on B sharp.",
+  "spoken": "Start on B sharp.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "c600ac2a": {
@@ -2879,6 +3109,11 @@
   "spoken": "Snail speed. Nice and slow.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "c70b196d": {
+  "text": "Let's play Egg Timer!",
+  "spoken": "Let's play Egg Timer!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "c70bfb85": {
   "text": "B",
   "spoken": "Bee!",
@@ -2889,9 +3124,9 @@
   "spoken": "Hi, Blueberry! Let's play!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "c82ed22e": {
-  "text": "Let's play Deck the Coop! Start on G.",
-  "spoken": "Let's play Deck the Coop! Start on G.",
+ "c892e75b": {
+  "text": "That's Haydn: Surprise Symphony!",
+  "spoken": "That's Haydn: Surprise Symphony!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "c8bcf329": {
@@ -2909,16 +3144,6 @@
   "spoken": "New song: Cluck Cluck Cluck CLUCK!!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "c9b61715": {
-  "text": "Let's play Egg Timer! Start on E.",
-  "spoken": "Let's play Egg Timer! Start on E.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "ca072d35": {
-  "text": "Let's play Five Little Eggs! Start on C.",
-  "spoken": "Let's play Five Little Eggs! Start on C.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "ca2fba63": {
   "text": "Listen to the rhythm, then play it on C. Short, short, long!",
   "spoken": "Listen to the rhythm, then play it on C. Short, short, long!",
@@ -2927,11 +3152,6 @@
  "ca3faf41": {
   "text": "A flat sign means play the very next key down, to the left. B flat is the black key just left of B! Tap B flat.",
   "spoken": "A flat sign means play the very next key down, to the left. B flat is the black key just left of B! Tap B flat.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "ca70ecfd": {
-  "text": "Let's play Hens in a Row! Start on E.",
-  "spoken": "Let's play Hens in a Row! Start on E.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "caf0b5ab": {
@@ -2944,14 +3164,19 @@
   "spoken": "New song: Rooster in the Yard!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "cb37b539": {
+  "text": "That's Twinkle Twinkle Little Star!",
+  "spoken": "That's Twinkle Twinkle Little Star!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "cbc8b7c0": {
+  "text": "Let's play Sneaky Chick!",
+  "spoken": "Let's play Sneaky Chick!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "cbff0c18": {
   "text": "New song: Amazing Hens!",
   "spoken": "New song: Amazing Hens!",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "cc74116a": {
-  "text": "Let's play Cluck Cluck Hen! Start on C.",
-  "spoken": "Let's play Cluck Cluck Hen! Start on C.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "cc8a060a": {
@@ -2969,14 +3194,14 @@
   "spoken": "New song: Old Friends in the Coop!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "ccb41334": {
-  "text": "Let's play Chord Hop! Start on C.",
-  "spoken": "Let's play Chord Hop! Start on C.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "ccc5a3bb": {
   "text": "You have 199 eggs.",
   "spoken": "You have 199 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "cccd059b": {
+  "text": "Start on E sharp.",
+  "spoken": "Start on E sharp.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "ccd8215c": {
@@ -2989,6 +3214,26 @@
   "spoken": "You have 301 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "cd1abadc": {
+  "text": "Let's play Barn Clock!",
+  "spoken": "Let's play Barn Clock!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "ce5c7332": {
+  "text": "Let's play Going Home to Roost!",
+  "spoken": "Let's play Going Home to Roost!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "ce5e7de8": {
+  "text": "That's Hot Cross Buns!",
+  "spoken": "That's Hot Cross Buns!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "ce5fe0e5": {
+  "text": "That's Old MacDonald Had a Farm!",
+  "spoken": "That's Old MacDonald Had a Farm!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "ce6d4e71": {
   "text": "You have 56 eggs.",
   "spoken": "You have 56 eggs.",
@@ -2999,9 +3244,19 @@
   "spoken": "You have 265 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "ceb1987c": {
+  "text": "That's Silent Night!",
+  "spoken": "That's Silent Night!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "cf591864": {
   "text": "You have 150 eggs.",
   "spoken": "You have 150 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "cf796e6c": {
+  "text": "Start on F.",
+  "spoken": "Start on F.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "d0127f16": {
@@ -3024,6 +3279,21 @@
   "spoken": "You have 325 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "d0b0d956": {
+  "text": "That's In the Hall of the Mountain King!",
+  "spoken": "That's In the Hall of the Mountain King!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "d0ce055b": {
+  "text": "That's Westminster Chimes!",
+  "spoken": "That's Westminster Chimes!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "d16ca59f": {
+  "text": "Start on A.",
+  "spoken": "Start on A.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "d17ef814": {
   "text": "You have 217 eggs.",
   "spoken": "You have 217 eggs.",
@@ -3037,11 +3307,6 @@
  "d1d1e771": {
   "text": "You have 179 eggs.",
   "spoken": "You have 179 eggs.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "d21cd392": {
-  "text": "Let's play Low Down Nest! Start on F.",
-  "spoken": "Let's play Low Down Nest! Start on F.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "d25d1abd": {
@@ -3124,6 +3389,11 @@
   "spoken": "Open all the songs in level 3?",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "d565cad6": {
+  "text": "Let's play Owl at the Coop!",
+  "spoken": "Let's play Owl at the Coop!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "d56dfbf1": {
   "text": "Open all the songs in level 8?",
   "spoken": "Open all the songs in level 8?",
@@ -3149,14 +3419,24 @@
   "spoken": "You have 305 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "d6850a2b": {
-  "text": "Let's play Under the Fence! Start on C.",
-  "spoken": "Let's play Under the Fence! Start on C.",
+ "d5f6672b": {
+  "text": "That's Korobeiniki!",
+  "spoken": "That's Korobeiniki!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "d695153d": {
   "text": "You have 45 eggs.",
   "spoken": "You have 45 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "d6f4e205": {
+  "text": "Let's play Three Brown Hens!",
+  "spoken": "Let's play Three Brown Hens!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "d73c72ec": {
+  "text": "That's London Bridge!",
+  "spoken": "That's London Bridge!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "d754f843": {
@@ -3169,11 +3449,6 @@
   "spoken": "New song: When the Chicks Go Marching In!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "d77509da": {
-  "text": "Let's play A Little Night Cluck! Start on G.",
-  "spoken": "Let's play A Little Night Cluck! Start on G.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "d7bf5cb8": {
   "text": "Tempo means how fast the music goes. Some songs run like a bunny, some walk like a turtle. Play C, D, E fast, then slow.",
   "spoken": "Tempo means how fast the music goes. Some songs run like a bunny, some walk like a turtle. Play C, D, E fast, then slow.",
@@ -3182,6 +3457,16 @@
  "d7cc0a49": {
   "text": "Now find C all by yourself!",
   "spoken": "Now find C all by yourself!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "d7d3ffdc": {
+  "text": "That's New song!",
+  "spoken": "That's New song!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "d8a4344a": {
+  "text": "That's Fr\u00e8re Jacques!",
+  "spoken": "That's Fr\u00e8re Jacques!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "d8ad1004": {
@@ -3199,9 +3484,9 @@
   "spoken": "You have 258 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "d98806c5": {
-  "text": "Let's play Oh My Darling Chickentine! Start on F.",
-  "spoken": "Let's play Oh My Darling Chickentine! Start on F.",
+ "d95dcd45": {
+  "text": "Let's play Clucky's Egg!",
+  "spoken": "Let's play Clucky's Egg!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "da132e02": {
@@ -3217,6 +3502,11 @@
  "da84083d": {
   "text": "New song: Flat Little Hen!",
   "spoken": "New song: Flat Little Hen!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "db06cab2": {
+  "text": "Let's play Pop Goes the Egg!",
+  "spoken": "Let's play Pop Goes the Egg!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "db29f575": {
@@ -3244,6 +3534,11 @@
   "spoken": "B flat",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "dceb11e6": {
+  "text": "Let's play Chicken Races!",
+  "spoken": "Let's play Chicken Races!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "dd05eade": {
   "text": "New song: Skip to My Coop!",
   "spoken": "New song: Skip to My Coop!",
@@ -3264,9 +3559,19 @@
   "spoken": "This is your chicken coop!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "dd66b842": {
+  "text": "Let's play Scrambled Eggs!",
+  "spoken": "Let's play Scrambled Eggs!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "ddbc0765": {
   "text": "Oops! Find G sharp.",
   "spoken": "Oops! Find G sharp.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "dea41a9f": {
+  "text": "Let's play Rooster Wake-Up!",
+  "spoken": "Let's play Rooster Wake-Up!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "deb9ac51": {
@@ -3304,6 +3609,11 @@
   "spoken": "Oops! Find F.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "e2e6fbaf": {
+  "text": "Let's play Flat Little Hen!",
+  "spoken": "Let's play Flat Little Hen!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "e3566650": {
   "text": "You have 213 eggs.",
   "spoken": "You have 213 eggs.",
@@ -3314,9 +3624,29 @@
   "spoken": "You have 163 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "e39bd0cb": {
+  "text": "Let's play Spring Chicks!",
+  "spoken": "Let's play Spring Chicks!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "e3b3868a": {
+  "text": "Let's play Roll the Egg!",
+  "spoken": "Let's play Roll the Egg!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "e3cf0efd": {
   "text": "New song: Quiet Night!",
   "spoken": "New song: Quiet Night!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "e3e6461f": {
+  "text": "That's We Wish You a Merry Christmas!",
+  "spoken": "That's We Wish You a Merry Christmas!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "e405603e": {
+  "text": "That's Good King Wenceslas!",
+  "spoken": "That's Good King Wenceslas!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "e446850b": {
@@ -3374,14 +3704,14 @@
   "spoken": "You have 300 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "e6cd8dfb": {
-  "text": "Let's play Little Eggies! Start on C.",
-  "spoken": "Let's play Little Eggies! Start on C.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "e6ecfebd": {
   "text": "You have 126 eggs.",
   "spoken": "You have 126 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "e721c181": {
+  "text": "Let's play Goodnight, Hen!",
+  "spoken": "Let's play Goodnight, Hen!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "e746d285": {
@@ -3409,11 +3739,6 @@
   "spoken": "You have 140 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "e9da99c4": {
-  "text": "Let's play Rooster Rumble! Start on C.",
-  "spoken": "Let's play Rooster Rumble! Start on C.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "e9e5b65e": {
   "text": "I did not hear any notes!",
   "spoken": "I did not hear any notes!",
@@ -3424,14 +3749,24 @@
   "spoken": "You have 141 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "eaf5abb8": {
-  "text": "Let's play Peck Peck Peck! Start on E.",
-  "spoken": "Let's play Peck Peck Peck! Start on E.",
+ "ea5f7468": {
+  "text": "That's Daisy Bell!",
+  "spoken": "That's Daisy Bell!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "eafb42df": {
   "text": "You have 223 eggs.",
   "spoken": "You have 223 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "eb8c56d4": {
+  "text": "Let's play Roll, Roll, Roll Your Egg!",
+  "spoken": "Let's play Roll, Roll, Roll Your Egg!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "ebebc1fd": {
+  "text": "Let's play Rain, Rain, Go Away!",
+  "spoken": "Let's play Rain, Rain, Go Away!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "ec86f38e": {
@@ -3464,11 +3799,6 @@
   "spoken": "A dot makes a note longer. A dotted half note gets three beats. Play G and hold it, one, two, three!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "ee3f6a29": {
-  "text": "Let's play Quiet Night! Start on G.",
-  "spoken": "Let's play Quiet Night! Start on G.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "ee4eda27": {
   "text": "You have 72 eggs.",
   "spoken": "You have 72 eggs.",
@@ -3484,6 +3814,11 @@
   "spoken": "New song: A Little Night Cluck!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "ef6f1370": {
+  "text": "Start on B.",
+  "spoken": "Start on B.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "f0002c99": {
   "text": "New song: Egg Hunt!",
   "spoken": "New song: Egg Hunt!",
@@ -3492,6 +3827,11 @@
  "f02be357": {
   "text": "You have one egg.",
   "spoken": "You have one egg.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "f07814bf": {
+  "text": "That's Michael, Row the Boat Ashore!",
+  "spoken": "That's Michael, Row the Boat Ashore!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "f0dbcc0b": {
@@ -3514,9 +3854,9 @@
   "spoken": "Notes climb up the fence. Higher on the staff means a higher sound! Play C, D, E, F, G and watch them climb.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "f155851b": {
-  "text": "Let's play Jingle Clucks! Start on E.",
-  "spoken": "Let's play Jingle Clucks! Start on E.",
+ "f17be289": {
+  "text": "Start on G.",
+  "spoken": "Start on G.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "f2093019": {
@@ -3524,14 +3864,19 @@
   "spoken": "Which line note is this?",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "f23faa75": {
+  "text": "Let's play Little Eggies!",
+  "spoken": "Let's play Little Eggies!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "f277271f": {
+  "text": "Let's play Swing High Chick!",
+  "spoken": "Let's play Swing High Chick!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "f357f2a8": {
   "text": "Oops! Find E flat.",
   "spoken": "Oops! Find E flat.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "f35ce2e8": {
-  "text": "Let's play Skip to My Coop! Start on E.",
-  "spoken": "Let's play Skip to My Coop! Start on E.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "f3db5797": {
@@ -3542,11 +3887,6 @@
  "f43a1919": {
   "text": "You have 203 eggs.",
   "spoken": "You have 203 eggs.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "f4ad459d": {
-  "text": "Let's play Hold That Note! Start on C.",
-  "spoken": "Let's play Hold That Note! Start on C.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "f4af1470": {
@@ -3594,19 +3934,24 @@
   "spoken": "You have 67 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "f69fde7b": {
+  "text": "That's Deck the Halls!",
+  "spoken": "That's Deck the Halls!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "f73d5693": {
   "text": "You have 201 eggs.",
   "spoken": "You have 201 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "f7498ddf": {
-  "text": "Let's play Low and Slow! Start on C.",
-  "spoken": "Let's play Low and Slow! Start on C.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "f75d4c3a": {
   "text": "You have 307 eggs.",
   "spoken": "You have 307 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "f76292ae": {
+  "text": "Let's play The Coop Is Falling Down!",
+  "spoken": "Let's play The Coop Is Falling Down!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "f860e076": {
@@ -3624,11 +3969,6 @@
   "spoken": "You have 154 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "fa39073a": {
-  "text": "Let's play Green Feathers! Start on A.",
-  "spoken": "Let's play Green Feathers! Start on A.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "fa551957": {
   "text": "You have 168 eggs.",
   "spoken": "You have 168 eggs.",
@@ -3644,9 +3984,9 @@
   "spoken": "You have 187 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "fb2876b7": {
-  "text": "Let's play Rooster in the Yard! Start on G.",
-  "spoken": "Let's play Rooster in the Yard! Start on G.",
+ "fb269430": {
+  "text": "Let's play Swing on the Gate!",
+  "spoken": "Let's play Swing on the Gate!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "fbd099d2": {
@@ -3659,6 +3999,11 @@
   "spoken": "You have 318 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "fc53965c": {
+  "text": "Let's play Big Hen Waltz!",
+  "spoken": "Let's play Big Hen Waltz!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "fc76a686": {
   "text": "You know so much music now! Play C, E, G, C to start the champion quiz.",
   "spoken": "You know so much music now! Play C, E, G, C to start the champion quiz.",
@@ -3667,6 +4012,11 @@
  "fcad9baa": {
   "text": "You have 264 eggs.",
   "spoken": "You have 264 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "fd4a464f": {
+  "text": "Let's play Chicken Gallop!",
+  "spoken": "Let's play Chicken Gallop!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "fe3dbf4e": {

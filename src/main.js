@@ -1,5 +1,5 @@
 import { SONGS, LEVELS, PRAISE, COLORS, BEATS, letterOf, nameOf, isBlack, parse, songById, songsForLevel } from './music.js';
-import { coop, openSongsAsk, letsPlay, oopsFind, songDone, lessonDone, noteWords, whoPlays, pickChicken, hello, removeAsk, SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN } from './lines.js';
+import { coop, openSongsAsk, letsPlay, oopsFind, songDone, lessonDone, noteWords, whoPlays, pickChicken, hello, removeAsk, originalName, SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN } from './lines.js';
 import { startAudio, playNote, noteDown, noteUp, playSequence, cluck, peck, bawk, silly, say, stopTalking, preloadVoice, startBeat } from './audio.js';
 import { BeatJudge, phrases, SPEEDS, barBeats, peckEvery, MIC_LAG } from './beat.js';
 import { startMic, stopMic, micOn, micSupported, expectNote, micHealth } from './mic.js';
@@ -375,7 +375,7 @@ $('#mapNodes').addEventListener('click', (e) => {
 const eggRow = (n) => [0, 1, 2].map((i) => `<span class="${i < n ? '' : 'no'}">🥚</span>`).join('');
 function songCard(s) {
   if (!songOpen(s)) return `<button class="card song locked" data-song="${s.id}"><div class="em">🔒</div><div class="t">${s.title}</div></button>`;
-  return `<button class="card song" data-song="${s.id}"><div class="em">${s.emoji}</div><div class="t">${s.title}</div><div class="eggs">${eggRow(progress.songs[s.id] || 0)}</div></button>`;
+  return `<button class="card song" data-song="${s.id}"><div class="em">${s.emoji}</div><div class="t">${s.title}</div>${originalName(s) ? `<div class="orig">${originalName(s)}</div>` : ''}<div class="eggs">${eggRow(progress.songs[s.id] || 0)}</div></button>`;
 }
 function renderLevel() {
   const lv = LEVELS[levelN - 1];
@@ -554,7 +554,7 @@ function openSong(id, back = 'songs') {
   const pref = progress.hands || 'rh';
   P.hands = !twoHands() ? 'rh' : P.song.melodyHand === 'lh' && pref === 'rh' ? 'lh' : pref;
   levelN = P.song.level;
-  $('#playTitle').textContent = `${P.song.emoji} ${P.song.title}`;
+  $('#playTitle').innerHTML = `${P.song.emoji} ${P.song.title}${originalName(P.song) ? `<small>${originalName(P.song)}</small>` : ''}`;
   drawSong();
   restartSong(true);
   onNote = playInput;
@@ -570,7 +570,7 @@ function restartSong(first) {
   setLetters();
   setCurrent();
   const ev = evNow();
-  if (first && ev) say(letsPlay(P.song.title, ev.need[0].label));
+  if (first && ev) say(letsPlay(P.song, ev.need[0].label));
 }
 // grey out every note that starts before `beat`, un-grey the rest
 function markUpTo(beat) {
@@ -1357,10 +1357,14 @@ function openFree() {
   onNote = (m, source) => {
     const n = noteOf(m);
     const now = performance.now();
-    // the note before this one was short if this one came quickly (and it wasn't held longer than a beat)
+    // Notes within 60 ms of each other are one chord. The chord before this one was short if this one came
+    // quickly (and it wasn't held longer than a beat).
     const prev = F.last;
-    if (prev && prev.n.d === 'q' && F.notes.includes(prev.n)) prev.n.d = gapLength(now - prev.t);
-    F.last = { n, t: now };
+    if (prev && now - prev.t < 60) prev.ns.push(n);
+    else {
+      if (prev) prev.ns.forEach((p) => { if (p.d === 'q' && F.notes.includes(p)) p.d = gapLength(now - prev.t); });
+      F.last = { ns: [n], t: now };
+    }
     F.notes.push(n);
     if (F.notes.length > 8) F.notes.shift();
     // tapped (or USB keyboard) keys start as quarter notes and get their real length when the finger lifts

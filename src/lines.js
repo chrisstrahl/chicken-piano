@@ -9,7 +9,15 @@ const ACC_WORD = { '': '', '#': ' sharp', 'b': ' flat', '♯': ' sharp', '♭': 
 
 // "C", "F sharp", "B flat" from a note label like F♯
 export const noteWords = (label) => label[0] + ACC_WORD[label.slice(1)];
-export const letsPlay = (title, label) => `Let's play ${title}! Start on ${noteWords(label)}.`;
+// The tune a chicken song comes from ("Twinkle Twinkle Little Star"), or null for songs written for the app
+export const originalName = (song) => (song.sub && song.sub !== 'New song' && song.sub !== song.title ? song.sub : null);
+const spokenOriginal = (sub) => sub.replace(/\s*\(.*?\)/g, '');
+export const letsPlay = (song, label) => [
+  `Let's play ${song.title}!`,
+  ...(originalName(song) ? [`That's ${spokenOriginal(originalName(song))}!`] : []),
+  startOn(label),
+];
+export const startOn = (label) => `Start on ${noteWords(label)}.`;
 export const oopsFind = (label) => `Oops! Find ${noteWords(label)}.`;
 export const openSongsAsk = (level) => `Open all the songs in level ${level}?`;
 export const throwAwayAsk = 'Throw this song away?';
@@ -43,7 +51,8 @@ export function templatedLines(songs, levels) {
   const labels = LETTERS.flatMap((l) => [l, l + '♯', l + '♭']);
   const maxEggs = songs.length * 3 + levels.reduce((a, lv) => a + lv.lessons.length, 0);
   const out = [
-    ...songs.map((s) => letsPlay(s.title, s.notes.find((n) => !n.r).label)),
+    ...songs.flatMap((s) => letsPlay(s, s.notes.find((n) => !n.r).label)),
+    ...labels.map(startOn),
     ...songs.map((s) => `New song: ${s.title}!`),
     ...labels.map(oopsFind),
     ...labels.map(noteWords),
