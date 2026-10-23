@@ -104,12 +104,15 @@ export function makeKeyboard(root, onPress, onRelease = () => {}) {
       lo = a; hi = b;
       build();
     },
+    // one MIDI number, a list (two hands / chord), or null
     setTarget(m) {
       state.target = m;
       Object.values(keys).forEach((k) => k.classList.remove('target'));
       if (m == null) return;
-      const k = keyFor(m);
-      if (k !== null) keys[k].classList.add('target');
+      (Array.isArray(m) ? m : [m]).forEach((x) => {
+        const k = keyFor(x);
+        if (k !== null) keys[k].classList.add('target');
+      });
     },
     setHL(list = []) {
       state.hl = list;

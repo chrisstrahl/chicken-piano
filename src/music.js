@@ -46,8 +46,13 @@ export function parse(notes, lyrics = '') {
 }
 
 import { SONG_DATA } from './songs.js';
+import { arrange } from './arrange.js';
 
-const song = (id, level, emoji, title, sub, notes, lyrics, opts = {}) => ({ id, level, emoji, title, sub, tempo: 100, time: '4/4', clef: 'treble', pickup: 0, bars: true, ...opts, notes: parse(notes, lyrics) });
+// lh / chords given in songs.js are kept as lhData / chordsData; arrange() works out the rest
+const song = (id, level, emoji, title, sub, notes, lyrics, { lh, chords, fingers, lhFingers, ...opts } = {}) => arrange({
+  id, level, emoji, title, sub, tempo: 100, time: '4/4', clef: 'treble', key: 'C', pickup: 0, bars: true, ...opts,
+  lhData: lh, chordsData: chords, fingersData: fingers, lhFingersData: lhFingers, notes: parse(notes, lyrics),
+}, parse);
 
 // Songs live in songs.js (raw strings, grouped by level, easiest first).
 export const SONGS = SONG_DATA.map(({ notes, lyrics, ...x }) => song(x.id, x.level, x.emoji, x.title, x.sub, notes, lyrics, x));
@@ -368,6 +373,8 @@ export const LEVELS = [
 ];
 
 export const lessonById = (id) => { for (const lv of LEVELS) for (const l of lv.lessons) if (l.id === id) return { lesson: l, level: lv }; return null; };
-export const songsForLevel = (n) => SONGS.filter((s) => s.level === n);
+// Easiest first: by diff (1-100) when songs give one, else in songs.js order
+export const songsForLevel = (n) => SONGS.filter((s) => s.level === n)
+  .map((s, i) => [s.diff ?? i, i, s]).sort((a, b) => a[0] - b[0] || a[1] - b[1]).map((x) => x[2]);
 
 export const PRAISE = ['Yes!', 'Egg-cellent!', 'Cluck yeah!', 'Peck-tacular!', 'Awesome!', 'Woo-hoo!', 'Super chick!'];

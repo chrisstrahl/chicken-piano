@@ -255,6 +255,8 @@ body.midi #mic:not(.on){opacity:.6}
 .staffcard .lt{font-weight:700;font-family:'Fredoka',sans-serif}
 .staffcard .ly{font-family:'Fredoka',sans-serif;fill:var(--muted);font-weight:600}
 .staffcard .ly.done,.staffcard .ltg.done{opacity:.3}
+.staffcard .dim{opacity:.3}
+.staffcard .chordsym{font-family:'Fredoka',sans-serif;font-weight:700;fill:#7447d9}
 .shake{animation:shake .4s}
 @keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
 
@@ -470,6 +472,7 @@ body.midi #mic:not(.on){opacity:.6}
         <button class="btn round" id="btnEcho" aria-label="Echo: listen, then copy">🦜</button>
         <button class="btn round" id="btnSpeed" aria-label="Speed">🐇</button>
         <button class="btn round" id="btnRestart" aria-label="Start over">⏮️</button>
+        <button class="btn round" id="btnHands" aria-label="Which hand">🫱</button>
         <button class="btn round" id="btnLetters" aria-label="Letters">🔤</button>
       </div>
     </div>

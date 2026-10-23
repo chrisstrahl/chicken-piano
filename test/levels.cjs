@@ -72,19 +72,20 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
     await page.evaluate(() => window.__cp.show('songs')); await page.waitForTimeout(200); await shot('songs');
     const ids = await page.evaluate(() => window.__cp.SONGS.map((s) => s.id));
     for (const id of ids) {
-      await page.evaluate((id) => window.__cp.openSong(id, 'level'), id);
+      await page.evaluate((id) => { window.__cp.progress.hands = ['rh', 'lh', 'both'][id.length % 3]; window.__cp.openSong(id, 'level'); }, id);
       await page.waitForTimeout(120);
       if (['bday', 'speedy', 'lheggs', 'minuet', 'silent', 'races'].includes(id)) { await page.waitForTimeout(400); await shot('song-' + id); }
       const r = await page.evaluate(() => {
-        const { P, noteIn, jumpTo } = window.__cp;
-        const notes = P.song.notes;
-        let presses = 0;
-        // play 5 notes, jump back to note 1, finish the song
-        for (let k = 0; k < 400 && P.i < notes.length; k++) {
-          if (presses === 5) { jumpTo(1); if (P.i !== 1 && !notes[1].r) return 'jump failed: at ' + P.i; }
-          noteIn(notes[P.i].m, 'tap'); presses++;
+        const { P, noteIn, jumpToBeat } = window.__cp;
+        let steps = 0;
+        // play 5 steps, jump back to step 1, then finish the song (every key of each step, like taps)
+        for (let k = 0; k < 2000 && P.e < P.events.length; k++) {
+          if (steps === 5) { jumpToBeat(P.events[1].beat); if (P.e !== 1) return 'jump failed: at ' + P.e; }
+          const ev = P.events[P.e];
+          ev.need.forEach((x) => noteIn(x.m, 'tap'));
+          steps++;
         }
-        return document.querySelector('#party.show') ? 'ok' : 'stuck at ' + P.i + '/' + notes.length;
+        return document.querySelector('#party.show') ? 'ok' : 'stuck at ' + P.e + '/' + P.events.length;
       });
       if (r !== 'ok') errs.push(`song ${id}: ${r}`);
       await page.evaluate(() => document.querySelector('#party').classList.remove('show'));

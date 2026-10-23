@@ -13,9 +13,9 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
   const box = await key.boundingBox();
   const x = box.x + box.width / 2, y = box.y + box.height * 0.85;
   await page.touchscreen.tap(x, y); await page.waitForTimeout(500);
-  const afterTouch = await page.evaluate(() => window.__cp.P.i);
+  const afterTouch = await page.evaluate(() => window.__cp.P.e);
   await page.mouse.click(x, y); await page.waitForTimeout(500);
-  const afterMouse = await page.evaluate(() => window.__cp.P.i);
+  const afterMouse = await page.evaluate(() => window.__cp.P.e);
   const ok = afterTouch === 1 && afterMouse === 2;
   console.log(`${ok ? 'PASS' : 'FAIL'} touch tap -> note ${afterTouch} (want 1), mouse click -> note ${afterMouse} (want 2)`);
   // free play: a quick next note makes a short note (16th, 8th); holding a key makes a long one (90 beats a minute)
