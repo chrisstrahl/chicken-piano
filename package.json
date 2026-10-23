@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "voice": "node --no-warnings tools/voice-lines.mjs > build/voice-lines.json && python3 tools/voice/render.py build/voice-lines.json dist/voice"
+    "build": "node build.mjs",
+    "typecheck": "tsc -p .",
+    "voice": "node --no-warnings tools/voice-lines.mjs > build/voice-lines.json && python3 tools/voice/render.py build/voice-lines.json dist/voice",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +19,7 @@
     "vexflow": "^4.2.5"
   },
   "devDependencies": {
-    "esbuild": "^0.28.2"
+    "esbuild": "^0.28.2",
+    "typescript": "^5.9.3"
   }
 }

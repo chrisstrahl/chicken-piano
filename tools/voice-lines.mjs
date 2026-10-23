@@ -17,7 +17,7 @@ const walk = (o) => {
 walk(LEVELS);
 walk(SONGS);
 templatedLines(SONGS, LEVELS).forEach((t) => texts.add(t));
-for (const f of fs.readdirSync('src').filter((f) => f.endsWith('.js'))) {
+for (const f of fs.readdirSync('src').filter((f) => /\.[jt]s$/.test(f))) {
   const src = fs.readFileSync(`src/${f}`, 'utf8');
   for (const m of src.matchAll(/\bsay\(\s*(['"])((?:\\.|(?!\1).)*)\1\s*\)/g)) texts.add(m[2].replace(/\\(.)/g, '$1'));
 }
