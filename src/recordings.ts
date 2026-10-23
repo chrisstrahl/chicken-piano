@@ -5,29 +5,43 @@ import { playNote, stopPiano, pianoSamples, say, stopTalking, cluck, bawk, audio
 import { drawStaff, focusNote } from './staff.js';
 import { throwAwayAsk } from './lines.js';
 import { makeKeyboard } from './keyboard.js';
+import type { RecInfo, Recording, RecNote, NoteSource, Note } from './types';
 import { makeRecorder, toTokens, guessTempo, lengthMs, listRecordings, saveRecording, deleteRecording, renderAudio, MAX_MS } from './recorder.js';
 
-const $ = (s, r = document) => r.querySelector(s);
-const clock = (ms) => { const s = Math.round(ms / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
-const fileName = (rec, ext) => `${rec.title.replace(/[^\w ']+/g, '').trim() || 'My song'} - Chicken Piano.${ext}`;
+// every element looked up here is in index.html, so a missing one is a bug worth a loud error
+const $ = <T extends HTMLElement = HTMLElement>(s: string): T => document.querySelector<T>(s)!;
+const clock = (ms: number) => { const s = Math.round(ms / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+const colorOf = (m: number) => (COLORS as Record<string, string>)[letterOf(m)];
+const fileName = (rec: Recording, ext: string) => `${rec.title.replace(/[^\w ']+/g, '').trim() || 'My song'} - Chicken Piano.${ext}`;
 
-// app: { show, toast, ask, act, bubble, bigLetter, player: () => profile id }
-export function setupRecordings(app) {
+// What the app hands over: screens, messages and the current player
+export interface RecordingsApp {
+  show: (screen: string) => void;
+  toast: (text: string) => void;
+  ask: (icon: string, question: string, onYes: () => void) => void;
+  bubble: (el: HTMLElement, text: string) => void;
+  bigLetter: (m: number) => string;
+  player: () => string;
+}
+// The sound file for the open recording; ready once made
+type ShareFile = { id: string; ready: File | null; p: Promise<File> };
+
+export function setupRecordings(app: RecordingsApp) {
   const recorder = makeRecorder();
-  let info = null; // what is being recorded: { title, emoji, song }
-  let btn = null; // the red button being used
-  let ticker = null;
+  let info: RecInfo | null = null; // what is being recorded: { title, emoji, song }
+  let btn: HTMLElement | null = null; // the red button being used
+  let ticker: ReturnType<typeof setInterval> | undefined;
 
   /* ---------- recording ---------- */
   function paint() {
-    document.querySelectorAll('.recbtn').forEach((b) => {
+    document.querySelectorAll<HTMLElement>('.recbtn').forEach((b) => {
       const on = recorder.on && b === btn;
       b.classList.toggle('on', on);
-      b.querySelector('.ic').textContent = on ? '⏹️' : '🔴';
-      b.querySelector('.tm').textContent = on ? clock(recorder.ms) : '';
+      b.querySelector('.ic')!.textContent = on ? '⏹️' : '🔴';
+      b.querySelector('.tm')!.textContent = on ? clock(recorder.ms) : '';
     });
   }
-  function start(b, what) {
+  function start(b: HTMLElement, what: RecInfo) {
     stopTalking();
     btn = b;
     info = what;
@@ -38,19 +52,19 @@ export function setupRecordings(app) {
     paint();
   }
   // Stops and saves. open: go and listen to it now. Returns the saved recording (or null).
-  function finish({ open = true } = {}) {
+  function finish({ open = true } = {}): Recording | null {
     if (!recorder.on) return null;
     clearInterval(ticker);
-    const notes = recorder.stop();
+    const notes = recorder.stop() as RecNote[] | null;
     paint();
     if (!notes) { if (open) say('I did not hear any notes!'); return null; }
-    const rec = { id: 'r' + Date.now().toString(36), at: Date.now(), ...info, notes };
+    const rec: Recording = { id: 'r' + Date.now().toString(36), at: Date.now(), ...info!, notes };
     if (!saveRecording(app.player(), rec)) { app.toast('🎙️ 📦 ❌'); return null; }
     if (open) { openRec(rec.id); say('I saved your song! Tap play to hear it.'); }
     return rec;
   }
   // The 🔴 button on a screen. what() says what is being played when recording starts.
-  function button(b, what) {
+  function button(b: HTMLElement, what: () => RecInfo) {
     b.addEventListener('click', () => {
       if (recorder.on) return finish();
       start(b, what());
@@ -59,23 +73,29 @@ export function setupRecordings(app) {
 
   /* ---------- the shelf of saved recordings ---------- */
   function renderShelf() {
-    const recs = listRecordings(app.player());
+    const recs: Recording[] = listRecordings(app.player());
     $('#recCards').innerHTML = recs.map((r) => `<button class="card reccard" data-rec="${r.id}"><div class="em">${r.emoji}</div><div class="t">${r.title}</div>
       <div class="when">${new Date(r.at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} · ${clock(lengthMs(r.notes))}</div></button>`).join('');
     $('#recEmpty').style.display = recs.length ? 'none' : '';
     if (!recs.length) say('No songs yet! Tap the red button when you play, and I will save your song.');
   }
   $('#recCards').addEventListener('click', (e) => {
-    const c = e.target.closest('[data-rec]');
-    if (c) openRec(c.dataset.rec);
+    const c = (e.target as Element).closest<HTMLElement>('[data-rec]');
+    if (c) openRec(c.dataset.rec!);
   });
 
   /* ---------- one recording: play it back, send it ---------- */
-  const kb = makeKeyboard($('#recKb'), (m) => playNote(m, 0.9));
-  const R = { rec: null, drawn: null, index: [], timer: null, file: null };
+  const kb = makeKeyboard($('#recKb'), (m: number) => playNote(m, 0.9));
+  const R: {
+    rec: Recording | null; // the open recording
+    drawn: ReturnType<typeof drawStaff> | null;
+    index: (number | undefined)[]; // recorded note -> drawn note
+    timer: ReturnType<typeof setTimeout>[] | null; // playing back
+    file: ShareFile | null;
+  } = { rec: null, drawn: null, index: [], timer: null, file: null };
   const card = $('#recStaff');
-  function openRec(id) {
-    const rec = listRecordings(app.player()).find((r) => r.id === id);
+  function openRec(id: string) {
+    const rec = (listRecordings(app.player()) as Recording[]).find((r) => r.id === id);
     if (!rec) return app.show('recs');
     app.show('rec');
     R.rec = rec;
@@ -83,7 +103,7 @@ export function setupRecordings(app) {
     const ms = rec.notes.map((n) => n[1]);
     kb.setRange(Math.min(...ms), Math.max(...ms));
     const { tokens, index } = toTokens(rec.notes, guessTempo(rec.notes));
-    const notes = parse(tokens);
+    const notes: Note[] = parse(tokens);
     const low = notes.filter((n) => !n.r && n.m < 60).length > notes.filter((n) => !n.r).length / 2;
     R.drawn = drawStaff(card, notes, { scroll: true, clef: low ? 'bass' : 'treble', time: null, bars: false });
     R.index = index;
@@ -102,7 +122,7 @@ export function setupRecordings(app) {
   }
   function play() {
     stopTalking();
-    const notes = R.rec.notes;
+    const notes = R.rec!.notes;
     R.timer = notes.map(([t, m, d, v], j) => setTimeout(() => {
       playNote(m, Math.max(0.15, d / 1000), undefined, v);
       kb.flash(m, 'down', Math.max(180, d));
@@ -116,7 +136,7 @@ export function setupRecordings(app) {
   $('#recDelete').addEventListener('click', () => {
     stopPlay();
     app.ask('🗑️ ❓', throwAwayAsk, () => {
-      deleteRecording(app.player(), R.rec.id);
+      deleteRecording(app.player(), R.rec!.id);
       app.show('recs');
     });
   });
@@ -124,30 +144,30 @@ export function setupRecordings(app) {
   // The sound file is made as soon as the recording opens, so tapping 📤 can open the share sheet right away
   // (iPhones and iPads only allow it straight from a tap).
   function samplesReady() {
-    return new Promise((res, rej) => {
+    return new Promise<NonNullable<ReturnType<typeof pianoSamples>>>((res, rej) => {
       const t0 = Date.now();
       const check = () => (pianoSamples() ? res(pianoSamples()) : Date.now() - t0 > 15000 ? rej(new Error('no piano')) : setTimeout(check, 200));
       check();
     });
   }
-  function prepare(rec) {
+  function prepare(rec: Recording) {
     if (R.file && R.file.id === rec.id) return;
-    const f = { id: rec.id, ready: null };
+    const f = { id: rec.id, ready: null } as ShareFile;
     f.p = samplesReady()
       .then((s) => renderAudio(rec.notes, s))
-      .then((blob) => { f.ready = new File([blob], fileName(rec, 'wav'), { type: 'audio/wav' }); return f.ready; });
+      .then((blob: Blob) => { f.ready = new File([blob], fileName(rec, 'wav'), { type: 'audio/wav' }); return f.ready; });
     f.p.catch((e) => console.warn('render failed', e));
     R.file = f;
   }
-  const shareText = (rec) => `🐔🎹 ${rec.emoji} ${rec.title}, played on Chicken Piano!`;
-  function send(file, rec, b) {
+  const shareText = (rec: Recording) => `🐔🎹 ${rec.emoji} ${rec.title}, played on Chicken Piano!`;
+  function send(file: File, rec: Recording, b: HTMLElement) {
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       navigator.share({ files: [file], title: rec.title, text: shareText(rec) })
         .then(() => { cluck(2); say('Sent! Bawk bawk!'); })
         .catch((e) => { if (e.name === 'NotAllowedError') { b.classList.add('pulse'); app.bubble($('#recBubble'), `👉 ${b.textContent}`); } else if (e.name !== 'AbortError') download(file); });
     } else download(file);
   }
-  function download(file) {
+  function download(file: File) {
     const a = document.createElement('a');
     a.href = URL.createObjectURL(file);
     a.download = file.name;
@@ -158,10 +178,11 @@ export function setupRecordings(app) {
     app.toast(`💾 ${file.name}`);
   }
   $('#recShare').addEventListener('click', (e) => {
-    const b = e.currentTarget;
+    const b = e.currentTarget as HTMLElement;
     b.classList.remove('pulse');
     stopPlay();
     const f = R.file;
+    if (!f || !R.rec) return;
     if (f.ready) return send(f.ready, R.rec, b);
     // still being made: ask for one more tap once it's ready
     app.bubble($('#recBubble'), '🥚⏳');
@@ -181,15 +202,15 @@ export function setupRecordings(app) {
     stopPlay();
     const rec = R.rec;
     const type = videoType();
-    if (!type || !R.file) return;
+    if (!type || !R.file || !rec) return;
     const box = $('#recFilm');
     box.classList.add('show');
     $('#filmSend').style.display = 'none';
     app.bubble($('#filmBubble'), '🎬 ⏳');
-    let file;
+    let file: File;
     try {
       const wav = await R.file.p;
-      file = await filmIt(rec, wav, type, $('#filmCanvas'));
+      file = await filmIt(rec, wav, type, $<HTMLCanvasElement>('#filmCanvas'));
     } catch (e) {
       console.warn('video failed', e);
       box.classList.remove('show');
@@ -200,14 +221,14 @@ export function setupRecordings(app) {
     bawk();
     app.bubble($('#filmBubble'), '🎬 ✅ 👉 📤');
     $('#filmSend').style.display = '';
-    $('#filmSend').onclick = (e) => send(file, rec, e.currentTarget);
+    $('#filmSend').onclick = (e) => send(file, rec, e.currentTarget as HTMLElement);
   });
   $('#filmClose').addEventListener('click', () => { $('#recFilm').classList.remove('show'); filming && filming.stop(); });
 
-  let filming = null;
+  let filming: { stop: () => void } | null = null;
   // Plays the recording on a drawn keyboard in real time while MediaRecorder films the canvas and the sound.
-  async function filmIt(rec, wav, type, canvas) {
-    const ctx = audioContext().rawContext;
+  async function filmIt(rec: Recording, wav: Blob, type: string, canvas: HTMLCanvasElement): Promise<File> {
+    const ctx = audioContext().rawContext as AudioContext;
     if (ctx.state !== 'running') await ctx.resume();
     const audio = await ctx.decodeAudioData(await wav.arrayBuffer());
     const dest = ctx.createMediaStreamDestination();
@@ -218,11 +239,11 @@ export function setupRecordings(app) {
     const stream = canvas.captureStream(30);
     dest.stream.getAudioTracks().forEach((t) => stream.addTrack(t));
     const mr = new MediaRecorder(stream, { mimeType: type, videoBitsPerSecond: 2500000 });
-    const chunks = [];
+    const chunks: Blob[] = [];
     mr.ondataavailable = (e) => e.data.size && chunks.push(e.data);
     const done = new Promise((res) => { mr.onstop = res; });
     const draw = drawer(canvas, rec);
-    let t0 = null;
+    let t0: number | null = null;
     let raf = 0;
     const frame = () => {
       const t = t0 === null ? 0 : (ctx.currentTime - t0) * 1000;
@@ -248,31 +269,31 @@ export function setupRecordings(app) {
   return {
     button, finish, openRec, R,
     get on() { return recorder.on; },
-    down: (m, source, vel) => { recorder.down(m, source, vel); },
-    up: (m) => recorder.up(m),
+    down: (m: number, source: NoteSource, vel?: number) => { recorder.down(m, source, vel); },
+    up: (m: number) => recorder.up(m),
     screens: { recs: renderShelf },
-    leave(to) { if (to !== 'rec') stopPlay(); if (recorder.on) { finish({ open: false }); app.toast('🎙️ ✅'); } },
+    leave(to: string) { if (to !== 'rec') stopPlay(); if (recorder.on) { finish({ open: false }); app.toast('🎙️ ✅'); } },
   };
 }
 
 // Draws one video frame at time t (ms): title, chicken, and a keyboard whose keys light up in their colors.
-function drawer(canvas, rec) {
+function drawer(canvas: HTMLCanvasElement, rec: Recording) {
   const W = canvas.width = 1280;
   const H = canvas.height = 720;
-  const g = canvas.getContext('2d');
+  const g = canvas.getContext('2d')!;
   const ms = rec.notes.map((n) => n[1]);
   let lo = Math.min(...ms, 60);
   let hi = Math.max(...ms, 72);
   while (isBlack(lo) || letterOf(lo) !== 'C') lo--;
   while (isBlack(hi) || letterOf(hi) !== 'B') hi++;
-  const whites = [];
+  const whites: number[] = [];
   for (let m = lo; m <= hi; m++) if (!isBlack(m)) whites.push(m);
   const kw = (W - 80) / whites.length;
   const ky = 380;
   const kh = 300;
-  const xOf = (m) => 40 + whites.indexOf(isBlack(m) ? m - 1 : m) * kw + (isBlack(m) ? kw * 0.7 : 0);
-  const font = (px, w = 700) => `${w} ${px}px Fredoka, 'Trebuchet MS', sans-serif`;
-  return (t) => {
+  const xOf = (m: number) => 40 + whites.indexOf(isBlack(m) ? m - 1 : m) * kw + (isBlack(m) ? kw * 0.7 : 0);
+  const font = (px: number, w = 700) => `${w} ${px}px Fredoka, 'Trebuchet MS', sans-serif`;
+  return (t: number) => {
     const sounding = rec.notes.filter(([s, , d]) => t >= s && t < s + Math.max(d, 200));
     const on = new Set(sounding.map((n) => n[1]));
     g.fillStyle = '#ffe9a8';
@@ -288,7 +309,7 @@ function drawer(canvas, rec) {
     const last = [...rec.notes].reverse().find(([s]) => s <= t);
     if (last && t - last[0] < 1500) {
       const m = last[1];
-      g.fillStyle = isBlack(m) ? '#555' : COLORS[letterOf(m)];
+      g.fillStyle = isBlack(m) ? '#555' : colorOf(m);
       g.beginPath(); g.arc(W / 2, 230, 95, 0, Math.PI * 2); g.fill();
       g.fillStyle = '#fff';
       g.font = font(110);
@@ -299,9 +320,9 @@ function drawer(canvas, rec) {
     g.fillRect(30, ky - 12, W - 60, kh + 24);
     whites.forEach((m, i) => {
       const x = 40 + i * kw;
-      g.fillStyle = on.has(m) ? COLORS[letterOf(m)] : '#fffdf6';
+      g.fillStyle = on.has(m) ? colorOf(m) : '#fffdf6';
       g.fillRect(x + 2, ky, kw - 4, kh);
-      g.fillStyle = COLORS[letterOf(m)];
+      g.fillStyle = colorOf(m);
       g.beginPath(); g.arc(x + kw / 2, ky + kh - 34, Math.min(20, kw / 3), 0, Math.PI * 2); g.fill();
     });
     for (let m = lo; m <= hi; m++) {
