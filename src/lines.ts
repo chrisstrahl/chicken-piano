@@ -3,6 +3,7 @@
 // pre-recorded clip. A line can be a list of sentences: each is its own clip, played back to back.
 
 import { AVATARS } from './profiles.ts';
+import { EAR_MAX_EGGS } from './ear.js';
 import type { Song, Level } from './types.ts';
 
 const LETTERS = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
@@ -34,6 +35,10 @@ export const SPEED_WORDS = ['Snail speed. Nice and slow.', 'Turtle speed.', 'Bun
 export const BEAT_START = 'Wait for the pecks, then play with the beat!';
 export const ECHO_START = 'Echo time! Listen to me, then play it back.';
 export const ECHO_AGAIN = 'Listen again!';
+// Ear game (src/eartraining.ts): the chicken plays, you find the notes. ECHO_AGAIN after a wrong key.
+export const EAR_PICK = 'Ear game! Pick a nest.';
+export const EAR_START = (len: number) => (len === 1 ? 'Listen to my note. Then find it on the piano!' : 'Listen to my notes. Then find them on the piano!');
+export const EAR_HINT = 'Try the glowing key!';
 // players (profiles.ts): a typed name has no recorded clip, so the device voice says those
 export const whoPlays = 'Who is playing?';
 export const pickChicken = 'Pick your chicken!';
@@ -62,7 +67,7 @@ const firstLabel = (s: Song) => { const n = s.notes.find((x) => !x.r); return n 
 // Every templated sentence the app can say, for the clip recorder.
 export function templatedLines(songs: Song[], levels: Level[]): string[] {
   const labels = LETTERS.flatMap((l) => [l, l + '♯', l + '♭']);
-  const maxEggs = songs.length * 3 + levels.reduce((a, lv) => a + lv.lessons.length, 0);
+  const maxEggs = songs.length * 3 + levels.reduce((a, lv) => a + lv.lessons.length, 0) + EAR_MAX_EGGS;
   const out = [
     ...songs.flatMap((s) => letsPlay(s, firstLabel(s))),
     ...labels.map(startOn),
@@ -75,6 +80,7 @@ export function templatedLines(songs: Song[], levels: Level[]): string[] {
     lessonDone([], 0)[0],
     ...[1, 2, 3].map(songDone),
     ...SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN,
+    EAR_PICK, EAR_START(1), EAR_START(2), EAR_HINT,
     whoPlays,
     pickChicken,
     ...AVATARS.map((a) => hello(a.name)),

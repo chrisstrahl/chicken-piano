@@ -7,6 +7,7 @@ import { startMidi, midiSupported, midiAllowed } from './midi.js';
 import { drawStaff, focusX } from './staff.js';
 import { makeKeyboard, LOW, HIGH } from './keyboard.js';
 import { setupRecordings } from './recordings.js';
+import { setupEarTraining, earEggTotal } from './eartraining.js';
 import { players, playerId, AVATARS, MAX_PLAYERS, avatarOf } from './profiles.js';
 import { deletePlayerRecordings } from './recorder.js';
 import { CHICKEN, lookOf, avatarChicken } from './chicken.js';
@@ -27,7 +28,7 @@ let progress = loadProgress();
 const save = () => players.save(progress);
 // a song or lesson was finished today (see streaks.ts)
 const dayWin = () => { const r = addWin(progress.days); save(); return r; };
-const totalEggs = () => Object.values(progress.songs).reduce((a, b) => a + b, 0) + Object.keys(progress.lessons).length;
+const totalEggs = () => Object.values(progress.songs).reduce((a, b) => a + b, 0) + Object.keys(progress.lessons).length + earEggTotal(progress);
 
 // Progress: any level can be picked. The "current" level is the first one with lessons left, and the map
 // points the chicken at it. Each lesson finished opens more of its level's songs: 1, 2, 3, then all 5.
@@ -92,6 +93,7 @@ let leaveHooks = [];
 let gen = 0; // bumps on every screen or step change, so late callbacks know they are stale
 function show(id) {
   recs.leave(id);
+  ears.leave();
   leaveHooks.forEach((f) => f());
   leaveHooks = [];
   stopTalking();
@@ -101,7 +103,7 @@ function show(id) {
   onNote = null;
   onRelease = null;
   expectNote(null);
-  ({ home: renderHome, who: renderWho, songs: renderSongs, map: renderMap, level: renderLevel, free: openFree, nest: renderNest, ...recs.screens })[id]?.();
+  ({ home: renderHome, who: renderWho, songs: renderSongs, map: renderMap, level: renderLevel, free: openFree, nest: renderNest, ...recs.screens, ...ears.screens })[id]?.();
 }
 document.addEventListener('click', (e) => {
   const b = e.target.closest('[data-go]');
@@ -1018,6 +1020,9 @@ players.onRemove(deletePlayerRecordings);
 recs.button($('#playRec'), () => ({ title: P.song.title, emoji: P.song.emoji, song: P.song.id }));
 recs.button($('#freeRec'), () => ({ title: 'My song', emoji: '🎹', song: null }));
 
+/* ---------- ear game (src/eartraining.ts) ---------- */
+const ears = setupEarTraining({ show, bubble, bigLetter, act, party: (...a) => party(...a), progress: () => progress, save, setInput: (f) => { onNote = f; }, noteIn, keyUp });
+
 /* ---------- yes / no question ---------- */
 function ask(html, words, onYes) {
   $('#askText').innerHTML = html;
@@ -1480,7 +1485,7 @@ document.addEventListener('keydown', (e) => {
 });
 document.addEventListener('keyup', (e) => { if (typing(e)) return; const m = KEYMAP[e.key.toLowerCase()]; if (m) keyUp(m); });
 
-window.__cp = { recs, players, usePlayer, say, show, openSong, openLesson, noteIn, jumpToBeat, P, L, progress, LEVELS, SONGS, startBeatMode, startEcho, lessonStep: (i) => { L.step = i; renderStep(); } };
+window.__cp = { recs, players, usePlayer, say, show, openSong, openLesson, noteIn, jumpToBeat, P, L, progress, LEVELS, SONGS, startBeatMode, startEcho, lessonStep: (i) => { L.step = i; renderStep(); }, ears };
 window.__cpMs = ms;
 window.__cpHeard = () => heardCount;
 window.__cpFree = () => F.notes;
