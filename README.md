@@ -9,6 +9,10 @@ It listens through the microphone, shows which key to press, and shows the real 
 - Tap any note in the music to jump back to it
 - Free play: see the name and staff position of anything you play
 - Eggs for finished songs and lessons; every 3 eggs hatch a chick
+- Players: each kid picks a chicken (and an optional name) and keeps their own eggs, chicks and open songs;
+  tap the chicken at the top left of the home screen to switch
+- Works as a home-screen app: on an iPad, Share → Add to Home Screen. It opens full screen and works without wifi
+  (a service worker saves the page and the chicken's voice; a new version loads on the next launch when online)
 
 Built with [Tone.js](https://tonejs.github.io/) (sound), [Pitchy](https://github.com/ianprime0509/pitchy) (pitch detection),
 [VexFlow](https://www.vexflow.com/) (sheet music) and piano samples from
@@ -44,6 +48,12 @@ node build.mjs
 
 The first run downloads the model (~350 MB) into `~/.cache/chicken-piano-voice`. If a word comes out wrong,
 add a regex spelling fix to `tools/voice/pronounce.json` (it changes what the voice reads, not what the app shows).
+
+## Home-screen icons
+
+`node tools/icons.cjs` redraws `dist/icons` from the chicken in `src/chicken.js` (needs Playwright's Chromium).
+`node build.mjs` writes `dist/manifest.webmanifest` and `dist/sw.js` (stamped with the build time).
+`test/profiles.cjs` and `test/offline.cjs` check players and the offline cache.
 
 ## Testing note detection
 
