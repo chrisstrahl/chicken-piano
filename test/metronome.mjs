@@ -5,7 +5,7 @@
 // usage: node test/metronome.mjs <pcm dir>   (48 kHz mono float32 piano samples, like test/sequence.mjs)
 import fs from 'node:fs';
 const { NoteListener } = await import(process.env.LISTENER || '../src/listener.js');
-const { PECK, peckMask } = await import('../src/beat.js');
+const { PECK, peckMask } = await import('../src/beat.ts');
 
 const dir = process.argv[2];
 const SR = 48000, SIZE = 4096, HOP = Math.round(SR * 0.04);
