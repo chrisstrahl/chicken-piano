@@ -54,7 +54,8 @@ button{font:inherit;color:inherit;border:0;cursor:pointer;touch-action:manipulat
   color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.25)}
 
 /* mic pill (global) */
-#mic{position:fixed;top:max(10px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:50;
+#ins{position:fixed;top:max(10px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:50;display:flex;gap:8px}
+#mic{
   height:clamp(44px,7vh,60px);border-radius:999px;padding:0 16px 0 10px;display:flex;align-items:center;gap:8px;
   background:var(--barn);color:#fff;box-shadow:0 5px 0 var(--barn-d);font-weight:700;font-size:clamp(15px,2.2vw,20px)}
 #mic .ic{font-size:1.5em}
@@ -66,6 +67,13 @@ button{font:inherit;color:inherit;border:0;cursor:pointer;touch-action:manipulat
 #mic.on .heard{display:flex}
 #mic.on .txt{display:none}
 #mic:active{transform:translateY(3px)}
+/* USB keyboard (Web MIDI): hidden where the browser can't do it (iPad), dim until a keyboard is connected */
+#midi{display:none;height:clamp(44px,7vh,60px);min-width:clamp(44px,7vh,60px);border-radius:999px;align-items:center;justify-content:center;
+  font-size:clamp(22px,3.3vw,30px);background:#bbb;box-shadow:0 5px 0 #999;opacity:.6}
+#midi.can{display:flex}
+#midi.on{background:var(--good);box-shadow:0 5px 0 #26a352;opacity:1}
+#midi:active{transform:translateY(3px)}
+body.midi #mic:not(.on){opacity:.6}
 #mic.nudge{animation:pulse 1s ease-in-out 3}
 
 /* chicken */
@@ -313,7 +321,8 @@ button{font:inherit;color:inherit;border:0;cursor:pointer;touch-action:manipulat
 
 <div id="start"><div class="egg">🥚</div><div class="tap">👆</div></div>
 
-<button id="mic" aria-label="Microphone"><span class="ic">🎤</span><span class="txt">Ears</span><span class="lvl"><i></i></span><span class="heard">·</span></button>
+<div id="ins"><button id="midi" aria-label="Piano keyboard">🎹</button>
+<button id="mic" aria-label="Microphone"><span class="ic">🎤</span><span class="txt">Ears</span><span class="lvl"><i></i></span><span class="heard">·</span></button></div>
 
 <section id="home" class="screen active">
   <div class="hero">

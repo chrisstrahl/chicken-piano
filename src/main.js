@@ -2,6 +2,7 @@ import { SONGS, LEVELS, PRAISE, COLORS, BEATS, letterOf, nameOf, isBlack, parse,
 import { coop, openSongsAsk, letsPlay, oopsFind, songDone, lessonDone, noteWords } from './lines.js';
 import { startAudio, playNote, noteDown, noteUp, playSequence, cluck, peck, bawk, silly, say, stopTalking, preloadVoice } from './audio.js';
 import { startMic, stopMic, micOn, micSupported, expectNote, micHealth } from './mic.js';
+import { startMidi, midiSupported, midiAllowed } from './midi.js';
 import { drawStaff, focusNote } from './staff.js';
 import { makeKeyboard, LOW, HIGH } from './keyboard.js';
 
@@ -112,7 +113,10 @@ function keyUp(m) {
   noteUp(m);
   onRelease && onRelease(m);
 }
-function noteIn(m, source) {
+// source: 'tap' (screen or computer keys), 'mic', or 'midi' (a USB keyboard, which makes its own sound).
+// vel: 0..1, only known for MIDI.
+function noteIn(m, source, vel) {
+  if (source === 'mic' && midiNames.length) return; // a plugged-in keyboard is exact; don't let the mic second-guess it
   if (source === 'tap') noteDown(m);
   const hd = $('#mic .heard');
   if (source === 'mic') heardCount++;
@@ -160,6 +164,56 @@ micBtn.addEventListener('click', async () => {
     toast('🎤 Clucky can’t hear here. Tap the keys on screen instead!', 6000);
   }
 });
+
+/* ---------- USB keyboard (Web MIDI) ---------- */
+// The 🎹 button only appears where the browser can talk to a keyboard (not iPad/iPhone Safari).
+// First time: tap it to allow MIDI. After that it connects by itself whenever a keyboard is plugged in.
+const midiBtn = $('#midi');
+let midiNames = [];
+let midiStarted = false;
+let midiCount = 0;
+async function connectMidi(asked) {
+  if (midiStarted) return;
+  try {
+    await startMidi({
+      onDown: (m, vel) => { midiCount++; [playKb, lessonKb, freeKb].forEach((kb) => kb.flash(m, 'down', 180)); noteIn(m, 'midi', vel); },
+      onUp: (m) => keyUp(m),
+      onChange: (names) => {
+        const was = midiNames.length;
+        midiNames = names;
+        midiBtn.classList.toggle('on', !!names.length);
+        document.body.classList.toggle('midi', !!names.length);
+        if (names.length && !was) cluck(2);
+        else if (!names.length && was && micOn()) toast('🎤 Keyboard unplugged. Clucky is listening with the microphone again.', 4000);
+      },
+    });
+    midiStarted = true;
+    if (asked && !midiNames.length) toast('🔌🎹 Plug the piano in with a USB cable!', 5000);
+  } catch (e) {
+    console.warn(e);
+    if (asked) toast('🎹 The browser said no. Allow MIDI in the site settings, then tap 🎹 again.', 6000);
+  }
+}
+if (midiSupported()) {
+  midiBtn.classList.add('can');
+  midiAllowed().then((ok) => ok && connectMidi(false));
+}
+// Grown-ups: hold 🎹 for 1.5s to see which keyboard is connected.
+{
+  let t = null, held = false;
+  midiBtn.addEventListener('pointerdown', () => {
+    held = false;
+    t = setTimeout(() => { held = true; toast(`🎹 ${midiStarted ? 'allowed' : 'not allowed yet'} · ${midiNames.join(', ') || 'no keyboard'} · notes ${midiCount}`, 8000); }, 1500);
+  });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) => midiBtn.addEventListener(ev, () => clearTimeout(t)));
+  midiBtn.addEventListener('click', () => {
+    if (held) return;
+    startAudio();
+    if (!midiStarted) connectMidi(true);
+    else if (!midiNames.length) toast('🔌🎹 Plug the piano in with a USB cable!', 5000);
+    else cluck(1);
+  });
+}
 
 /* ---------- HOME ---------- */
 function renderHome() {
@@ -817,8 +871,8 @@ function openFree() {
     const n = noteOf(m);
     F.notes.push(n);
     if (F.notes.length > 8) F.notes.shift();
-    // tapped keys start as quarter notes and get their real length when the finger lifts
-    if (source === 'tap') F.down[m] = { n, t: performance.now() };
+    // tapped (or USB keyboard) keys start as quarter notes and get their real length when the finger lifts
+    if (source !== 'mic') F.down[m] = { n, t: performance.now() };
     drawFree();
     bubble($('#freeBubble'), bigLetter(m));
     freeKb.flash(m, 'hl', 600);
@@ -847,3 +901,4 @@ window.__cp = { say, show, openSong, openLesson, noteIn, jumpTo, P, L, progress,
 window.__cpMs = ms;
 window.__cpHeard = () => heardCount;
 window.__cpFree = () => F.notes;
+window.__cpMidi = () => ({ names: midiNames, started: midiStarted, count: midiCount });
