@@ -4,7 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Chicken Piano">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#ffd84d">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <title>Chicken Piano</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
@@ -54,7 +60,8 @@ button{font:inherit;color:inherit;border:0;cursor:pointer;touch-action:manipulat
   color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.25)}
 
 /* mic pill (global) */
-#mic{position:fixed;top:max(10px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:50;
+#ins{position:fixed;top:max(10px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:50;display:flex;gap:8px}
+#mic{
   height:clamp(44px,7vh,60px);border-radius:999px;padding:0 16px 0 10px;display:flex;align-items:center;gap:8px;
   background:var(--barn);color:#fff;box-shadow:0 5px 0 var(--barn-d);font-weight:700;font-size:clamp(15px,2.2vw,20px)}
 #mic .ic{font-size:1.5em}
@@ -66,6 +73,13 @@ button{font:inherit;color:inherit;border:0;cursor:pointer;touch-action:manipulat
 #mic.on .heard{display:flex}
 #mic.on .txt{display:none}
 #mic:active{transform:translateY(3px)}
+/* USB keyboard (Web MIDI): hidden where the browser can't do it (iPad), dim until a keyboard is connected */
+#midi{display:none;height:clamp(44px,7vh,60px);min-width:clamp(44px,7vh,60px);border-radius:999px;align-items:center;justify-content:center;
+  font-size:clamp(22px,3.3vw,30px);background:#bbb;box-shadow:0 5px 0 #999;opacity:.6}
+#midi.can{display:flex}
+#midi.on{background:var(--good);box-shadow:0 5px 0 #26a352;opacity:1}
+#midi:active{transform:translateY(3px)}
+body.midi #mic:not(.on){opacity:.6}
 #mic.nudge{animation:pulse 1s ease-in-out 3}
 
 /* chicken */
@@ -106,6 +120,40 @@ button{font:inherit;color:inherit;border:0;cursor:pointer;touch-action:manipulat
 .coop{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.8);border-radius:999px;padding:6px 18px;font-size:min(4vh,3vw);min-height:44px}
 #home .ver{position:absolute;right:max(12px,env(safe-area-inset-right));bottom:max(6px,env(safe-area-inset-bottom));font-size:11px;color:rgba(0,0,0,.4)}
 .coop .lbl{font-weight:700;margin-right:6px}
+
+/* PLAYERS: who is playing? */
+.av{display:inline-flex;align-items:center;justify-content:center}
+.av .chicken{height:100%;width:auto}
+.av.mini{height:1em;vertical-align:-.12em}
+#btnWho{position:absolute;top:max(10px,env(safe-area-inset-top));left:max(12px,env(safe-area-inset-left));display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.85);border-radius:999px;padding:4px 18px 4px 8px;box-shadow:0 4px 0 rgba(0,0,0,.12);font-weight:700;font-size:clamp(16px,2.4vw,22px);min-height:52px}
+#btnWho .av{height:clamp(40px,7vh,56px)}
+#btnWho:active{transform:translateY(3px)}
+#who{align-items:center;justify-content:center;gap:3vh;background:radial-gradient(ellipse 120% 40% at 50% 112%,var(--grass) 60%,transparent 61%)}
+.whohead{font-size:min(12vh,9vw);line-height:1}
+.players{display:flex;flex-wrap:wrap;gap:3vh 3vw;justify-content:center;max-width:94vw}
+.player{position:relative}
+.pick{width:min(20vw,32vh);aspect-ratio:1;border-radius:32px;background:var(--card);box-shadow:0 7px 0 rgba(0,0,0,.14);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6vh;padding:1.6vh;transition:transform .1s}
+.pick:active{transform:translateY(5px);box-shadow:0 2px 0 rgba(0,0,0,.14)}
+.pick .av{height:68%}
+.pick .nm{font-weight:700;font-size:min(4.2vh,2.8vw);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.player.cur .pick{box-shadow:0 7px 0 rgba(0,0,0,.14),0 0 0 6px var(--yolk)}
+.player .edit{position:absolute;top:-12px;right:-12px;width:48px;height:48px;font-size:22px}
+.pick.add{background:rgba(255,255,255,.55);box-shadow:0 7px 0 rgba(0,0,0,.08)}
+.pick .plus{font-size:min(12vh,8vw)}
+#editor{position:fixed;inset:0;z-index:84;display:none;align-items:center;justify-content:center;background:rgba(40,25,10,.45)}
+#editor.show{display:flex}
+#editor .box{background:var(--card);border-radius:32px;padding:3vh 3vw;display:flex;flex-direction:column;align-items:center;gap:3vh;
+  box-shadow:0 10px 0 rgba(0,0,0,.2);animation:bpop .3s;max-width:94vw}
+.avs{display:flex;gap:1.6vw;flex-wrap:wrap;justify-content:center}
+.avbtn{width:min(12vw,20vh);aspect-ratio:1;border-radius:24px;background:#f4ecdc;display:flex;align-items:center;justify-content:center;padding:8px}
+.avbtn .av{height:100%}
+.avbtn.on{background:var(--yolk);box-shadow:0 0 0 5px var(--accent)}
+#editor .row{display:flex;gap:2vw;align-items:center}
+#edName{font:inherit;font-weight:700;font-size:clamp(20px,4vh,32px);padding:8px 16px;border-radius:18px;border:3px solid #eadcc6;width:min(34vw,320px);
+  color:var(--ink);background:#fff;user-select:text;-webkit-user-select:text}
+#editor .btn.round{width:min(12vh,9vw);height:min(12vh,9vw);font-size:min(6vh,4.4vw)}
 
 /* SONGS / LESSONS lists */
 .cards{flex:1;display:flex;gap:2.5vw;align-items:center;justify-content:center;padding:1vh 0 2vh}
@@ -156,7 +204,7 @@ button{font:inherit;color:inherit;border:0;cursor:pointer;touch-action:manipulat
 .keybtn.holding{background:var(--good);transition:background 2s}
 
 /* one level */
-.lvbody{flex:1;display:flex;flex-direction:column;justify-content:center;gap:2.6vh;padding-bottom:2vh;min-height:0}
+.lvbody{flex:1;display:flex;flex-direction:column;justify-content:safe center;gap:2.6vh;padding-bottom:2vh;min-height:0;overflow-y:auto}
 .lvsec{display:flex;align-items:center;gap:1.4vw}
 .lvlbl{font-size:min(7vh,5vw);width:min(8vh,6vw);text-align:center}
 .lvrowc{flex:1;display:grid;grid-template-columns:repeat(5,1fr);gap:1.4vw}
@@ -170,7 +218,14 @@ button{font:inherit;color:inherit;border:0;cursor:pointer;touch-action:manipulat
 .card.next{animation:pulse 1.4s ease-in-out infinite}
 
 /* all songs, by level */
-.songlist{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:1.6vh;padding:1vh 4px 3vh;-webkit-overflow-scrolling:touch}
+.songlist{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:1.6vh;padding:1vh 4px 3vh}
+/* long lists scroll: momentum on iPad, a chunky scrollbar where browsers show one, and a fade at the bottom edge
+   while there's more below (main.js sets .more) so kids can see the list keeps going */
+.lvbody,.songlist{-webkit-overflow-scrolling:touch;overscroll-behavior:contain;scrollbar-width:auto;scrollbar-color:var(--accent) rgba(255,255,255,.4)}
+.lvbody::-webkit-scrollbar,.songlist::-webkit-scrollbar{width:12px}
+.lvbody::-webkit-scrollbar-thumb,.songlist::-webkit-scrollbar-thumb{background:var(--accent);border-radius:6px}
+.lvbody.more,.songlist.more{-webkit-mask-image:linear-gradient(#000 85%,transparent);mask-image:linear-gradient(#000 85%,transparent)}
+.lvtag{grid-row:span 3}
 .lvrow{display:grid;grid-template-columns:min(9vh,6vw) repeat(5,1fr);gap:1.2vw;align-items:stretch}
 .lvtag{border-radius:20px;background:var(--lc);color:#fff;font-weight:700;font-size:min(5vh,3.4vw);display:flex;flex-direction:column;align-items:center;justify-content:center}
 .lvtag small{font-size:.7em}
@@ -253,6 +308,11 @@ button{font:inherit;color:inherit;border:0;cursor:pointer;touch-action:manipulat
 #lesson .kbwrap{margin-top:auto}
 #lessonStaff[style*="none"] ~ .kbwrap{flex-basis:56%}
 #lessonStaff[style*="none"] ~ .choices{flex:1}
+/* staff and answer eggs together: smaller eggs so the staff stays big enough to read */
+#lessonStaff{min-height:22vh}
+#lessonStaff:not([style*="none"]) ~ .choices{padding:.5vh 0 1vh}
+#lessonStaff:not([style*="none"]) ~ .choices .choice{width:min(13vw,15vh);height:min(16vw,18vh);font-size:min(9vh,6vw)}
+@media (max-height:500px){#lessonStaff{min-height:30vh}#lesson .kbwrap{flex-basis:30%}}
 .choices{display:flex;gap:2vw;justify-content:center;align-items:center;flex:0 0 auto;padding:1vh 0 2vh}
 .choice{width:min(18vw,22vh);height:min(22vw,26vh);border-radius:50% 50% 46% 46% / 58% 58% 42% 42%;background:#fffaf0;
   box-shadow:0 6px 0 #e7d9bd;font-size:min(10vh,7vw);font-weight:700;display:flex;align-items:center;justify-content:center;flex-direction:column;line-height:1}
@@ -304,6 +364,31 @@ button{font:inherit;color:inherit;border:0;cursor:pointer;touch-action:manipulat
   font-size:18px;z-index:99;max-width:min(90vw,560px);text-align:center;transition:transform .3s,opacity .3s;opacity:0;pointer-events:none}
 #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 
+/* record and share */
+.recbtn{background:#fff;width:clamp(54px,9vh,76px);height:clamp(54px,9vh,76px);position:relative}
+.recbtn .ic{font-size:clamp(26px,5vh,42px)}
+.recbtn.on{background:var(--barn);box-shadow:0 5px 0 var(--barn-d);animation:recpulse 1.2s ease-in-out infinite}
+.recbtn .tm{position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);background:var(--barn);color:#fff;border-radius:999px;padding:0 7px;font-size:14px;line-height:20px}
+.recbtn .tm:empty{display:none}
+@keyframes recpulse{50%{box-shadow:0 5px 0 var(--barn-d),0 0 0 10px rgba(255,77,77,.3)}}
+.btn.green{background:var(--good);box-shadow:0 5px 0 #26a352;color:#fff}
+.btn.round.big{width:clamp(54px,10vh,84px);height:clamp(54px,10vh,84px);font-size:clamp(26px,5vh,42px)}
+.menu .tile{width:min(20vw,30vh)}
+.reclist{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(30vw,200px),1fr));gap:1.6vw;align-content:start;padding:1vh 4px 3vh}
+.reccard{width:auto;height:auto;padding:2vh 1vw;gap:.6vh;justify-content:center}
+.reccard .em{font-size:min(9vh,6vw)}
+.reccard .t{font-size:min(3.2vh,2.2vw)}
+.reccard .when{font-size:min(2.6vh,1.8vw);color:var(--muted)}
+.recempty{flex:1;display:flex;align-items:center;justify-content:center;gap:2vw}
+.recempty .chicken{height:min(30vh,22vw)}
+.recempty .bubble{font-size:min(8vh,6vw)}
+#recFilm{position:fixed;inset:0;z-index:90;background:rgba(59,39,22,.6);display:none;align-items:center;justify-content:center;padding:2vh}
+#recFilm.show{display:flex}
+#recFilm .box{background:var(--card);border-radius:28px;padding:2vh;display:flex;flex-direction:column;gap:1.4vh;max-width:96vw;max-height:96vh}
+#recFilm canvas{width:min(80vw,124vh);aspect-ratio:16/9;height:auto;border-radius:16px;max-height:70vh;object-fit:contain}
+#recFilm .row{display:flex;gap:14px;align-items:center;justify-content:center}
+#recFilm .bubble:before{display:none}
+
 #turn{position:fixed;inset:0;z-index:100;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;
   background:var(--yolk);font-size:28px;font-weight:700;text-align:center;padding:16px}
 #turn .em{font-size:90px;animation:spin 2s ease-in-out infinite}
@@ -315,7 +400,8 @@ button{font:inherit;color:inherit;border:0;cursor:pointer;touch-action:manipulat
 
 <div id="start"><div class="egg">🥚</div><div class="tap">👆</div></div>
 
-<button id="mic" aria-label="Microphone"><span class="ic">🎤</span><span class="txt">Ears</span><span class="lvl"><i></i></span><span class="heard">·</span></button>
+<div id="ins"><button id="midi" aria-label="Piano keyboard">🎹</button>
+<button id="mic" aria-label="Microphone"><span class="ic">🎤</span><span class="txt">Ears</span><span class="lvl"><i></i></span><span class="heard">·</span></button></div>
 
 <section id="home" class="screen active">
   <div class="hero">
@@ -326,9 +412,16 @@ button{font:inherit;color:inherit;border:0;cursor:pointer;touch-action:manipulat
     <button class="btn blue tile" data-go="map"><span class="em">🗺️</span>Levels<span class="tbadge" id="homeLevel"></span></button>
     <button class="btn orange tile" data-go="songs"><span class="em">🎵</span>Songs</button>
     <button class="btn violet tile" data-go="free"><span class="em">🎹</span>Play</button>
+    <button class="btn red tile" data-go="recs"><span class="em">🎙️</span>Mine</button>
   </div>
   <div class="coop" id="coop"></div>
   <div class="ver">v <!--VERSION--></div>
+  <button id="btnWho" aria-label="Who is playing?"></button>
+</section>
+
+<section id="who" class="screen">
+  <div class="whohead">🐔❓</div>
+  <div class="players" id="players"></div>
 </section>
 
 <section id="songs" class="screen">
@@ -365,6 +458,7 @@ button{font:inherit;color:inherit;border:0;cursor:pointer;touch-action:manipulat
       <div class="bubble" id="playBubble"></div>
       <div class="spacer"></div>
       <div class="tools">
+        <button class="btn round recbtn" id="playRec" aria-label="Record"><span class="ic">🔴</span><span class="tm"></span></button>
         <button class="btn round blue" id="btnListen" aria-label="Listen">👂</button>
         <button class="btn round" id="btnRestart" aria-label="Restart">🔁</button>
         <button class="btn round" id="btnHands" aria-label="Which hand">🫱</button>
@@ -405,10 +499,46 @@ button{font:inherit;color:inherit;border:0;cursor:pointer;touch-action:manipulat
     <div class="coach">
       <div data-chicken id="freeChicken"></div>
       <div class="bubble" id="freeBubble"></div>
+      <div class="spacer"></div>
+      <div class="tools"><button class="btn round recbtn" id="freeRec" aria-label="Record"><span class="ic">🔴</span><span class="tm"></span></button></div>
     </div>
     <div class="kbwrap"><div id="freeKb"></div></div>
   </div>
 </section>
+
+<section id="recs" class="screen">
+  <div class="topbar"><button class="btn round" data-go="home" aria-label="Home">🏠</button><h2>🎙️ Mine</h2></div>
+  <div class="recempty" id="recEmpty"><div data-chicken></div><div class="bubble">🔴 🎹 🎵</div></div>
+  <div class="reclist" id="recCards"></div>
+</section>
+
+<section id="rec" class="screen">
+  <div class="topbar"><button class="btn round" data-go="recs" aria-label="Back">⬅️</button><h2 id="recTitle">🎹</h2></div>
+  <div class="stage">
+    <div class="staffcard" id="recStaff"><div class="scroller"><div class="strip"></div></div></div>
+    <div class="coach">
+      <div data-chicken id="recChicken"></div>
+      <div class="bubble" id="recBubble"></div>
+      <div class="spacer"></div>
+      <div class="tools">
+        <button class="btn round big green" id="recPlay" aria-label="Play">▶️</button>
+        <button class="btn round big orange" id="recShare" aria-label="Send">📤</button>
+        <button class="btn round big violet" id="recVideo" aria-label="Make a video">🎬</button>
+        <button class="btn round" id="recDelete" aria-label="Throw away">🗑️</button>
+      </div>
+    </div>
+    <div class="kbwrap"><div id="recKb"></div></div>
+  </div>
+</section>
+
+<div id="recFilm"><div class="box">
+  <canvas id="filmCanvas" width="1280" height="720"></canvas>
+  <div class="row">
+    <div class="bubble" id="filmBubble">🎬</div>
+    <button class="btn round big orange" id="filmSend" aria-label="Send">📤</button>
+    <button class="btn round" id="filmClose" aria-label="Close">✖️</button>
+  </div>
+</div></div>
 
 <div id="party"><div class="box">
   <div data-chicken id="partyChicken"></div>
@@ -418,6 +548,7 @@ button{font:inherit;color:inherit;border:0;cursor:pointer;touch-action:manipulat
     <div class="row">
       <button class="btn round" id="partyAgain" aria-label="Again">🔁</button>
       <button class="btn round" id="partyHome" aria-label="Home">🏠</button>
+      <button class="btn round red" id="partyRec" aria-label="Listen to my recording" style="display:none">🎙️</button>
       <button class="btn orange" id="partyNext" style="font-size:clamp(24px,5vh,40px);padding:6px 26px" aria-label="Next">➡️</button>
     </div>
   </div>
@@ -431,6 +562,16 @@ button{font:inherit;color:inherit;border:0;cursor:pointer;touch-action:manipulat
       <button class="btn round red" id="askNo" aria-label="No">✖️</button>
       <button class="btn round" id="askYes" aria-label="Yes" style="background:var(--good);box-shadow:0 5px 0 #26a352">✔️</button>
     </div>
+  </div>
+</div></div>
+
+<div id="editor"><div class="box">
+  <div class="avs" id="edAvatars"></div>
+  <div class="row">
+    <input id="edName" maxlength="12" autocomplete="off" autocapitalize="words" spellcheck="false" aria-label="Name">
+    <button class="btn round red" id="edDel" aria-label="Remove">🗑️</button>
+    <button class="btn round" id="edNo" aria-label="Cancel">✖️</button>
+    <button class="btn round" id="edYes" aria-label="OK" style="background:var(--good);box-shadow:0 5px 0 #26a352">✔️</button>
   </div>
 </div></div>
 

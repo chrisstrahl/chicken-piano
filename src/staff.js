@@ -178,7 +178,7 @@ export function drawStaff(card, notes, opts = {}) {
   card.dataset.h = H;
 
   // highlight box lives behind everything
-  const cur = svgEl('rect', { class: 'cur', x: -100, y: 4, width: 44, height: H - 8, rx: 14 }, svg);
+  const cur = svgEl('rect', { class: 'cur', x: -10000, y: 4, width: 44, height: H - 8, rx: 14 }, svg);
 
   const staves = [];
   const mk = (y, c) => {
@@ -274,12 +274,17 @@ export function drawStaff(card, notes, opts = {}) {
       if (onTapBeat) onTapBeat(+r.dataset.i); else onTap(+r.dataset.i);
     });
   }
+  // nothing under the staff (note-reading quizzes): crop to the staff so the note is drawn big
+  if (!scroll && !letters && !lyrics && !grand) {
+    const y0 = top.getYForLine(0) - 36;
+    svg.setAttribute('viewBox', `0 ${y0} ${width} ${top.getYForLine(4) + 36 - y0}`);
+  }
   return { width, svg, cur, H, ...R, lh: Lh, beatX };
 }
 
 // Move the highlight to x and scroll so it sits about 30% from the left.
 export function focusX(card, drawn, x) {
-  if (x === undefined || x === null) { drawn.cur.setAttribute('x', -100); return; }
+  if (x === undefined || x === null) { drawn.cur.setAttribute('x', -10000); return; }
   drawn.cur.setAttribute('x', x - 22);
   const strip = card.querySelector('.strip');
   const scale = card.clientHeight / drawn.H;
