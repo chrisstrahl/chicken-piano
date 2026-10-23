@@ -4,14 +4,17 @@ import { SAMPLES } from './samples.generated.js';
 import { BEATS } from './music.js';
 import { lineId } from './lines.js';
 import { VOICE } from './voice.generated.js';
+import { PECK } from './beat.js';
 
 let piano = null;
 let pianoBufs = null; // { 'C4': AudioBuffer, ... } for rendering recordings
 let fx = null;
 let started = false;
-const listeners = { busy: [] }; // tell the mic to ignore our own sounds
+const listeners = { busy: [], peck: [] }; // tell the mic to ignore our own sounds
 
 export function onBusy(fn) { listeners.busy.push(fn); }
+// fn(ms): a metronome peck plays at performance.now() time ms
+export function onPeck(fn) { listeners.peck.push(fn); }
 // exact: replace the current quiet time instead of extending it (speech ended early, so listen again sooner)
 function busy(ms, exact = false) { listeners.busy.forEach((f) => f(ms, exact)); }
 
@@ -264,6 +267,53 @@ function speak(text, id, finish) {
 export function stopTalking() {
   if (talking) talking.stop();
   try { if (window.speechSynthesis && speechSynthesis.speaking) { speechSynthesis.cancel(); busy(300, true); } } catch (e) {}
+}
+
+// Metronome: a soft chicken peck on every beat. The peck is a burst of hiss above every piano note
+// (src/beat.js PECK), and the mic is told exactly when each one plays, so it never counts as a key.
+// bpm: quarter beats a minute; every: quarter beats between pecks; accent(k): true for a louder peck
+// onBeat(k, ms): runs at each peck (for the bouncing chicken). Returns { t0, stop } where t0 is the
+// performance.now() time of peck 0.
+let peckBuf = null;
+export function startBeat({ bpm, every = 1, accent = (k) => k % 4 === 0, onBeat, sound = true, lead = 0.25 }) {
+  const ctx = Tone.getContext().rawContext;
+  if (!peckBuf) {
+    const n = Math.round(ctx.sampleRate * PECK.len);
+    peckBuf = ctx.createBuffer(1, n, ctx.sampleRate);
+    const d = peckBuf.getChannelData(0);
+    for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * PECK.decay));
+  }
+  const gap = (60 / bpm) * every;
+  const a0 = ctx.currentTime + lead;
+  // performance.now() time when peck 0 is heard (the speaker's own delay included where the browser knows it)
+  const p0 = performance.now() + (lead + (ctx.outputLatency || 0)) * 1000;
+  let k = 0;
+  const timers = [];
+  const pump = () => {
+    // schedule the pecks due in the next 150 ms on the audio clock (steady even if the page is busy)
+    while (a0 + k * gap < ctx.currentTime + 0.15) {
+      const a = a0 + k * gap, p = p0 + k * gap * 1000, kk = k;
+      if (sound && a >= ctx.currentTime) {
+        const src = ctx.createBufferSource();
+        src.buffer = peckBuf;
+        const hp = ctx.createBiquadFilter();
+        hp.type = 'highpass';
+        hp.frequency.value = PECK.hz;
+        hp.Q.value = 0.9;
+        const g = ctx.createGain();
+        g.gain.value = accent(kk) ? 0.5 : 0.5 * PECK.soft;
+        src.connect(hp).connect(g).connect(ctx.destination);
+        src.start(a);
+        listeners.peck.forEach((f) => f(p));
+      }
+      timers.push(setTimeout(() => onBeat && onBeat(kk, p), Math.max(0, p - performance.now())));
+      k++;
+    }
+    while (timers.length > 8) timers.shift();
+  };
+  pump();
+  const iv = setInterval(pump, 30);
+  return { t0: p0, gap: gap * 1000, stop: () => { clearInterval(iv); timers.forEach(clearTimeout); } };
 }
 
 export { Tone };

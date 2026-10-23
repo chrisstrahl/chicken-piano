@@ -10,7 +10,7 @@ export const COLORS = { C: '#ff4d4d', D: '#ff9a1f', E: '#ffcc00', F: '#3cc95a', 
 // darker versions for drawing notes on the white staff
 export const INK = { C: '#e8322f', D: '#ef8300', E: '#e0a800', F: '#22a843', G: '#1782e0', A: '#7f3fd6', B: '#e64e98' };
 export const BLACK_INK = '#4a4a4a';
-export const BEATS = { 8: 0.5, q: 1, qd: 1.5, h: 2, hd: 3, w: 4 };
+export const BEATS = { 16: 0.25, 8: 0.5, q: 1, qd: 1.5, h: 2, hd: 3, w: 4 };
 
 const LETTERS = 'CCDDEFFGGAAB';
 const SHARP = [0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0];
