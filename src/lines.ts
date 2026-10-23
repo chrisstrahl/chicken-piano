@@ -4,6 +4,7 @@
 
 import { AVATARS } from './profiles.ts';
 import { EAR_MAX_EGGS } from './ear.js';
+import { GAME_MAX_EGGS, TWINKLE_STAGES } from './barnyard.js';
 import type { Song, Level } from './types.ts';
 
 const LETTERS = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
@@ -46,6 +47,12 @@ export const RHYTHM_SHH = 'Shh! That was a rest.';
 export const EAR_PICK = 'Ear game! Pick a nest.';
 export const EAR_START = (len: number) => (len === 1 ? 'Listen to my note. Then find it on the piano!' : 'Listen to my notes. Then find them on the piano!');
 export const EAR_HINT = 'Try the glowing key!';
+// Learn games (src/games.ts): Egg Rush, Echo Game, Twinkle Twist
+export const GAMES_PICK = 'Pick a nest!';
+export const RUSH_START = 'Egg rush! Play each note as fast as you can. Ready, go!';
+export const RUSH_BEST = 'Your fastest time ever!';
+export const CLUCK_START = 'Echo game! Listen to my rhythm. Then play it back on any key.';
+export const twinkleStart = (word: string) => `Twinkle twist! Play Twinkle with a new rhythm. ${word}!`;
 // players (profiles.ts): a typed name has no recorded clip, so the device voice says those
 export const whoPlays = 'Who is playing?';
 export const pickChicken = 'Pick your chicken!';
@@ -74,7 +81,7 @@ const firstLabel = (s: Song) => { const n = s.notes.find((x) => !x.r); return n 
 // Every templated sentence the app can say, for the clip recorder.
 export function templatedLines(songs: Song[], levels: Level[]): string[] {
   const labels = LETTERS.flatMap((l) => [l, l + '♯', l + '♭']);
-  const maxEggs = songs.length * 3 + levels.reduce((a, lv) => a + lv.lessons.length, 0) + EAR_MAX_EGGS;
+  const maxEggs = songs.length * 3 + levels.reduce((a, lv) => a + lv.lessons.length, 0) + EAR_MAX_EGGS + GAME_MAX_EGGS;
   const out = [
     ...songs.flatMap((s) => letsPlay(s, firstLabel(s))),
     ...labels.map(startOn),
@@ -89,6 +96,7 @@ export function templatedLines(songs: Song[], levels: Level[]): string[] {
     ...SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN,
     RHYTHM_TURN, RHYTHM_AGAIN, RHYTHM_GOOD, RHYTHM_OK, RHYTHM_HOLD, RHYTHM_SHH,
     EAR_PICK, EAR_START(1), EAR_START(2), EAR_HINT,
+    GAMES_PICK, RUSH_START, RUSH_BEST, CLUCK_START, ...TWINKLE_STAGES.map((s) => twinkleStart(s.word)),
     whoPlays,
     pickChicken,
     ...AVATARS.map((a) => hello(a.name)),

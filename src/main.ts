@@ -9,6 +9,7 @@ import { makeKeyboard, LOW, HIGH } from './keyboard.js';
 import type { Keyboard } from './keyboard.ts';
 import { setupRecordings } from './recordings.js';
 import { setupEarTraining, earEggTotal } from './eartraining.js';
+import { setupGames, gameEggTotal } from './games.js';
 import { players, playerId, AVATARS, MAX_PLAYERS, avatarOf } from './profiles.js';
 import { deletePlayerRecordings } from './recorder.js';
 import { CHICKEN, lookOf, avatarChicken } from './chicken.js';
@@ -26,6 +27,7 @@ type Step<T extends LessonStep['type']> = Extract<LessonStep, { type: T }>;
 type Progress = {
   songs: Record<string, number>; lessons: Record<string, boolean>; days: Days; letters: boolean; all: boolean;
   open?: Record<number, boolean>; hands?: Hands; clefFlip?: boolean; speed?: number; ears?: Record<string, number>;
+  games?: Record<string, number>; rushBest?: Record<string, number>;
 };
 // a key to press now in a song, and which hand's note it belongs to
 type Need = Pitch & { part: Part; i: number };
@@ -53,7 +55,7 @@ let progress = loadProgress();
 const save = () => players.save(progress);
 // a song or lesson was finished today (see streaks.ts)
 const dayWin = () => { const r = addWin(progress.days); save(); return r; };
-const totalEggs = () => Object.values(progress.songs).reduce((a, b) => a + b, 0) + Object.keys(progress.lessons).length + earEggTotal(progress);
+const totalEggs = () => Object.values(progress.songs).reduce((a, b) => a + b, 0) + Object.keys(progress.lessons).length + earEggTotal(progress) + gameEggTotal(progress);
 
 // Progress: any level can be picked. The "current" level is the first one with lessons left, and the map
 // points the chicken at it. Each lesson finished opens more of its level's songs: 1, 2, 3, then all 5.
@@ -119,6 +121,7 @@ let gen = 0; // bumps on every screen or step change, so late callbacks know the
 function show(id: string) {
   recs.leave(id);
   ears.leave();
+  games.leave();
   leaveHooks.forEach((f) => f());
   leaveHooks = [];
   stopTalking();
@@ -128,7 +131,7 @@ function show(id: string) {
   onNote = null;
   onRelease = null;
   expectNote(null);
-  ({ home: renderHome, who: renderWho, songs: renderSongs, map: renderMap, level: renderLevel, free: openFree, nest: renderNest, ...recs.screens, ...ears.screens } as Record<string, () => void>)[id]?.();
+  ({ home: renderHome, learn: renderLearn, who: renderWho, songs: renderSongs, map: renderMap, level: renderLevel, free: openFree, nest: renderNest, ...recs.screens, ...ears.screens, ...games.screens } as Record<string, () => void>)[id]?.();
 }
 document.addEventListener('click', (e) => {
   const b = (e.target as Element).closest<HTMLElement>('[data-go]');
@@ -255,6 +258,8 @@ function renderHome() {
   $('#coop').innerHTML = `<span class="lbl">🏡</span><span class="cnt">🥚 ${eggs}</span>${chicks ? `<span class="cnt">${'🐥'.repeat(chicks)}</span>` : ''}${days ? `<span class="cnt">🔥 ${days}</span>` : ''}`;
 }
 $('#coop').addEventListener('click', () => show('nest'));
+// Learn: lessons, and the games that practise what they teach
+function renderLearn() { $('#learnLevel').textContent = currentLevel() as unknown as string; }
 
 // The coop: eggs from lessons (1 each) and songs (up to 3 each), one chick for every finished level,
 // and the practice calendar: a day's egg is laid by finishing DAILY_GOAL songs or lessons that day.
@@ -1060,6 +1065,9 @@ recs.button($('#freeRec'), () => ({ title: 'My song', emoji: '🎹', song: null 
 /* ---------- ear game (src/eartraining.ts) ---------- */
 const ears = setupEarTraining({ show, bubble, bigLetter, act, party: (...a) => party(...a), progress: () => progress, save, setInput: (f) => { onNote = f; }, noteIn, keyUp });
 
+/* ---------- learn games: Egg Rush, Echo Game, Twinkle Twist (src/games.ts) ---------- */
+const games = setupGames({ show, bubble, bigLetter, act, party: (...a) => party(...a), progress: () => progress, save, setInput: (f) => { onNote = f; }, noteIn, keyUp });
+
 /* ---------- yes / no question ---------- */
 function ask(html: string, words: string, onYes: () => void) {
   $('#askText').innerHTML = html;
@@ -1325,26 +1333,28 @@ function keyInput(m: number) {
 function seqStep() {
   const s = stepObj() as Step<'seq'>;
   keyboard(true, s.range || s.seqs.join(' '));
+  if (s.read) lessonKb.setLetters('none');
   seqPrompt(true);
 }
 function seqPrompt(first: boolean) {
   const s = stepObj() as Step<'seq'>;
   const tune = (parse(s.seqs[L.sub]) as Sounding[]);
   L.seqPos = 0;
-  L.seqDrawn = staff(s.seqs[L.sub], s, { letters: true });
-  lessonKb.setHL(tune.map((n) => n.m));
+  L.seqDrawn = staff(s.seqs[L.sub], s, { letters: !s.read });
+  lessonKb.setHL(s.read ? [] : tune.map((n) => n.m));
   seqTarget();
   if (first) sayThen(s.say);
 }
 function seqTarget() {
-  const tune = (parse((stepObj() as Step<'seq'>).seqs[L.sub]) as Sounding[]);
+  const s = stepObj() as Step<'seq'>;
+  const tune = (parse(s.seqs[L.sub]) as Sounding[]);
   const n = tune[L.seqPos];
-  lessonKb.setTarget(n.m);
+  lessonKb.setTarget(s.read ? null : n.m);
   expectNote(n.m);
   L.seqDrawn!.cur.setAttribute('x', (L.seqDrawn!.xs[L.seqPos] - 22) as unknown as string);
   L.seqDrawn!.noteEls.forEach((e, j) => e && e.classList.toggle('done', j < L.seqPos));
   armHint($('#btnLessonHint'));
-  bubble($('#lessonBubble'), `${tune.map((x, j) => (j < L.seqPos ? '🥚' : j === L.seqPos ? bigLetter(x.m, x.label) : '<i class="egg0">🥚</i>')).join('')}`);
+  bubble($('#lessonBubble'), `${tune.map((x, j) => (j < L.seqPos ? '🥚' : j === L.seqPos ? (s.read ? '👀' : bigLetter(x.m, x.label)) : '<i class="egg0">🥚</i>')).join('')}`);
 }
 function seqInput(m: number) {
   const s = stepObj() as Step<'seq'>;
@@ -1725,7 +1735,7 @@ document.addEventListener('keydown', (e) => {
 });
 document.addEventListener('keyup', (e) => { if (typing(e)) return; const m = KEYMAP[e.key.toLowerCase()]; if (m) keyUp(m); });
 
-window.__cp = { recs, players, usePlayer, say, show, openSong, openLesson, noteIn, jumpToBeat, P, L, progress, LEVELS, SONGS, startBeatMode, startEcho, lessonStep: (i: number) => { L.step = i; renderStep(); }, ears };
+window.__cp = { recs, players, usePlayer, say, show, openSong, openLesson, noteIn, jumpToBeat, P, L, progress, LEVELS, SONGS, startBeatMode, startEcho, lessonStep: (i: number) => { L.step = i; renderStep(); }, ears, games };
 window.__cpMs = ms;
 window.__cpHeard = () => heardCount;
 window.__cpFree = () => F.notes;
