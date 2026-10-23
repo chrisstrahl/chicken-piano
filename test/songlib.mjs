@@ -2,6 +2,7 @@
 // and each song only uses what its level has taught. Also builds every note in VexFlow.
 // Run: node test/songlib.mjs
 import { SONG_DATA } from '../src/songs.js';
+import { difficulty } from '../tools/difficulty.mjs';
 
 const STEP = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
 const BEATS = { 8: 0.5, q: 1, qd: 1.5, h: 2, hd: 3, w: 4 };
@@ -24,7 +25,7 @@ const RULES = {
   6: { lo: 'G3', hi: 'F5', durs: ['8', 'q', 'h', 'hd', 'w'], rests: true, waltz: true },
   7: { lo: 'G3', hi: 'F5', durs: ['8', 'q', 'qd', 'h', 'hd', 'w'], rests: true, waltz: true, ties: true },
   8: { lo: 'G3', hi: 'A5', durs: ['8', 'q', 'qd', 'h', 'hd', 'w'], rests: true, waltz: true, ties: true, accidentals: true },
-  9: { lo: 'C3', hi: 'A3', durs: ['8', 'q', 'qd', 'h', 'hd', 'w'], rests: true, waltz: true, ties: true, accidentals: true, bass: true },
+  9: { lo: 'C3', hi: 'C4', durs: ['8', 'q', 'qd', 'h', 'hd', 'w'], rests: true, waltz: true, ties: true, accidentals: true, bass: true },
   10: { lo: 'G3', hi: 'A5', durs: ['8', 'q', 'qd', 'h', 'hd', 'w'], rests: true, waltz: true, ties: true, accidentals: true, chords: true },
 };
 const SHARP_KEYS = ['G', 'D', 'A', 'E', 'Em', 'Bm'];
@@ -121,6 +122,43 @@ for (const s of SONG_DATA) {
   const words = s.lyrics.trim() ? s.lyrics.trim().split(/\s+/) : [];
   if (words.length && words.length !== sounding) err(`${words.length} lyric words for ${sounding} notes`);
 }
+
+// Difficulty: every song stores diff = tools/difficulty.mjs's score, and each level lists its
+// songs easiest first (songs unlock in that order).
+for (const s of SONG_DATA) if (s.diff !== difficulty(s)) errors.push(`${s.id}: diff is ${s.diff}, score says ${difficulty(s)} (node tools/difficulty.mjs)`);
+for (let i = 1; i < SONG_DATA.length; i++) {
+  const [a, b] = [SONG_DATA[i - 1], SONG_DATA[i]];
+  if (b.level < a.level) errors.push(`${b.id}: level ${b.level} comes after level ${a.level}`);
+  if (b.level === a.level && b.diff < a.diff) errors.push(`${b.id} (diff ${b.diff}) is listed after harder ${a.id} (diff ${a.diff})`);
+}
+for (const lv of Object.keys(RULES)) if ((perLevel[lv] || 0) < 10) errors.push(`level ${lv} has only ${perLevel[lv] || 0} songs (want 10+)`);
+
+// No near-duplicates: two songs may not share a run of 12+ melody intervals (same tune in any key).
+const intervals = (s) => {
+  const ms = s.notes.trim().split(/\s+/).filter((t) => !t.startsWith('R')).map((t) => midi(t.split(':')[0].replace('~', '').split('+').pop()));
+  return ms.slice(1).map((m, i) => m - ms[i]);
+};
+const longestShared = (a, b) => {
+  let best = 0;
+  const row = new Array(b.length + 1).fill(0);
+  for (let i = 1; i <= a.length; i++) {
+    let diag = 0;
+    for (let j = 1; j <= b.length; j++) {
+      const up = row[j];
+      row[j] = a[i - 1] === b[j - 1] ? diag + 1 : 0;
+      if (row[j] > best) best = row[j];
+      diag = up;
+    }
+  }
+  return best;
+};
+const ivs = SONG_DATA.map((s) => [s, intervals(s)]);
+for (let i = 0; i < ivs.length; i++) for (let j = i + 1; j < ivs.length; j++) {
+  const n = longestShared(ivs[i][1], ivs[j][1]);
+  if (n >= 12) errors.push(`${ivs[i][0].id} and ${ivs[j][0].id} share ${n + 1} notes of the same tune`);
+}
+const titles = new Map();
+for (const s of SONG_DATA) { if (titles.has(s.title)) errors.push(`${s.id} and ${titles.get(s.title)} are both called "${s.title}"`); titles.set(s.title, s.id); }
 
 // Every note must also build as a VexFlow note (what the staff draws).
 const { StaveNote } = await import('vexflow/bravura').catch(() => import('vexflow'));
