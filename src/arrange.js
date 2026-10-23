@@ -208,11 +208,36 @@ export function fingersFromData(str, notes) {
   });
 }
 
-// Everything a song needs for two hands. Bass-clef songs are already left-hand songs: no extra part.
+// A right hand for bass-clef songs: each chord held as a close triad just above middle C (lowest chord note
+// from C4 up), so the melody stays in the left hand.
+export function rightHand(song, chords) {
+  const toks = [];
+  if (song.pickup) split(song.pickup).forEach((d) => toks.push(`R:${d}`));
+  for (const { len, chord } of chords) {
+    if (!chord.notes.length) { split(len).forEach((d) => toks.push(`R:${d}`)); continue; }
+    const ms = chord.notes.map((n) => ({ n, m: 60 + ((BASE[n.letter] + ACC[n.acc] + 12) % 12) }));
+    const block = ms.sort((a, b) => a.m - b.m).map(({ n, m }) => `${n.letter}${n.acc}${Math.floor(m / 12) - 1}`).join('+');
+    split(len).forEach((d) => toks.push(`${block}:${d}`));
+  }
+  return toks.join(' ');
+}
+
+// Everything a song needs for two hands. In bass-clef songs the melody is the left hand, and the right hand
+// gets chords (melodyHand 'lh'); otherwise the melody is the right hand.
 export function arrange(song, parse) {
   song.keySig = keySig(song.key);
   song.fingers = song.fingersData ? fingersFromData(song.fingersData, song.notes) : fingering(song.notes, song.clef === 'bass' ? 'lh' : 'rh');
-  if (song.clef === 'bass') { song.chords = []; song.lh = null; return song; }
+  if (song.clef === 'bass') {
+    song.chords = song.chordsData ? chordsFromData(song, song.chordsData) : harmonize(song);
+    song.melodyHand = 'lh';
+    song.lh = song.notes;
+    song.lhFingers = song.fingers;
+    song.notes = parse(rightHand(song, song.chords));
+    song.fingers = fingering(song.notes, 'rh');
+    song.clef = 'treble';
+    return song;
+  }
+  song.melodyHand = 'rh';
   song.chords = song.chordsData ? chordsFromData(song, song.chordsData) : harmonize(song);
   song.lh = parse(song.lhData || leftHand(song, song.chords));
   song.lhFingers = song.lhFingersData ? fingersFromData(song.lhFingersData, song.lh) : fingering(song.lh, 'lh');
