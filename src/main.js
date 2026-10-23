@@ -458,7 +458,6 @@ function buildEvents() {
   P.events.forEach((ev) => { ev.need = ev.items.flatMap((it) => it.n.keys.map((k) => ({ ...k, part: it.part, i: it.i }))); });
 }
 const evNow = () => P.events[P.e];
-const partOf = (name) => (name === 'lh' ? P.drawn.lh : P.drawn);
 const fingersOf = (part) => (part === 'lh' ? P.song.lhFingers : P.song.fingers) || [];
 // a chord's fingers are listed lowest key first
 const fingerFor = (k) => {
@@ -492,9 +491,21 @@ function drawSong() {
   const toks = (ns) => (ns || []).filter((n) => !n.r).flatMap((n) => n.keys.map((k) => k.m));
   const all = toks(s.notes).concat(P.hands !== 'rh' ? toks(s.lh) : []);
   playKb.setRange(Math.min(...all), Math.max(...all));
+  // On a phone the grand staff is tiny, so one hand alone gets just its own staff.
+  // P.solo = 'lh' means the left hand is drawn (and followed by beat and echo modes) on its own.
+  const grand = twoHands() && (P.hands === 'both' || playCard.clientHeight > 220);
+  P.solo = twoHands() && !grand && P.hands === 'lh' ? 'lh' : null;
+  if (P.solo) {
+    P.drawn = drawStaff(playCard, s.lh, {
+      scroll: true, bars: s.bars !== false, clef: 'bass', time: s.time, pickup: s.pickup, onTapBeat: jumpToBeat,
+      key: s.key && s.key !== 'C' ? s.key : null, sig: s.keySig, fingers: s.lhFingers,
+    });
+    buildEvents();
+    return;
+  }
   P.drawn = drawStaff(playCard, s.notes, {
     scroll: true, lyrics: true, bars: s.bars !== false, clef: s.clef, time: s.time, pickup: s.pickup, onTapBeat: jumpToBeat,
-    key: s.key && s.key !== 'C' ? s.key : null, sig: s.keySig, lh: s.lh, chords: s.chords,
+    key: s.key && s.key !== 'C' ? s.key : null, sig: s.keySig, lh: grand ? s.lh : null, chords: grand ? s.chords : null,
     fingers: s.fingers, lhFingers: s.lhFingers,
   });
   // the hand that isn't being played is greyed out
@@ -547,7 +558,7 @@ function setCurrent() {
   bubble($('#playBubble'), `👉 ${ev.need.map((k) => bigLetter(k.m, k.label)).join('')}`);
 }
 // Beat and echo modes step through the melody one note at a time.
-const notesP = () => P.song.notes;
+const notesP = () => (P.solo === 'lh' ? P.song.lh : P.song.notes);
 const skippable = (i) => notesP()[i] && (notesP()[i].r || (i > 0 && notesP()[i - 1].tie));
 const matches = (n, m) => n.keys.some((k) => pc(k.m) === pc(m));
 const markDone = (i) => [P.drawn.noteEls[i], P.drawn.letterEls[i], P.drawn.lyricEls[i]].forEach((e) => e && e.classList.add('done'));
