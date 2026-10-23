@@ -30,6 +30,8 @@ Chicken Piano started as a dad project. My 8-year-old wanted to learn piano, he 
 
 🥚 **Eggs and chicks to collect.** Finish a lesson, earn an egg. Play a song well, earn up to three. Complete a whole level and a chick hatches into your coop.
 
+🔥 **An egg a day.** Finish two songs or lessons in a day to lay that day's egg. Tap the coop to see four weeks of nests and how many days in a row you've played.
+
 🗣️ **A warm, friendly voice.** The chicken talks kids through every step, so there's almost nothing to read. Big buttons, bright pictures and sounds make it work for pre-readers too.
 
 🥁 **Play with the beat.** Tap the drum and the chicken pecks out a gentle metronome, counts you in, and the song moves along in time. Every note is scored for the right key *and* the right moment. (The peck is a tiny high "tick" the microphone knows to ignore, so it never gets mistaken for a piano note.)
