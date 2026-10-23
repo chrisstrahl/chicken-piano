@@ -21,7 +21,7 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
   const closeParty = () => page.evaluate(() => document.querySelector('#party').classList.remove('show'));
 
   await page.screenshot({ path: `${out}/ears-home.png` });
-  await page.click('[data-go=ears]'); await page.waitForTimeout(400);
+  await page.click('[data-go=learn]'); await page.waitForTimeout(300); await page.click('#learn [data-go=ears]'); await page.waitForTimeout(400);
   check(await page.locator('#earCards .earcard').count() === 8, 'eight nests');
   await page.screenshot({ path: `${out}/ears-nests.png` });
 
@@ -93,7 +93,7 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
 
   await page.setViewportSize({ width: 844, height: 390 });
   await page.screenshot({ path: `${out}/ears-home-phone.png` });
-  await page.evaluate(() => document.querySelector('[data-go=ears]').click()); await page.waitForTimeout(300);
+  await page.evaluate(() => document.querySelector('#learn [data-go=ears]').click()); await page.waitForTimeout(300);
   await page.screenshot({ path: `${out}/ears-nests-phone.png` });
   await page.evaluate(() => document.querySelector('#earCards [data-ear="7"]').click()); await ready();
   await page.screenshot({ path: `${out}/ears-play-phone.png` });

@@ -18,7 +18,7 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
     await page.screenshot({ path: `${out}/${tag}-start.png` });
     await page.locator('#start').dispatchEvent('pointerdown'); await page.waitForTimeout(900);
     await shot('home');
-    await page.click('[data-go=map]'); await page.waitForTimeout(200); await shot('map');
+    await page.click('[data-go=learn]'); await page.waitForTimeout(200); await shot('learn'); await page.click('#learn [data-go=map]'); await page.waitForTimeout(200); await shot('map');
     await page.click('[data-level="1"]', { force: true }); await page.waitForTimeout(200); await shot('level1');
     if (tag === 'phone') { await page.evaluate(() => window.__cp.openSong('bday', 'level')); await page.waitForTimeout(400); await shot('song-bday'); await page.evaluate(() => window.__cp.openLesson(1, 0)); await page.waitForTimeout(500); await shot('lesson-findc'); await ctx.close(); continue; }
 

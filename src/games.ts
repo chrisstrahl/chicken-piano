@@ -1,6 +1,6 @@
-// Barnyard games (🎪 on the home screen), each nest giving up to three eggs like a song:
+// Learn games (tiles on the Learn screen), each nest giving up to three eggs like a song:
 // - Egg Rush: a note pops onto the staff, play it on the piano, as fast as you can. Ten notes a rush.
-// - Copy Cluck: the chicken plays a rhythm on C with the pecks; you copy it on any key. Then the staff shows
+// - Echo Game: the chicken plays a rhythm on C with the pecks; you copy it on any key. Then the staff shows
 //   what you just played, so the sound meets its notes.
 // - Twinkle Twist: Twinkle Twinkle in a new rhythm each nest (the Suzuki way): the rhythm alone, then two lines.
 // Nest data is in src/games.js.
@@ -51,15 +51,22 @@ export function setupGames(app: GamesApp) {
     p.games = { ...(p.games || {}), [id]: Math.max(eggsOf(id), eggs) };
   };
 
-  /* ---------- the picker ---------- */
+  /* ---------- the picker: one game's nests (Learn has a tile per game) ---------- */
+  let kind: 'rush' | 'cluck' | 'twinkle' = 'rush';
+  const NAMES = { rush: '🥚 Egg Rush', cluck: '👏 Echo Game', twinkle: '⭐ Twinkle Twist' };
+  document.addEventListener('click', (e) => {
+    const b = (e.target as Element).closest<HTMLElement>('[data-pick]');
+    if (b) { kind = b.dataset.pick as typeof kind; app.show('games'); }
+  });
   function renderPicker() {
+    $('#gamesTitle').textContent = NAMES[kind];
     const best = app.progress().rushBest || {};
     const card = (kind: string, i: number, id: string, top: string, mid: string) => `<button class="card reccard gamecard${eggsOf(id) ? '' : ' fresh'}" data-game="${kind}" data-i="${i}">
       <div class="em">${top}</div>${mid}<div class="eggs">${eggRow(eggsOf(id))}</div></button>`;
     $('#gameCards').innerHTML =
-      `<h3 class="gamehead">🥚💨 Egg Rush</h3>` + RUSH_STAGES.map((s, i) => card('rush', i, s.id, s.emoji, `<div class="pool">${dots(s.pool)}</div><div class="when">${best[s.id] ? `⏱️ ${secs(best[s.id])}` : ''}</div>`)).join('') +
-      `<h3 class="gamehead">👏🐔 Copy Cluck</h3>` + CLUCK_STAGES.map((s, i) => card('cluck', i, s.id, s.emoji, `<div class="t">${s.time === '3/4' ? '3/4' : '🥁'.repeat(s.bars)}</div>`)).join('') +
-      `<h3 class="gamehead">⭐🎵 Twinkle Twist</h3>` + TWINKLE_STAGES.map((s, i) => card('twinkle', i, s.id, s.emoji, `<div class="t">${s.word}</div>`)).join('');
+      kind === 'rush' ? RUSH_STAGES.map((s, i) => card('rush', i, s.id, s.emoji, `<div class="pool">${dots(s.pool)}</div><div class="when">${best[s.id] ? `⏱️ ${secs(best[s.id])}` : ''}</div>`)).join('')
+      : kind === 'cluck' ? CLUCK_STAGES.map((s, i) => card('cluck', i, s.id, s.emoji, `<div class="t">${s.time === '3/4' ? '3/4' : '🥁'.repeat(s.bars)}</div>`)).join('')
+      : TWINKLE_STAGES.map((s, i) => card('twinkle', i, s.id, s.emoji, `<div class="t">${s.word}</div>`)).join('');
     say(GAMES_PICK);
   }
   $('#gameCards').addEventListener('click', (e) => {
@@ -73,11 +80,11 @@ export function setupGames(app: GamesApp) {
   const rushKb = makeKeyboard($('#rushKb'), (m: number) => app.noteIn(m, 'tap'), onRelease);
   const rushChicken = () => document.querySelector('#rushChicken');
   const R = { si: 0, notes: [] as number[], pos: 0, misses: 0, missHere: 0, t0: 0, ready: false, done: false, tok: 0, last: { m: -1, at: 0 }, timer: 0 as unknown as ReturnType<typeof setInterval> };
-  function openRush(i: number) { R.si = i; app.show('rush'); }
+  function openRush(i: number) { R.si = i; kind = 'rush'; app.show('rush'); }
   function renderRush() {
     const s = RUSH_STAGES[R.si];
     Object.assign(R, { notes: rushNotes(s), pos: 0, misses: 0, missHere: 0, ready: false, done: false, last: { m: -1, at: 0 } });
-    $('#rushTitle').textContent = `🥚💨 ${s.emoji}`;
+    $('#rushTitle').textContent = `🥚 ${s.emoji}`;
     $('#rushTime').textContent = '0.0';
     const lo = Math.min(...s.pool), hi = Math.max(...s.pool);
     rushKb.reset();
@@ -152,7 +159,7 @@ export function setupGames(app: GamesApp) {
     }), 500);
   }
 
-  /* ---------- Copy Cluck and Twinkle Twist: listen, then play it back with the pecks ---------- */
+  /* ---------- Echo Game and Twinkle Twist: listen, then play it back with the pecks ---------- */
   const beatKb = makeKeyboard($('#beatKb'), (m: number) => app.noteIn(m, 'tap'), onRelease);
   const beatChicken = () => document.querySelector('#beatChicken');
   const B = {
@@ -164,11 +171,11 @@ export function setupGames(app: GamesApp) {
   const rounds = () => (B.kind === 'cluck' ? CLUCK_ROUNDS : TWINKLE_ROUNDS);
   const timeOf = () => (B.kind === 'cluck' ? CLUCK_STAGES[B.si].time : '4/4');
   const beatMs = () => 60000 / stages()[B.si].tempo;
-  function openRhythm(kind: 'cluck' | 'twinkle', i: number) { B.kind = kind; B.si = i; app.show('beat'); }
+  function openRhythm(k: 'cluck' | 'twinkle', i: number) { B.kind = k; B.si = i; kind = k; app.show('beat'); }
   function renderBeat() {
     const s = stages()[B.si];
     Object.assign(B, { round: 0, fails: 0, tokens: '', done: false, judge: null });
-    $('#beatTitle').textContent = `${B.kind === 'cluck' ? '👏🐔' : '⭐🎵'} ${s.emoji}`;
+    $('#beatTitle').textContent = `${B.kind === 'cluck' ? '👏' : '⭐'} ${s.emoji}`;
     beatKb.reset();
     if (B.kind === 'cluck') { beatKb.setRange(60, 76); beatKb.setLetters('none'); }
     else { beatKb.setRange(60, 72); beatKb.setHL([60, 62, 64, 65, 67, 69]); beatKb.setLetters('hl'); }
@@ -184,7 +191,7 @@ export function setupGames(app: GamesApp) {
     B.tokens = B.kind === 'cluck' ? cluckPattern(CLUCK_STAGES[B.si], B.tokens || null) : twinkleRounds(TWINKLE_STAGES[B.si])[B.round];
     B.notes = parse(B.tokens);
     B.tries = 0;
-    // Copy Cluck: listen first, the notes appear after; Twinkle Twist: read and listen
+    // Echo Game: listen first, the notes appear after; Twinkle Twist: read and listen
     drawBeat(B.kind === 'twinkle');
     demo();
   }
@@ -196,7 +203,7 @@ export function setupGames(app: GamesApp) {
     const d = B.drawn, j = B.judge;
     if (!d || !B.shown) return;
     d.noteEls.forEach((e) => e && e.classList.remove('done', 'miss'));
-    // Copy Cluck shows the notes after you play, so only the missed ones are marked
+    // Echo Game shows the notes after you play, so only the missed ones are marked
     if (j) j.items.forEach((it) => { const e = d.noteEls[it.i]; if (e && it.result && (it.result === 'miss' || B.kind === 'twinkle')) e.classList.add(it.result === 'miss' ? 'miss' : 'done'); });
   }
   function lightBeat(b: number) {
@@ -267,7 +274,7 @@ export function setupGames(app: GamesApp) {
     const j = B.judge;
     if (!j || B.done) return;
     const at = performance.now() - (source === 'mic' ? MIC_LAG : 0);
-    // Copy Cluck: any key is the chicken's C
+    // Echo Game: any key is the chicken's C
     const r = j.input(B.kind === 'cluck' ? 72 : m, at);
     if (!r) {
       // a key during a rest

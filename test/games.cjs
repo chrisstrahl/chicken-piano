@@ -21,12 +21,16 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
   const partyEggs = () => page.evaluate(() => document.querySelector('#party.show') ? document.querySelectorAll('#partyEggs span:not([style])').length : null);
   const waitParty = () => page.waitForFunction(() => document.querySelector('#party.show'), null, { timeout: 150000 });
   const closeParty = () => page.evaluate(() => document.querySelector('#party').classList.remove('show'));
-  const open = (kind, i) => page.evaluate(([k, i]) => document.querySelector(`#gameCards [data-game="${k}"][data-i="${i}"]`).click(), [kind, i]);
+  const open = (kind, i) => page.evaluate(([k, i]) => { document.querySelector(`#learn [data-pick="${k}"]`).click(); document.querySelector(`#gameCards [data-game="${k}"][data-i="${i}"]`).click(); }, [kind, i]);
 
   await page.screenshot({ path: `${out}/games-home.png` });
-  await page.click('[data-go=games]'); await page.waitForTimeout(400);
-  check(await page.locator('#gameCards .gamecard').count() === 19, '19 game nests (8 rush, 6 cluck, 5 twinkle)');
-  await page.screenshot({ path: `${out}/games-pick.png` });
+  check(await page.locator('#home .menu .tile').count() === 3, 'home: Learn, Play Songs, Record a Song');
+  await page.click('[data-go=learn]'); await page.waitForTimeout(400);
+  await page.screenshot({ path: `${out}/games-learn.png` });
+  const nests = {};
+  for (const k of ['rush', 'cluck', 'twinkle']) { await page.click(`#learn [data-pick=${k}]`); await page.waitForTimeout(300); nests[k] = await page.locator('#gameCards .gamecard').count(); if (k === 'rush') await page.screenshot({ path: `${out}/games-pick.png` }); await page.click('#games [data-go=learn]'); await page.waitForTimeout(200); }
+  check(nests.rush === 8 && nests.cluck === 6 && nests.twinkle === 5, `nests per game ${JSON.stringify(nests)}`);
+  await page.click('#learn [data-pick=rush]'); await page.waitForTimeout(300);
 
   /* Egg Rush */
   await open('rush', 0);

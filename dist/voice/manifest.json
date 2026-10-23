@@ -609,11 +609,6 @@
   "spoken": "You have 190 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "1af7d9c0": {
-  "text": "Copy cluck! Listen to my rhythm. Then play it back on any key.",
-  "spoken": "Copy cluck! Listen to my rhythm. Then play it back on any key.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "1b18e527": {
   "text": "Let's play Happy Hatch Day!",
   "spoken": "Let's play Happy Hatch Day!",
@@ -847,11 +842,6 @@
  "275cfdb1": {
   "text": "You have 364 eggs.",
   "spoken": "You have 364 eggs.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
- "2792c99b": {
-  "text": "Barnyard games! Pick one.",
-  "spoken": "Barnyard games! Pick one.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "2803f021": {
@@ -3739,6 +3729,11 @@
   "spoken": "You have 287 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "b9271c5a": {
+  "text": "Pick a nest!",
+  "spoken": "Pick a nest!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "b951ea23": {
   "text": "That's 52 days in a row!",
   "spoken": "That's 52 days in a row!",
@@ -5107,6 +5102,11 @@
  "f7644d80": {
   "text": "Hold G for three pecks. Then E for two, and one more E.",
   "spoken": "Hold G for three pecks. Then E for two, and one more E.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "f768a82e": {
+  "text": "Echo game! Listen to my rhythm. Then play it back on any key.",
+  "spoken": "Echo game! Listen to my rhythm. Then play it back on any key.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "f860e076": {

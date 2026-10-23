@@ -1,4 +1,4 @@
-// Barnyard games data: Egg Rush (read a note, play it, fast), Copy Cluck (copy the chicken's rhythm on any key)
+// Learn games data: Egg Rush (read a note, play it, fast), Echo Game (copy the chicken's rhythm on any key)
 // and Twinkle Twist (Twinkle Twinkle in new rhythms, the Suzuki way). Plain data, no DOM, so Node tools can use
 // it (tools/voice-lines.mjs counts the eggs through lines.js). The screens are src/games.ts.
 
@@ -34,7 +34,7 @@ export function rushNotes(stage, rnd = Math.random) {
   return out;
 }
 
-/* ---------- Copy Cluck ---------- */
+/* ---------- Echo Game ---------- */
 // Each nest: the rhythm pieces a pattern is built from (one piece = a few beats), the time signature,
 // how many bars the chicken plays, and the tempo. Every pattern is played on C.
 export const CLUCK_STAGES = [

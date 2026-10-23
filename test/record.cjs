@@ -27,7 +27,8 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
   await page.screenshot({ path: `${out}/rec-home.png` });
 
   // 1. Free play: hold keys for different lengths, plus a heard (mic) note and a MIDI-style note with velocity
-  await page.click('[data-go=free]'); await wait(300);
+  await page.click('#home [data-go=recs]'); await wait(300);
+  await page.click('#recs [data-go=free]'); await wait(300);
   await page.click('#freeRec'); await wait(200);
   check(await page.evaluate(() => window.__cp.recs.on), 'red button starts recording');
   check((await page.textContent('#freeRec .ic')) === '⏹️', 'button turns into stop');
@@ -128,11 +129,11 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
   // 7. Leaving a screen while recording saves it
   await page.click('#rec [data-go=recs]'); await wait(200);
   await page.click('#recs [data-go=home]'); await wait(200);
-  await page.click('#home [data-go=free]'); await wait(200);
+  await page.click('#home [data-go=recs]'); await wait(200);
+  await page.click('#recs [data-go=free]'); await wait(200);
   await page.click('#freeRec'); await wait(100);
   await key(65, 200);
-  await page.click('#free [data-go=home]'); await wait(300);
-  await page.click('#home [data-go=recs]'); await wait(400);
+  await page.click('#free [data-go=recs]'); await wait(400);
   const cards = await page.locator('#recCards [data-rec]').count();
   check(cards === 3, `the shelf shows all 3 recordings (${cards})`);
   await page.screenshot({ path: `${out}/rec-shelf.png` });

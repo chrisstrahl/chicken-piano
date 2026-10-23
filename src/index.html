@@ -439,8 +439,16 @@ body.midi #mic:not(.on){opacity:.6}
 .earcard .t{letter-spacing:-.1em}
 .earcard .pool{display:flex;gap:4px;justify-content:center}
 .earcard .pool i{width:min(2.2vh,1.6vw);height:min(2.2vh,1.6vw);border-radius:50%}
+/* home: three big tiles; Learn: five */
+#home .menu .tile{width:min(26vw,36vh)}
+#home .menu .tile .em{font-size:min(15vh,11vw)}
+#learn{justify-content:flex-start}
+#learn .menu{flex:1;align-items:center;align-content:center}
+#learn .menu .tile{width:min(17vw,30vh);height:auto}
+#learn .menu .tile .em{font-size:min(10vh,7.5vw)}
+.newrec{margin-left:auto;font-size:clamp(24px,5.5vh,44px);padding:.25em .7em;border-radius:22px}
+#recEmpty .bubble{cursor:pointer}
 /* barnyard games */
-.menu .tile{width:min(14vw,26vh)}
 .gamehead{grid-column:1/-1;margin:1vh 0 0;font-size:min(5vh,3.6vw);color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.25)}
 .gamecard .pool{display:flex;gap:4px;justify-content:center}
 .gamecard .pool i{width:min(2.2vh,1.6vw);height:min(2.2vh,1.6vw);border-radius:50%}
@@ -479,16 +487,24 @@ body.midi #mic:not(.on){opacity:.6}
     <h1>Chicken<span>Piano</span></h1>
   </div>
   <div class="menu">
-    <button class="btn blue tile" data-go="map"><span class="em">🗺️</span>Levels<span class="tbadge" id="homeLevel"></span></button>
-    <button class="btn orange tile" data-go="songs"><span class="em">🎵</span>Songs</button>
-    <button class="btn violet tile" data-go="free"><span class="em">🎹</span>Play</button>
-    <button class="btn red tile" data-go="recs"><span class="em">🎙️</span>Mine</button>
-    <button class="btn green tile" data-go="ears"><span class="em">👂</span>Find it</button>
-    <button class="btn pink tile" data-go="games"><span class="em">🎪</span>Games</button>
+    <button class="btn blue tile" data-go="learn"><span class="em">🎓</span>Learn<span class="tbadge" id="homeLevel"></span></button>
+    <button class="btn orange tile" data-go="songs"><span class="em">🎵</span>Play Songs</button>
+    <button class="btn red tile" data-go="recs"><span class="em">🎙️</span>Record a Song</button>
   </div>
   <div class="coop" id="coop"></div>
   <div class="ver">v <!--VERSION--></div>
   <button id="btnWho" aria-label="Who is playing?"></button>
+</section>
+
+<section id="learn" class="screen">
+  <div class="topbar"><button class="btn round" data-go="home" aria-label="Home">🏠</button><h2>🎓 Learn</h2></div>
+  <div class="menu">
+    <button class="btn blue tile" data-go="map"><span class="em">🗺️</span>Lessons<span class="tbadge" id="learnLevel"></span></button>
+    <button class="btn violet tile" data-pick="cluck"><span class="em">👏</span>Echo Game</button>
+    <button class="btn orange tile" data-pick="rush"><span class="em">🥚</span>Egg Rush</button>
+    <button class="btn green tile" data-go="ears"><span class="em">👂</span>Find it</button>
+    <button class="btn pink tile" data-pick="twinkle"><span class="em">⭐</span>Twinkle Twist</button>
+  </div>
 </section>
 
 <section id="nest" class="screen">
@@ -514,7 +530,7 @@ body.midi #mic:not(.on){opacity:.6}
 </section>
 
 <section id="map" class="screen">
-  <div class="topbar"><button class="btn round" data-go="home" aria-label="Home">🏠</button><h2>🗺️ Levels</h2>
+  <div class="topbar"><button class="btn round" data-go="learn" aria-label="Back">⬅️</button><h2>🗺️ Lessons</h2>
     <div class="stars" id="mapStars"></div>
     <button class="btn round keybtn" id="btnKey" aria-label="Grown-ups: hold to open all levels">🔑</button></div>
   <div class="map" id="mapNodes"></div>
@@ -583,7 +599,7 @@ body.midi #mic:not(.on){opacity:.6}
 </section>
 
 <section id="free" class="screen">
-  <div class="topbar"><button class="btn round" data-go="home" aria-label="Home">🏠</button><h2>🎹 Play!</h2></div>
+  <div class="topbar"><button class="btn round" data-go="recs" aria-label="Back">⬅️</button><h2>🎹 Make a song</h2></div>
   <div class="stage">
     <div class="staffcard static" id="freeStaff"><div class="scroller"><div class="strip"></div></div></div>
     <div class="coach">
@@ -597,7 +613,7 @@ body.midi #mic:not(.on){opacity:.6}
 </section>
 
 <section id="ears" class="screen">
-  <div class="topbar"><button class="btn round" data-go="home" aria-label="Home">🏠</button><h2>👂 Find it</h2></div>
+  <div class="topbar"><button class="btn round" data-go="learn" aria-label="Back">⬅️</button><h2>👂 Find it</h2></div>
   <div class="reclist" id="earCards"></div>
 </section>
 
@@ -616,7 +632,7 @@ body.midi #mic:not(.on){opacity:.6}
 </section>
 
 <section id="games" class="screen">
-  <div class="topbar"><button class="btn round" data-go="home" aria-label="Home">🏠</button><h2>🎪 Games</h2></div>
+  <div class="topbar"><button class="btn round" data-go="learn" aria-label="Back">⬅️</button><h2 id="gamesTitle">🥚 Egg Rush</h2></div>
   <div class="reclist" id="gameCards"></div>
 </section>
 
@@ -648,8 +664,8 @@ body.midi #mic:not(.on){opacity:.6}
 </section>
 
 <section id="recs" class="screen">
-  <div class="topbar"><button class="btn round" data-go="home" aria-label="Home">🏠</button><h2>🎙️ Mine</h2></div>
-  <div class="recempty" id="recEmpty"><div data-chicken></div><div class="bubble">🔴 🎹 🎵</div></div>
+  <div class="topbar"><button class="btn round" data-go="home" aria-label="Home">🏠</button><h2>🎙️ My Songs</h2><button class="btn violet newrec" data-go="free" aria-label="Make a song">🎹 🔴</button></div>
+  <div class="recempty" id="recEmpty"><div data-chicken></div><div class="bubble" data-go="free">🔴 🎹 🎵</div></div>
   <div class="reclist" id="recCards"></div>
 </section>
 

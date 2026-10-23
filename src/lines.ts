@@ -47,11 +47,11 @@ export const RHYTHM_SHH = 'Shh! That was a rest.';
 export const EAR_PICK = 'Ear game! Pick a nest.';
 export const EAR_START = (len: number) => (len === 1 ? 'Listen to my note. Then find it on the piano!' : 'Listen to my notes. Then find them on the piano!');
 export const EAR_HINT = 'Try the glowing key!';
-// Barnyard games (src/games.ts): Egg Rush, Copy Cluck, Twinkle Twist
-export const GAMES_PICK = 'Barnyard games! Pick one.';
+// Learn games (src/games.ts): Egg Rush, Echo Game, Twinkle Twist
+export const GAMES_PICK = 'Pick a nest!';
 export const RUSH_START = 'Egg rush! Play each note as fast as you can. Ready, go!';
 export const RUSH_BEST = 'Your fastest time ever!';
-export const CLUCK_START = 'Copy cluck! Listen to my rhythm. Then play it back on any key.';
+export const CLUCK_START = 'Echo game! Listen to my rhythm. Then play it back on any key.';
 export const twinkleStart = (word: string) => `Twinkle twist! Play Twinkle with a new rhythm. ${word}!`;
 // players (profiles.ts): a typed name has no recorded clip, so the device voice says those
 export const whoPlays = 'Who is playing?';

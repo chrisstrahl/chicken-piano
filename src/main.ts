@@ -131,7 +131,7 @@ function show(id: string) {
   onNote = null;
   onRelease = null;
   expectNote(null);
-  ({ home: renderHome, who: renderWho, songs: renderSongs, map: renderMap, level: renderLevel, free: openFree, nest: renderNest, ...recs.screens, ...ears.screens, ...games.screens } as Record<string, () => void>)[id]?.();
+  ({ home: renderHome, learn: renderLearn, who: renderWho, songs: renderSongs, map: renderMap, level: renderLevel, free: openFree, nest: renderNest, ...recs.screens, ...ears.screens, ...games.screens } as Record<string, () => void>)[id]?.();
 }
 document.addEventListener('click', (e) => {
   const b = (e.target as Element).closest<HTMLElement>('[data-go]');
@@ -258,6 +258,8 @@ function renderHome() {
   $('#coop').innerHTML = `<span class="lbl">🏡</span><span class="cnt">🥚 ${eggs}</span>${chicks ? `<span class="cnt">${'🐥'.repeat(chicks)}</span>` : ''}${days ? `<span class="cnt">🔥 ${days}</span>` : ''}`;
 }
 $('#coop').addEventListener('click', () => show('nest'));
+// Learn: lessons, and the games that practise what they teach
+function renderLearn() { $('#learnLevel').textContent = currentLevel() as unknown as string; }
 
 // The coop: eggs from lessons (1 each) and songs (up to 3 each), one chick for every finished level,
 // and the practice calendar: a day's egg is laid by finishing DAILY_GOAL songs or lessons that day.
@@ -1063,7 +1065,7 @@ recs.button($('#freeRec'), () => ({ title: 'My song', emoji: '🎹', song: null 
 /* ---------- ear game (src/eartraining.ts) ---------- */
 const ears = setupEarTraining({ show, bubble, bigLetter, act, party: (...a) => party(...a), progress: () => progress, save, setInput: (f) => { onNote = f; }, noteIn, keyUp });
 
-/* ---------- barnyard games: Egg Rush, Copy Cluck, Twinkle Twist (src/games.ts) ---------- */
+/* ---------- learn games: Egg Rush, Echo Game, Twinkle Twist (src/games.ts) ---------- */
 const games = setupGames({ show, bubble, bigLetter, act, party: (...a) => party(...a), progress: () => progress, save, setInput: (f) => { onNote = f; }, noteIn, keyUp });
 
 /* ---------- yes / no question ---------- */
