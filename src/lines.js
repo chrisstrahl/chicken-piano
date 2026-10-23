@@ -20,6 +20,12 @@ export const coop = (eggs, chicks) => [
   ...(chicks ? [chicks === 1 ? 'And one baby chick.' : `And ${chicks} baby chicks.`] : []),
   'Win eggs in lessons and songs. Finish a level to hatch a baby chick!',
 ];
+// Speed button: snail, turtle, bunny (src/beat.js SPEEDS)
+export const SPEED_WORDS = ['Snail speed. Nice and slow.', 'Turtle speed.', 'Bunny speed!'];
+// Play with the beat, and echo mode
+export const BEAT_START = 'Wait for the pecks, then play with the beat!';
+export const ECHO_START = 'Echo time! Listen to me, then play it back.';
+export const ECHO_AGAIN = 'Listen again!';
 // players (profiles.js): a typed name has no recorded clip, so the device voice says those
 export const whoPlays = 'Who is playing?';
 export const pickChicken = 'Pick your chicken!';
@@ -46,6 +52,7 @@ export function templatedLines(songs, levels) {
     ...levels.flatMap((lv) => lessonDone([], lv.n).slice(1)),
     lessonDone([], 0)[0],
     ...[1, 2, 3].map(songDone),
+    ...SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN,
     whoPlays,
     pickChicken,
     ...AVATARS.map((a) => hello(a.name)),

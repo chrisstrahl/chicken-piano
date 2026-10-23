@@ -189,6 +189,11 @@
   "spoken": "You have 178 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "086563db": {
+  "text": "Bunny speed!",
+  "spoken": "Bunny speed!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "0875c198": {
   "text": "You have 86 eggs.",
   "spoken": "You have 86 eggs.",
@@ -227,6 +232,11 @@
  "0aba497f": {
   "text": "You have 252 eggs.",
   "spoken": "You have 252 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "0b36ffe2": {
+  "text": "Turtle speed.",
+  "spoken": "Turtle speed.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "0cde1e95": {
@@ -649,6 +659,11 @@
   "spoken": "New song: Sneaky Chick!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "2c9fd0b3": {
+  "text": "Wait for the pecks, then play with the beat!",
+  "spoken": "Wait for the pecks, then play with the beat!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "2cd5404b": {
   "text": "You have 102 eggs.",
   "spoken": "You have 102 eggs.",
@@ -827,6 +842,11 @@
  "38ef6ba8": {
   "text": "You have 198 eggs.",
   "spoken": "You have 198 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "399a0029": {
+  "text": "Listen again!",
+  "spoken": "Listen again!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "399cb720": {
@@ -3004,6 +3024,11 @@
   "spoken": "You have 356 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "c6c27a16": {
+  "text": "Snail speed. Nice and slow.",
+  "spoken": "Snail speed. Nice and slow.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "c70bfb85": {
   "text": "B",
   "spoken": "Bee!",
@@ -3182,6 +3207,11 @@
  "d20500dd": {
   "text": "Let's play Scrambled Eggs Remix! Start on E.",
   "spoken": "Let's play Scrambled Eggs Remix! Start on E.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "d25d1abd": {
+  "text": "Echo time! Listen to me, then play it back.",
+  "spoken": "Echo time! Listen to me, then play it back.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "d26328d4": {
