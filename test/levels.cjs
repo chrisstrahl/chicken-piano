@@ -28,7 +28,7 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
       for (let li = 0; li < 4; li++) {
         await page.evaluate(([n, li]) => window.__cp.openLesson(n, li), [n, li]);
         await page.waitForTimeout(400);
-        for (let guard = 0; guard < 80; guard++) {
+        for (let guard = 0; guard < 400; guard++) {
           const st = await page.evaluate(() => {
             const { L } = window.__cp;
             if (document.querySelector('#party.show')) return { party: true };
@@ -56,9 +56,18 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
             if (s.type === 'name') { noteIn(window.__cpMs(s.notes)[L.sub], 'tap'); return true; }
             if (s.type === 'beats') { const b = { 8: '½', q: '1', h: '2', hd: '3', w: '4' }[s.durs[L.sub]]; return btn(b); }
             if (s.type === 'choice') return btn(s.rounds[L.sub].answer);
+            if (s.type === 'rhythm') {
+              if (L.done) { document.querySelector('#btnNext').click(); return true; }
+              // once the chicken has counted in, play every note right on its beat
+              if (L.judge && window.__fed !== L.judge) {
+                const j = (window.__fed = L.judge);
+                j.items.forEach((it) => setTimeout(() => noteIn(j.notes[it.i].keys[0].m, 'tap'), Math.max(0, it.t - performance.now() + 15)));
+              }
+              return true;
+            }
           });
           if (!ok) errs.push(`no answer button in ${st.id} step ${st.step} sub ${st.sub}`);
-          await page.waitForTimeout(st.type === 'show' ? 60 : 1250);
+          await page.waitForTimeout(st.type === 'show' ? 60 : st.type === 'rhythm' ? 250 : 1250);
         }
         const party = await page.evaluate(() => !!document.querySelector('#party.show'));
         if (!party) errs.push(`lesson ${n}.${li} did not finish`);

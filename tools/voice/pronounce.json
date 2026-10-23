@@ -5,6 +5,7 @@
  [ "\\bf means forte\\b", "F means forte"],
  [ "Für Eggs-lise", "Fur Eggs-leeze"],
  [ "Clu, uck!", "Cluck, cluck!"],
+ [ "\\b([Ss])hh\\b", "$1hush"],
  [ "Cluuuuuck!", "Cluck, cluck, cluck, cluck!"],
  [ "^C$", "See!"],
  [ "^D$", "D."],

@@ -84,6 +84,11 @@
   "spoken": "That's 19 days in a row!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "02e07811": {
+  "text": "Two eighth notes fit in one peck. Chick, en! Play C, then chick en, then hold.",
+  "spoken": "Two eighth notes fit in one peck. Chick, en! Play C, then chick en, then hold.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "02f68303": {
   "text": "You have 331 eggs.",
   "spoken": "You have 331 eggs.",
@@ -399,6 +404,11 @@
   "spoken": "You have 123 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "10f683d2": {
+  "text": "Play two measures with the pecks. Count one, two, three, four in every box!",
+  "spoken": "Play two measures with the pecks. Count one, two, three, four in every box!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "112623aa": {
   "text": "A scale walks up eight notes, from C to the next C. After E, tuck your thumb under to reach F! Play the whole scale.",
   "spoken": "A scale walks up eight notes, from C to the next C. After E, tuck your thumb under to reach F! Play the whole scale.",
@@ -437,6 +447,11 @@
  "130a0118": {
   "text": "Listen. Which rhythm did you hear?",
   "spoken": "Listen. Which rhythm did you hear?",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "132ae6b3": {
+  "text": "Low notes are easy for your left hand! Put your left thumb on middle C and walk down. Then walk back up.",
+  "spoken": "Low notes are easy for your left hand! Put your left thumb on middle C and walk down. Then walk back up.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "133e96de": {
@@ -712,6 +727,11 @@
  "231d5af6": {
   "text": "New song: Oh Henrietta!",
   "spoken": "New song: Oh Henrietta!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "23f5d42f": {
+  "text": "Your left hand plays the low keys, like a big rooster! Put your left pinky on low C and play it.",
+  "spoken": "Your left hand plays the low keys, like a big rooster! Put your left pinky on low C and play it.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "24c8a5f1": {
@@ -1009,11 +1029,6 @@
   "spoken": "You have 297 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "38a386e2": {
-  "text": "Treble clef is for high notes, often the right hand. Bass clef is for low notes, often the left hand. Play a high C and a low C.",
-  "spoken": "Treble clef is for high notes, often the right hand. Bass clef is for low notes, often the left hand. Play a high C and a low C.",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "38da56c3": {
   "text": "You have 98 eggs.",
   "spoken": "You have 98 eggs.",
@@ -1104,6 +1119,11 @@
   "spoken": "That's Minuet in G!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "3ec2f939": {
+  "text": "Now both hands at once! Your left hand holds low C while your right hand walks up C, D, E, F.",
+  "spoken": "Now both hands at once! Your left hand holds low C while your right hand walks up C, D, E, F.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "3ee64848": {
   "text": "You have 110 eggs.",
   "spoken": "You have 110 eggs.",
@@ -1189,6 +1209,11 @@
   "spoken": "You have 32 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "42d16e73": {
+  "text": "Now long, short, short. Hold the long one for two pecks!",
+  "spoken": "Now long, short, short. Hold the long one for two pecks!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "42d6401b": {
   "text": "Let's play Chicken Boogie!",
   "spoken": "Let's play Chicken Boogie!",
@@ -1224,6 +1249,11 @@
   "spoken": "That's 12 days in a row!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "45837278": {
+  "text": "Left pinky on low C. Which finger plays this key?",
+  "spoken": "Left pinky on low C. Which finger plays this key?",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "45a199ff": {
   "text": "New song: Moonlight Chicks!",
   "spoken": "New song: Moonlight Chicks!",
@@ -1237,6 +1267,11 @@
  "45d6df9c": {
   "text": "C lives just to the left of the two black keys. It is the chicken coop door! Tap the glowing C.",
   "spoken": "C lives just to the left of the two black keys. It is the chicken coop door! Tap the glowing C.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "4666bbe8": {
+  "text": "Put the two staffs together and you get the grand staff! The top is for your right hand, the bottom is for your left hand. Middle C sits right between them. Play middle C.",
+  "spoken": "Put the two staffs together and you get the grand staff! The top is for your right hand, the bottom is for your left hand. Middle C sits right between them. Play middle C.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "46718b7c": {
@@ -1849,6 +1884,11 @@
   "spoken": "You have 312 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "6b7e8d84": {
+  "text": "Shh! That was a rest.",
+  "spoken": "Shush! That was a rest.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "6bfeebd1": {
   "text": "I saved your song! Tap play to hear it.",
   "spoken": "I saved your song! Tap play to hear it.",
@@ -1947,6 +1987,11 @@
  "717a844a": {
   "text": "You have 310 eggs.",
   "spoken": "You have 310 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "71bbc0f4": {
+  "text": "Your left hand has numbers too! Thumb is one, pinky is five. Put your left pinky on low C and play C, D, E, F, G with fingers five, four, three, two, one.",
+  "spoken": "Your left hand has numbers too! Thumb is one, pinky is five. Put your left pinky on low C and play C, D, E, F, G with fingers five, four, three, two, one.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "71d388e0": {
@@ -2122,6 +2167,11 @@
  "7a4b076c": {
   "text": "After B, the letters start over at C! Two keys with the same name sound alike, one is just higher. That is called an octave. Play both Cs.",
   "spoken": "After B, the letters start over at C! Two keys with the same name sound alike, one is just higher. That is called an octave. Play both Cs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "7a4d65f6": {
+  "text": "Right on the beat!",
+  "spoken": "Right on the beat!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "7a5a2b85": {
@@ -2327,6 +2377,11 @@
  "8418f596": {
   "text": "New song: Barnyard Waltz!",
   "spoken": "New song: Barnyard Waltz!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "842ea6df": {
+  "text": "Play on one and three. Be quiet on two and four!",
+  "spoken": "Play on one and three. Be quiet on two and four!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "8493a70c": {
@@ -2559,6 +2614,11 @@
   "spoken": "A half step is the very next key, black or white. A whole step skips one key. E to F is a half step. C to D is a whole step. Play E, F, then C, D.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "8ed7c1c2": {
+  "text": "Now a walking bass. One note on every peck!",
+  "spoken": "Now a walking bass. One note on every peck!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "8f0eeeed": {
   "text": "Play up and down in G position!",
   "spoken": "Play up and down in G position!",
@@ -2609,6 +2669,11 @@
   "spoken": "You have 145 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "90419ff8": {
+  "text": "In songs, the left hand often plays long notes. Hold C for two, G for two, then C for four!",
+  "spoken": "In songs, the left hand often plays long notes. Hold C for two, G for two, then C for four!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "9056556c": {
   "text": "New song: Old MacDonald's Chicks!",
   "spoken": "New song: Old MacDonald's Chicks!",
@@ -2617,6 +2682,11 @@
  "90748a98": {
   "text": "You have 33 eggs.",
   "spoken": "You have 33 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "907effaa": {
+  "text": "Your turn! Count with the pecks, then play!",
+  "spoken": "Your turn! Count with the pecks, then play!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "90becc3b": {
@@ -2797,6 +2867,11 @@
  "9bb01c25": {
   "text": "That's Vivaldi: Spring!",
   "spoken": "That's Vivaldi: Spring!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "9c0709e9": {
+  "text": "Waltz with the pecks! One, two, three. Then hold the last C for all three.",
+  "spoken": "Waltz with the pecks! One, two, three. Then hold the last C for all three.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "9c2dd4d3": {
@@ -3174,6 +3249,11 @@
   "spoken": "Let's play The Little Red Hen!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "ae8f5b3f": {
+  "text": "Good try! You will get it with practice.",
+  "spoken": "Good try! You will get it with practice.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "aeedcfd9": {
   "text": "You have 41 eggs.",
   "spoken": "You have 41 eggs.",
@@ -3382,6 +3462,11 @@
  "bb8207a1": {
   "text": "Let's play Grumpy Rooster!",
   "spoken": "Let's play Grumpy Rooster!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "bbd0f23d": {
+  "text": "Left hand, play with the pecks. C, E, G, then hold C for two.",
+  "spoken": "Left hand, play with the pecks. C, E, G, then hold C for two.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "bbde2b7a": {
@@ -3614,6 +3699,11 @@
   "spoken": "Start on B sharp.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "c5e8c23e": {
+  "text": "Now play with the pecks! A quarter note gets one peck. The half note gets two, so hold it!",
+  "spoken": "Now play with the pecks! A quarter note gets one peck. The half note gets two, so hold it!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "c600ac2a": {
   "text": "Find the two black keys. C is right next to them, on the left.",
   "spoken": "Find the two black keys. C is right next to them, on the left.",
@@ -3644,6 +3734,11 @@
   "spoken": "Bee!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "c72f557a": {
+  "text": "Hold long notes down until the next one!",
+  "spoken": "Hold long notes down until the next one!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "c7f12493": {
   "text": "Hi, Blueberry! Let's play!",
   "spoken": "Hi, Blueberry! Let's play!",
@@ -3662,6 +3757,11 @@
  "c912bf32": {
   "text": "In three four time, every box has three beats. One, two, three! One, two, three! It feels like a dance. Play C, E, G.",
   "spoken": "In three four time, every box has three beats. One, two, three! One, two, three! It feels like a dance. Play C, E, G.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "c91af148": {
+  "text": "Short, short, shh, short. Then hold a whole note for four pecks!",
+  "spoken": "Short, short, shush, short. Then hold a whole note for four pecks!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "c941abe6": {
@@ -3834,6 +3934,11 @@
   "spoken": "That's 63 days in a row!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "d0a80f6b": {
+  "text": "Hands take turns! Your right hand plays C, E, G. Then your left hand plays low C.",
+  "spoken": "Hands take turns! Your right hand plays C, E, G. Then your left hand plays low C.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "d0b0d956": {
   "text": "That's In the Hall of the Mountain King!",
   "spoken": "That's In the Hall of the Mountain King!",
@@ -3932,6 +4037,11 @@
  "d50c35a0": {
   "text": "You have 2 eggs.",
   "spoken": "You have 2 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "d5448416": {
+  "text": "One and two and, then hold for three and four!",
+  "spoken": "One and two and, then hold for three and four!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "d54fe6dd": {
@@ -4054,6 +4164,11 @@
   "spoken": "You have 327 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "d8d33980": {
+  "text": "The space notes on the bass staff are A, C, E, G. All Cows Eat Grass! Play C, E and G.",
+  "spoken": "The space notes on the bass staff are A, C, E, G. All Cows Eat Grass! Play C, E and G.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "d92adbd2": {
   "text": "You have 206 eggs.",
   "spoken": "You have 206 eggs.",
@@ -4077,6 +4192,11 @@
  "da2930d5": {
   "text": "You have 236 eggs.",
   "spoken": "You have 236 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "da2b6867": {
+  "text": "Almost! Listen once more.",
+  "spoken": "Almost! Listen once more.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "da84083d": {
@@ -4346,7 +4466,7 @@
  },
  "e83e858a": {
   "text": "A rest means be quiet! This squiggle is a quarter rest. Stay quiet for one beat. Play C, then shh!",
-  "spoken": "A rest means be quiet! This squiggle is a quarter rest. Stay quiet for one beat. Play C, then shh!",
+  "spoken": "A rest means be quiet! This squiggle is a quarter rest. Stay quiet for one beat. Play C, then shush!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "e84cbe54": {
@@ -4494,6 +4614,11 @@
   "spoken": "Start on G.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "f1bdeda3": {
+  "text": "Left hand! Play low C and hold it for four pecks. Then play it again.",
+  "spoken": "Left hand! Play low C and hold it for four pecks. Then play it again.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "f2093019": {
   "text": "Which line note is this?",
   "spoken": "Which line note is this?",
@@ -4602,6 +4727,11 @@
  "f76292ae": {
   "text": "Let's play The Coop Is Falling Down!",
   "spoken": "Let's play The Coop Is Falling Down!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "f7644d80": {
+  "text": "Hold G for three pecks. Then E for two, and one more E.",
+  "spoken": "Hold G for three pecks. Then E for two, and one more E.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "f860e076": {
