@@ -647,7 +647,9 @@ function sayThen(text, after) {
 }
 function staff(tokens, s, extra = {}) {
   lessonCard.style.display = '';
-  return drawStaff(lessonCard, tokens ? parse(tokens) : [], { minWidth: 420, clef: s.clef || 'treble', time: s.time || null, repeat: !!s.repeat, ...extra });
+  const notes = tokens ? parse(tokens) : [];
+  // one or two notes get a short staff, so they're drawn big
+  return drawStaff(lessonCard, notes, { minWidth: notes.length && notes.length <= 2 ? 240 : 420, clef: s.clef || 'treble', time: s.time || null, repeat: !!s.repeat, ...extra });
 }
 function keyboard(on, rangeTokens) {
   $('#lessonKb').parentElement.style.display = on ? '' : 'none';
@@ -735,7 +737,8 @@ function goalHtml(s) {
 function showStep() {
   const s = stepObj();
   const k = s.keys || {};
-  keyboard(true, k.range);
+  // without a range, make sure every highlighted key fits (F5 in Line Notes)
+  keyboard(true, k.range || (k.hl && `${k.hl} C E5`));
   const hl = ms(k.hl);
   lessonKb.setHL(hl);
   lessonKb.setGroups(k.groups);
