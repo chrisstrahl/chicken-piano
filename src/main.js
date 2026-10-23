@@ -4,7 +4,7 @@ import { startAudio, playNote, noteDown, noteUp, playSequence, cluck, peck, bawk
 import { BeatJudge, phrases, SPEEDS, barBeats, peckEvery, MIC_LAG } from './beat.js';
 import { startMic, stopMic, micOn, micSupported, expectNote, micHealth } from './mic.js';
 import { startMidi, midiSupported, midiAllowed } from './midi.js';
-import { drawStaff, focusNote } from './staff.js';
+import { drawStaff, focusNote, focusX } from './staff.js';
 import { makeKeyboard, LOW, HIGH } from './keyboard.js';
 import { setupRecordings } from './recordings.js';
 import { players, playerId, AVATARS, MAX_PLAYERS, avatarOf } from './profiles.js';
@@ -426,36 +426,102 @@ function renderSongs() {
 $('#songCards').addEventListener('click', songTap);
 
 /* ---------- PLAY A SONG ---------- */
+// A song is played as "events": each moment where the active hand(s) start a note. In two-hand mode an event
+// can need two (or more) keys; taps and MIDI must press them all, the mic only needs one (it can't hear chords).
 const playKb = makeKeyboard($('#playKb'), (m) => noteIn(m, 'tap'), keyUp);
-const P = { song: null, i: 0, mistakes: 0, missed: false, wrongRow: 0, drawn: null, stopDemo: null, back: 'songs',
-  mode: null, tok: null, beat: null, loop: null, judge: null, stopEcho: null, phrases: [], ph: 0, turn: false, echoWrong: 0 };
+const P = { song: null, e: 0, events: [], hands: 'rh', mistakes: 0, missed: false, wrongRow: 0, drawn: null, stopDemo: null, back: 'songs',
+  // play-with-the-beat and echo follow the melody note by note (P.i)
+  i: 0, mode: null, tok: null, beat: null, loop: null, judge: null, stopEcho: null, phrases: [], ph: 0, turn: false, echoWrong: 0 };
 const playCard = $('#playStaff');
 const playChicken = () => $('#playChicken');
-const notesP = () => P.song.notes;
-// rests and the second half of a tie need no key press
-const skippable = (i) => notesP()[i] && (notesP()[i].r || (i > 0 && notesP()[i - 1].tie));
-const matches = (n, m) => n.keys.some((k) => pc(k.m) === pc(m));
+const HANDS = { rh: '🫱', lh: '🫲', both: '🙌' };
+const twoHands = () => !!(P.song && P.song.lh);
+
+// [{ beat, items: [{ part: 'rh'|'lh', i, n }] }] for the hands being played
+function buildEvents() {
+  const map = new Map();
+  const add = (notes, part) => {
+    let beat = 0;
+    notes.forEach((n, i) => {
+      const cont = i > 0 && notes[i - 1].tie;
+      if (!n.r && !cont) {
+        const k = Math.round(beat * 1000);
+        if (!map.has(k)) map.set(k, { beat, items: [] });
+        map.get(k).items.push({ part, i, n });
+      }
+      beat += BEATS[n.d];
+    });
+  };
+  if (P.hands !== 'lh' || !twoHands()) add(P.song.notes, 'rh');
+  if (P.hands !== 'rh' && twoHands()) add(P.song.lh, 'lh');
+  P.events = [...map.values()].sort((x, y) => x.beat - y.beat);
+  P.events.forEach((ev) => { ev.need = ev.items.flatMap((it) => it.n.keys.map((k) => ({ ...k, part: it.part, i: it.i }))); });
+}
+const evNow = () => P.events[P.e];
+const fingersOf = (part) => (part === 'lh' ? P.song.lhFingers : P.song.fingers) || [];
+// a chord's fingers are listed lowest key first
+const fingerFor = (k) => {
+  const f = fingersOf(k.part)[k.i];
+  if (!Array.isArray(f)) return f;
+  const keys = (k.part === 'lh' ? P.song.lh : P.song.notes)[k.i].keys.map((x) => x.m).sort((a, b) => a - b);
+  return f[keys.indexOf(k.m)];
+};
 
 function setLetters() {
   const on = progress.letters;
   $('#btnLetters').classList.toggle('off', !on);
   playKb.setLetters(on ? 'all' : 'none');
-  P.drawn && P.drawn.letterEls.forEach((g) => g && (g.style.display = on ? '' : 'none'));
+  [P.drawn, P.drawn && P.drawn.lh].forEach((d) => d && d.letterEls.forEach((g) => g && g.querySelectorAll('circle:not(.fing circle), text.lt:not(.fing text)').forEach((x) => { if (!x.closest('.fing')) x.style.display = on ? '' : 'none'; })));
 }
 $('#btnLetters').addEventListener('click', () => { progress.letters = !progress.letters; save(); setLetters(); });
 $('#btnPlayBack').addEventListener('click', () => show(P.back));
+$('#btnHands').addEventListener('click', () => {
+  P.hands = { rh: 'lh', lh: 'both', both: 'rh' }[P.hands];
+  progress.hands = P.hands;
+  save();
+  drawSong();
+  restartSong(false);
+  say({ rh: 'Right hand', lh: 'Left hand', both: 'Both hands!' }[P.hands]);
+});
 
+function drawSong() {
+  const s = P.song;
+  $('#btnHands').style.display = twoHands() ? '' : 'none';
+  $('#btnHands').textContent = HANDS[P.hands];
+  const toks = (ns) => (ns || []).filter((n) => !n.r).flatMap((n) => n.keys.map((k) => k.m));
+  const all = toks(s.notes).concat(P.hands !== 'rh' ? toks(s.lh) : []);
+  playKb.setRange(Math.min(...all), Math.max(...all));
+  // On a phone the grand staff is tiny, so one hand alone gets just its own staff.
+  // P.solo = 'lh' means the left hand is drawn (and followed by beat and echo modes) on its own.
+  const grand = twoHands() && (P.hands === 'both' || playCard.clientHeight > 220);
+  P.solo = twoHands() && !grand && P.hands === 'lh' ? 'lh' : null;
+  if (P.solo) {
+    P.drawn = drawStaff(playCard, s.lh, {
+      scroll: true, bars: s.bars !== false, clef: 'bass', time: s.time, pickup: s.pickup, onTapBeat: jumpToBeat,
+      key: s.key && s.key !== 'C' ? s.key : null, sig: s.keySig, fingers: s.lhFingers,
+    });
+    buildEvents();
+    return;
+  }
+  P.drawn = drawStaff(playCard, s.notes, {
+    scroll: true, lyrics: true, bars: s.bars !== false, clef: s.clef, time: s.time, pickup: s.pickup, onTapBeat: jumpToBeat,
+    key: s.key && s.key !== 'C' ? s.key : null, sig: s.keySig, lh: grand ? s.lh : null, chords: grand ? s.chords : null,
+    fingers: s.fingers, lhFingers: s.lhFingers,
+  });
+  // the hand that isn't being played is greyed out
+  const dim = (d, on) => d && [d.noteEls, d.letterEls].forEach((list) => list.forEach((e) => e && e.classList.toggle('dim', on)));
+  dim(P.drawn, twoHands() && P.hands === 'lh');
+  dim(P.drawn.lh, P.hands === 'rh');
+  buildEvents();
+}
 function openSong(id, back = 'songs') {
   show('play');
   P.song = songById(id);
   P.back = back === 'level' ? 'level' : 'songs';
+  P.hands = twoHands() ? progress.hands || 'rh' : 'rh';
   levelN = P.song.level;
   $('#playTitle').textContent = `${P.song.emoji} ${P.song.title}`;
-  const [lo, hi] = range(P.song.notes.filter((n) => !n.r).map((n) => n.keys.map((k) => `${k.letter}${k.acc}${k.oct}`).join(' ')).join(' '));
-  playKb.setRange(lo, hi);
-  P.drawn = drawStaff(playCard, P.song.notes, {
-    scroll: true, lyrics: true, bars: P.song.bars !== false, clef: P.song.clef, time: P.song.time, pickup: P.song.pickup, onTap: jumpTo,
-  });
+  drawSong();
   restartSong(true);
   onNote = playInput;
   leaveHooks.push(stopDemo, stopMode);
@@ -465,82 +531,87 @@ function openSong(id, back = 'songs') {
 function restartSong(first) {
   stopDemo();
   stopMode();
-  P.i = 0; P.mistakes = 0; P.missed = false; P.wrongRow = 0;
+  P.e = 0; P.i = 0; P.mistakes = 0; P.missed = false; P.wrongRow = 0;
   markUpTo(0);
   setLetters();
-  settle();
   setCurrent();
-  const n = notesP()[P.i];
-  if (first) say(letsPlay(P.song.title, n.label));
+  const ev = evNow();
+  if (first && ev) say(letsPlay(P.song.title, ev.need[0].label));
 }
-// grey out every note before i, un-grey the rest
-function markUpTo(i) {
-  const d = P.drawn;
-  d.noteEls.forEach((e, j) => e && e.classList.toggle('done', j < i));
-  [d.letterEls, d.lyricEls].forEach((list) => list.forEach((e, j) => e && e.classList.toggle('done', j < i)));
+// grey out every note that starts before `beat`, un-grey the rest
+function markUpTo(beat) {
+  [P.drawn, P.drawn.lh].forEach((d) => {
+    if (!d) return;
+    d.beats.forEach((b, j) => [d.noteEls[j], d.letterEls[j], d.lyricEls[j]].forEach((e) => e && e.classList.toggle('done', b < beat - 1e-6)));
+  });
 }
-function markDone(i) {
-  const d = P.drawn;
-  [d.noteEls[i], d.letterEls[i], d.lyricEls[i]].forEach((e) => e && e.classList.add('done'));
+function setCurrent() {
+  const ev = evNow();
+  $('#playProg').style.width = (P.e / Math.max(1, P.events.length)) * 100 + '%';
+  if (!ev) { focusX(playCard, P.drawn, null); playKb.setTarget(null); playKb.setFingers({}); expectNote(null); return; }
+  ev.got = new Set();
+  markUpTo(ev.beat);
+  focusX(playCard, P.drawn, P.drawn.beatX(ev.beat));
+  expectNote(ev.need[0].m);
+  playKb.setTarget(ev.need.map((k) => k.m));
+  playKb.setFingers(Object.fromEntries(ev.need.map((k) => [k.m, fingerFor(k)]).filter((x) => x[1])));
+  bubble($('#playBubble'), `👉 ${ev.need.map((k) => bigLetter(k.m, k.label)).join('')}`);
 }
-// step over rests and tied notes; returns true if there was a rest
+// Beat and echo modes step through the melody one note at a time.
+const notesP = () => (P.solo === 'lh' ? P.song.lh : P.song.notes);
+const skippable = (i) => notesP()[i] && (notesP()[i].r || (i > 0 && notesP()[i - 1].tie));
+const matches = (n, m) => n.keys.some((k) => pc(k.m) === pc(m));
+const markDone = (i) => [P.drawn.noteEls[i], P.drawn.letterEls[i], P.drawn.lyricEls[i]].forEach((e) => e && e.classList.add('done'));
+// step over rests and tied notes
 function settle() {
-  let rest = false;
-  while (P.i < notesP().length && skippable(P.i)) { rest = rest || notesP()[P.i].r; markDone(P.i); P.i++; }
-  return rest;
+  while (P.i < notesP().length && skippable(P.i)) { markDone(P.i); P.i++; }
 }
-function setCurrent(rest = false) {
-  const n = notesP()[P.i];
-  focusNote(playCard, P.drawn, P.i);
-  $('#playProg').style.width = (P.i / notesP().length) * 100 + '%';
-  expectNote(n ? n.m : null);
-  if (!n) { playKb.setTarget(null); return; }
-  playKb.setTarget(n.m);
-  bubble($('#playBubble'), `${rest ? '🤫 ' : ''}👉 ${bigLetter(n.m, n.label)}`);
-}
-// Tap a note in the music to go back (or ahead) to it.
-function jumpTo(i) {
+// Tap the music to go back (or ahead) to that spot.
+function jumpToBeat(beat) {
   if (current !== 'play' || P.mode) return;
   stopDemo();
-  P.i = i;
+  const e = P.events.findIndex((ev) => ev.beat >= beat - 1e-6);
+  P.e = e < 0 ? P.events.length - 1 : e;
   P.missed = false; P.wrongRow = 0;
-  markUpTo(i);
-  settle();
   setCurrent();
-  const n = notesP()[P.i];
-  if (n) { playNote(n.keys.map((k) => k.m), 0.7); act(playChicken(), 'peck', 300); }
+  const ev = evNow();
+  if (ev) { playNote(ev.need.map((k) => k.m), 0.7); act(playChicken(), 'peck', 300); }
 }
 function playInput(m, source) {
   if (P.mode === 'beat') return beatInput(m, source);
   if (P.mode === 'echo') return echoInput(m);
   if (P.stopDemo) return;
-  const n = notesP()[P.i];
-  if (!n) return;
-  if (matches(n, m)) {
-    markDone(P.i);
-    playKb.flash(n.m, 'good', 300);
+  const ev = evNow();
+  if (!ev) return;
+  const hit = ev.need.find((k) => pc(k.m) === pc(m) && !ev.got.has(k));
+  if (hit) {
+    ev.got.add(hit);
+    playKb.flash(hit.m, 'good', 300);
     peck();
     act(playChicken(), 'peck', 300);
-    P.i++; P.missed = false; P.wrongRow = 0;
-    const rest = settle();
-    if (P.i >= notesP().length) return finishSong();
-    setCurrent(rest);
-    if (P.i % 6 === 0 && !rest) { const x = notesP()[P.i]; bubble($('#playBubble'), `${pick(PRAISE)} 👉 ${bigLetter(x.m, x.label)}`); act(playChicken(), 'happy'); }
-  } else {
+    if (source !== 'mic' && ev.got.size < ev.need.length) return;
+    P.e++; P.missed = false; P.wrongRow = 0;
+    if (P.e >= P.events.length) { markUpTo(1e9); return finishSong(); }
+    const gap = evNow().beat - (ev.beat + Math.min(...ev.items.map((it) => BEATS[it.n.d])));
+    setCurrent();
+    if (gap > 0.01) bubble($('#playBubble'), `🤫 👉 ${evNow().need.map((k) => bigLetter(k.m, k.label)).join('')}`);
+    else if (P.e % 6 === 0) { bubble($('#playBubble'), `${pick(PRAISE)} 👉 ${evNow().need.map((k) => bigLetter(k.m, k.label)).join('')}`); act(playChicken(), 'happy'); }
+  } else if (!ev.need.some((k) => pc(k.m) === pc(m))) {
     if (!P.missed) P.mistakes++;
     P.missed = true;
     P.wrongRow++;
     playKb.flash(m, 'bad', 500);
     act(playChicken(), 'oops');
-    bubble($('#playBubble'), `${bigLetter(m)} 🙈 👉 ${bigLetter(n.m, n.label)}`);
+    bubble($('#playBubble'), `${bigLetter(m)} 🙈 👉 ${ev.need.map((k) => bigLetter(k.m, k.label)).join('')}`);
     playCard.classList.remove('shake'); void playCard.offsetWidth; playCard.classList.add('shake');
-    if (P.wrongRow === 2) say(oopsFind(n.label));
+    if (P.wrongRow === 2) say(oopsFind(ev.need[0].label));
   }
 }
 function finishSong(eggs = P.mistakes === 0 ? 3 : P.mistakes <= 3 ? 2 : 1) {
   const mode = P.mode;
   stopMode();
   playKb.setTarget(null);
+  playKb.setFingers({});
   $('#playProg').style.width = '100%';
   progress.songs[P.song.id] = Math.max(progress.songs[P.song.id] || 0, eggs);
   save();
@@ -560,23 +631,48 @@ function stopDemo() {
   act(playChicken(), 'happy', 1);
   playChicken()?.classList.remove('dance');
 }
-// Listen plays the song from where you are (or from the start once it's finished).
+// The notes of a part from `beat` on, with rests in front if its first note starts later (keeps hands in step).
+// Returns { notes, beats } where beats[j] is when notes[j] starts.
+function from(notes, beat) {
+  let b = 0;
+  const out = [];
+  const beats = [];
+  notes.forEach((n) => {
+    if (b >= beat - 1e-6) { out.push(n); beats.push(b); }
+    b += BEATS[n.d];
+  });
+  let gap = (beats[0] ?? beat) - beat;
+  const lead = [];
+  for (const [d, v] of [['h', 2], ['q', 1], ['8', 0.5]]) while (gap >= v - 1e-6) { lead.push({ r: true, d, keys: [] }); gap -= v; }
+  let t = beat;
+  const leadBeats = lead.map((n) => { const x = t; t += BEATS[n.d]; return x; });
+  return { notes: lead.concat(out), beats: leadBeats.concat(beats) };
+}
+// Listen plays the song (both hands) from where you are, or from the start once it's finished.
 $('#btnListen').addEventListener('click', () => {
   if (P.stopDemo) { stopDemo(); setCurrent(); return; }
-  if (P.mode) { stopMode(); markUpTo(P.i); setCurrent(); }
+  if (P.mode) { stopMode(); setCurrent(); }
   stopTalking();
   $('#btnListen').textContent = '⏹️';
   playChicken().classList.add('dance');
   playKb.setTarget(null);
-  const from = P.i < notesP().length ? P.i : 0;
-  const part = notesP().slice(from);
-  P.stopDemo = playSequence(part, P.song.tempo * speed(), (j) => {
-    const n = part[j];
-    focusNote(playCard, P.drawn, from + j);
+  playKb.setFingers({});
+  const start = P.e < P.events.length ? evNow().beat : 0;
+  const r = from(P.song.notes, start);
+  const tempo = P.song.tempo * speed();
+  const stops = [];
+  stops.push(playSequence(r.notes, tempo, (j) => {
+    const n = r.notes[j];
+    focusX(playCard, P.drawn, P.drawn.beatX(r.beats[j]));
     if (n.r) { bubble($('#playBubble'), '🤫'); return; }
     playKb.flash(n.m, 'hl', 350);
     bubble($('#playBubble'), `🎵 ${bigLetter(n.m, n.label)}`);
-  }, () => { P.stopDemo = null; stopDemo(); setCurrent(); });
+  }, () => { P.stopDemo = null; stopDemo(); setCurrent(); }, 0.8));
+  if (twoHands()) {
+    const l = from(P.song.lh, start);
+    stops.push(playSequence(l.notes, P.song.tempo, (j) => { const n = l.notes[j]; if (!n.r) n.keys.forEach((k) => playKb.flash(k.m, 'hl', 350)); }, null, 0.55));
+  }
+  P.stopDemo = () => stops.forEach((f) => f());
 });
 // start over: back to the first note, mistakes forgiven
 $('#btnRestart').addEventListener('click', () => {
@@ -721,7 +817,7 @@ function echoPlay() {
   P.turn = false;
   P.echoWrong = 0;
   P.missed = false;
-  markUpTo(a);
+  markUpTo(d.beats[a]);
   [d.noteEls, d.letterEls, d.lyricEls].forEach((list) => list.forEach((e, j) => e && e.classList.toggle('later', j >= b)));
   playKb.setTarget(null);
   expectNote(null);
@@ -801,7 +897,12 @@ $('#btnEcho').addEventListener('click', () => {
   stopDemo();
   startEcho();
 });
-window.addEventListener('resize', () => { if (current === 'play' && P.drawn) focusNote(playCard, P.drawn, P.i); });
+window.addEventListener('resize', () => {
+  if (current !== 'play' || !P.drawn) return;
+  if (P.mode) return focusNote(playCard, P.drawn, P.i);
+  const ev = evNow();
+  focusX(playCard, P.drawn, ev ? P.drawn.beatX(ev.beat) : null);
+});
 
 /* ---------- record and share ---------- */
 // Recordings are kept per player; a removed player's recordings go with them
@@ -1252,7 +1353,7 @@ document.addEventListener('keydown', (e) => {
 });
 document.addEventListener('keyup', (e) => { if (typing(e)) return; const m = KEYMAP[e.key.toLowerCase()]; if (m) keyUp(m); });
 
-window.__cp = { recs, players, usePlayer, say, show, openSong, openLesson, noteIn, jumpTo, P, L, progress, LEVELS, SONGS, startBeatMode, startEcho };
+window.__cp = { recs, players, usePlayer, say, show, openSong, openLesson, noteIn, jumpToBeat, P, L, progress, LEVELS, SONGS, startBeatMode, startEcho };
 window.__cpMs = ms;
 window.__cpHeard = () => heardCount;
 window.__cpFree = () => F.notes;
