@@ -1,7 +1,7 @@
 // Offline checks for recording logic: timing, mic notes, notation, storage, wav encoding.
 // Usage: node test/recorder.mjs
-import { makeRecorder, toTokens, guessTempo, noteValue, encodeWav, saveRecording, listRecordings, deleteRecording, deletePlayerRecordings, MAX_SAVED, lengthMs } from '../src/recorder.js';
-import { parse } from '../src/music.js';
+import { makeRecorder, toTokens, guessTempo, noteValue, encodeWav, saveRecording, listRecordings, deleteRecording, deletePlayerRecordings, MAX_SAVED, lengthMs } from '../src/recorder.ts';
+import { parse } from '../src/music.ts';
 
 let fails = 0;
 const check = (ok, msg) => { console.log(`${ok ? 'PASS' : 'FAIL'} ${msg}`); if (!ok) fails++; };

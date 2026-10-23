@@ -30,8 +30,40 @@ const STABLE = 3;
 const NOISE_TARGET = 0.0009;
 const MAX_GAIN = 16; // expected note must beat every other note name by this much
 
+// a frame's result: rms loudness, and midi only when a new key press was recognized
+export type Heard = { rms: number; midi: number | null };
+
 export class NoteListener {
-  constructor(size) {
+  size: number;
+  pitchSize: number;
+  detector: PitchDetector<Float32Array>;
+  fft: FFT;
+  win: Float32Array;
+  frame: Float32Array;
+  spec: number[];
+  mag: Float32Array;
+  armed: boolean;
+  lastMidi: number | null;
+  lastMidiF = 0;
+  stable: number;
+  lastAccept: number;
+  lastPc: number;
+  lastAcceptMidi: number;
+  rawNoise: number;
+  gain: number;
+  scaled: Float32Array;
+  targetHits: number;
+  noise: number;
+  recent: number[];
+  peak: number;
+  notePeak: number;
+  prevLog: Float32Array;
+  fluxHist: number[];
+  lowFluxHist: number[];
+  onsetAt: number;
+  specReady: boolean;
+
+  constructor(size: number) {
     this.size = size;
     // pitch from the newest ~43ms only: a longer window blends the old and new note into a fake low note
     this.pitchSize = Math.min(size, PITCH_SIZE);
@@ -52,7 +84,7 @@ export class NoteListener {
   // peck: the metronome's peck (a high hiss, src/beat.js) is in this window. Its loudness and hiss must not
   // count as a key press, so only the low, piano part of the sound may start a note. Keys still work.
   // Returns { rms, midi } where midi is set only when a new key press is recognized.
-  process(buf, sr, now, ignore = false, expectPc = null, peck = false) {
+  process(buf: Float32Array, sr: number, now: number, ignore = false, expectPc: number | null = null, peck = false): Heard {
     let raw = 0;
     for (let i = 0; i < buf.length; i++) raw += buf[i] * buf[i];
     raw = Math.sqrt(raw / buf.length);
@@ -75,7 +107,7 @@ export class NoteListener {
     if (!peck) this.recent.push(rms);
     if (this.recent.length > 4) this.recent.shift();
     const [flux, lowFlux] = this.spectralFlux(buf, sr);
-    const avg = (h) => (h.length ? h.reduce((a, b) => a + b, 0) / h.length : 0);
+    const avg = (h: number[]) => (h.length ? h.reduce((a, b) => a + b, 0) / h.length : 0);
     const fluxAvg = avg(this.fluxHist), lowAvg = avg(this.lowFluxHist);
     if (!peck) this.fluxHist.push(flux);
     this.lowFluxHist.push(lowFlux);
@@ -89,13 +121,13 @@ export class NoteListener {
     if (!peck) this.peak = Math.max(rms, this.peak * 0.97);
     if (!peck) this.notePeak = Math.max(this.notePeak, rms);
 
-    const none = { rms, midi: null };
+    const none: Heard = { rms, midi: null };
     if (rms < gate) { this.stable = 0; this.targetHits = 0; this.lastMidi = null; return none; }
     if (ignore) { this.stable = 0; this.targetHits = 0; return none; }
 
     const [freq, clarity] = this.detector.findPitch(buf.subarray(buf.length - this.pitchSize), sr);
-    let midi = null;
-    let midiF = null;
+    let midi: number | null = null;
+    let midiF = 0;
     if (clarity >= CLARITY && freq > 27 && freq < 4300) {
       midiF = 69 + 12 * Math.log2(freq / 440);
       if (Math.abs(midiF - Math.round(midiF)) <= 0.45) midi = Math.round(midiF);
@@ -122,12 +154,12 @@ export class NoteListener {
     if (expectPc !== null && this.armed && now - this.lastAccept > 130) {
       const m = this.targetCheck(buf, sr, expectPc);
       this.targetHits = m !== null ? this.targetHits + 1 : 0;
-      if (this.targetHits >= 2) return this.accept(m, rms, now);
+      if (m !== null && this.targetHits >= 2) return this.accept(m, rms, now);
     }
     return none;
   }
 
-  accept(midi, rms, now) {
+  accept(midi: number, rms: number, now: number): Heard {
     this.armed = false;
     this.lastAccept = now;
     this.lastPc = midi % 12;
@@ -142,7 +174,7 @@ export class NoteListener {
   // Harmonic salience for every piano note A0..C8; returns a midi of the expected pitch class if it wins clearly.
   // Fills this.mag with the magnitude spectrum and returns how much new energy appeared since last frame.
   // Also returns the same for the piano's own range only (below LOW_BAND Hz), which a peck doesn't reach.
-  spectralFlux(buf, sr) {
+  spectralFlux(buf: Float32Array, sr: number): [number, number] {
     const n = this.size;
     const lowK = Math.round(LOW_BAND / (sr / n));
     for (let i = 0; i < n; i++) this.frame[i] = (buf[i] || 0) * this.win[i];
@@ -162,10 +194,10 @@ export class NoteListener {
     return [total > 0 ? rise / total : 0, lowTotal > 0 ? lowRise / lowTotal : 0];
   }
 
-  targetCheck(buf, sr, expectPc) {
+  targetCheck(buf: Float32Array, sr: number, expectPc: number): number | null {
     const n = this.size;
     const binHz = sr / n;
-    const peakNear = (f) => {
+    const peakNear = (f: number) => {
       const k = Math.round(f / binHz);
       if (k < 1 || k >= n / 2 - 1) return 0;
       return Math.max(this.mag[k - 1], this.mag[k], this.mag[k + 1]);

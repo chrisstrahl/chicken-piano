@@ -1,7 +1,7 @@
 // Lists every line the chicken can say as JSON [{id, text}], for tools/voice/render.py.
 // Sources: say/hint text in songs and lessons, templated lines in src/lines.js, and literal say('...') calls in src/.
 import fs from 'node:fs';
-import { SONGS, LEVELS } from '../src/music.js';
+import { SONGS, LEVELS } from '../src/music.ts';
 import { templatedLines, lineId } from '../src/lines.ts';
 
 const texts = new Set();

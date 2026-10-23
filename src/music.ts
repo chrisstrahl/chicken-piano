@@ -6,22 +6,24 @@
 //   Song time: '4/4', '3/4' or '6/8'.
 //   C+E+G = chord.
 
-export const COLORS = { C: '#ff4d4d', D: '#ff9a1f', E: '#ffcc00', F: '#3cc95a', G: '#2fa2ff', A: '#9b5de5', B: '#ff6fb0' };
+import type { Note, Pitch, Song, SongData, Lesson, LessonStep, Level } from './types.ts';
+
+export const COLORS: Record<string, string> = { C: '#ff4d4d', D: '#ff9a1f', E: '#ffcc00', F: '#3cc95a', G: '#2fa2ff', A: '#9b5de5', B: '#ff6fb0' };
 // darker versions for drawing notes on the white staff
-export const INK = { C: '#e8322f', D: '#ef8300', E: '#e0a800', F: '#22a843', G: '#1782e0', A: '#7f3fd6', B: '#e64e98' };
+export const INK: Record<string, string> = { C: '#e8322f', D: '#ef8300', E: '#e0a800', F: '#22a843', G: '#1782e0', A: '#7f3fd6', B: '#e64e98' };
 export const BLACK_INK = '#4a4a4a';
-export const BEATS = { 16: 0.25, 8: 0.5, q: 1, qd: 1.5, h: 2, hd: 3, w: 4 };
+export const BEATS: Record<string, number> = { 16: 0.25, 8: 0.5, q: 1, qd: 1.5, h: 2, hd: 3, w: 4 };
 
 const LETTERS = 'CCDDEFFGGAAB';
 const SHARP = [0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0];
-const BASE = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
-export const letterOf = (m) => LETTERS[((m % 12) + 12) % 12];
-export const isBlack = (m) => SHARP[((m % 12) + 12) % 12] === 1;
-export const nameOf = (m) => letterOf(m) + (isBlack(m) ? '♯' : '');
-export const samePc = (a, b) => ((a - b) % 12 + 12) % 12 === 0;
+const BASE: Record<string, number> = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+export const letterOf = (m: number): string => LETTERS[((m % 12) + 12) % 12];
+export const isBlack = (m: number): boolean => SHARP[((m % 12) + 12) % 12] === 1;
+export const nameOf = (m: number): string => letterOf(m) + (isBlack(m) ? '♯' : '');
+export const samePc = (a: number, b: number): boolean => ((a - b) % 12 + 12) % 12 === 0;
 
 // One pitch like "Bb3" -> { m, letter, acc, oct, label }
-function pitch(p) {
+function pitch(p: string): Pitch {
   const x = p.match(/^([A-G])([#b]?)(\d?)$/);
   if (!x) throw new Error('bad note ' + p);
   const [, letter, acc, o] = x;
@@ -31,10 +33,10 @@ function pitch(p) {
 }
 
 // "C D E:h" (+ optional lyrics, one word per sounding note, "_" = none) -> note objects
-export function parse(notes, lyrics = '') {
+export function parse(notes: string, lyrics = ''): Note[] {
   const ly = lyrics.trim() ? lyrics.trim().split(/\s+/) : [];
   let li = 0;
-  return notes.trim().split(/\s+/).map((tok) => {
+  return notes.trim().split(/\s+/).map((tok): Note => {
     const tie = tok.endsWith('~');
     const [p, d = 'q'] = tok.replace('~', '').split(':');
     if (!(d in BEATS)) throw new Error('bad duration ' + tok);
@@ -46,17 +48,18 @@ export function parse(notes, lyrics = '') {
 }
 
 import { SONG_DATA } from './songs.js';
-import { arrange } from './arrange.js';
+import { arrange } from './arrange.ts';
 
 // lh / chords given in songs.js are kept as lhData / chordsData; arrange() works out the rest
-const song = (id, level, emoji, title, sub, notes, lyrics, { lh, chords, fingers, lhFingers, ...opts } = {}) => arrange({
+type SongOpts = Partial<Omit<SongData, 'id' | 'level' | 'emoji' | 'title' | 'sub' | 'notes' | 'lyrics'>>;
+const song = (id: string, level: number, emoji: string, title: string, sub: string, notes: string, lyrics: string, { lh, chords, fingers, lhFingers, ...opts }: SongOpts = {}): Song => arrange({
   id, level, emoji, title, sub, tempo: 100, time: '4/4', clef: 'treble', key: 'C', pickup: 0, bars: true, ...opts,
   lhData: lh, chordsData: chords, fingersData: fingers, lhFingersData: lhFingers, notes: parse(notes, lyrics),
 }, parse);
 
 // Songs live in songs.js (raw strings, grouped by level, easiest first).
-export const SONGS = SONG_DATA.map(({ notes, lyrics, ...x }) => song(x.id, x.level, x.emoji, x.title, x.sub, notes, lyrics, x));
-export const songById = (id) => SONGS.find((s) => s.id === id);
+export const SONGS: Song[] = (SONG_DATA as SongData[]).map(({ notes, lyrics, ...x }) => song(x.id, x.level, x.emoji, x.title, x.sub, notes, lyrics, x));
+export const songById = (id: string): Song | undefined => SONGS.find((s) => s.id === id);
 
 /* ------------------------------------------------------------------------------------------------
  Lessons. Every step asks the child to do something before moving on:
@@ -67,10 +70,10 @@ export const songById = (id) => SONGS.find((s) => s.id === id);
   beats:  "how many beats?"                                                 { durs, say }
   choice: listen or look, then pick an answer                               { say, rounds:[{ staff, hear, tempo, vel, hl, options, answer }] }
 ------------------------------------------------------------------------------------------------ */
-const L = (id, emoji, title, steps) => ({ id, emoji, title, steps });
+const L = (id: string, emoji: string, title: string, steps: LessonStep[]): Lesson => ({ id, emoji, title, steps });
 const C_POS = 'C D E F G';
 
-export const LEVELS = [
+export const LEVELS: Level[] = [
   {
     n: 1, emoji: '🐣', title: 'Hello, Keys', color: '#ff8a1f',
     lessons: [
@@ -372,9 +375,9 @@ export const LEVELS = [
   },
 ];
 
-export const lessonById = (id) => { for (const lv of LEVELS) for (const l of lv.lessons) if (l.id === id) return { lesson: l, level: lv }; return null; };
+export const lessonById = (id: string): { lesson: Lesson; level: Level } | null => { for (const lv of LEVELS) for (const l of lv.lessons) if (l.id === id) return { lesson: l, level: lv }; return null; };
 // Easiest first: by diff (1-100) when songs give one, else in songs.js order
-export const songsForLevel = (n) => SONGS.filter((s) => s.level === n)
-  .map((s, i) => [s.diff ?? i, i, s]).sort((a, b) => a[0] - b[0] || a[1] - b[1]).map((x) => x[2]);
+export const songsForLevel = (n: number): Song[] => SONGS.filter((s) => s.level === n)
+  .map((s, i): [number, number, Song] => [s.diff ?? i, i, s]).sort((a, b) => a[0] - b[0] || a[1] - b[1]).map((x) => x[2]);
 
 export const PRAISE = ['Yes!', 'Egg-cellent!', 'Cluck yeah!', 'Peck-tacular!', 'Awesome!', 'Woo-hoo!', 'Super chick!'];

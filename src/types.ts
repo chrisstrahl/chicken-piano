@@ -46,10 +46,13 @@ export type Note =
   | { r: true; d: Duration | string; keys: []; lyric: string }
   | { r?: undefined; m: number; keys: Pitch[]; d: Duration | string; tie: boolean; label: string; letter: string; lyric: string };
 
+// A note of the key's scale, spelled: letter, '#' / 'b' / '', pitch class (0 = C)
+export interface ScaleNote { letter: string; acc: string; pc: number }
 export interface Chord {
   sym: string; // 'C', 'Am', 'F♯m'
   pcs: number[]; // pitch classes, 0 = C
-  notes: { letter: string; acc: string; pc: number }[];
+  notes: ScaleNote[];
+  bonus?: number; // how much the harmonizer favors it (home chord most)
 }
 // A chord held from `beat` for `len` beats
 export interface ChordSpan { beat: number; len: number; chord: Chord }
@@ -60,8 +63,18 @@ export type KeySig = Partial<Record<string, '#' | 'b'>>;
 // A finger number per sounding note: 1 thumb .. 5 pinky, several for a chord, null for none
 export type Finger = number | number[] | null;
 
-// A song ready to play: notes parsed, two hands arranged (music.js song() + arrange.js)
-export interface Song {
+// A song ready to play: notes parsed, two hands arranged (music.js song() + arrange.ts)
+export interface Song extends SongInput {
+  keySig: KeySig;
+  melodyHand: 'rh' | 'lh'; // bass-clef songs put the melody in the left hand and chords in the right
+  notes: Note[]; // right hand
+  fingers: Finger[];
+  chords: ChordSpan[];
+  lh: Note[];
+  lhFingers: Finger[];
+}
+// What music.js hands to arrange(): the song's own fields, with defaults filled in
+export interface SongInput {
   id: string;
   level: number;
   emoji: string;
@@ -74,12 +87,13 @@ export interface Song {
   pickup: number;
   bars: boolean;
   diff?: number;
+  lhStyle?: string;
   notes: Note[];
-  keySig: KeySig;
-  fingers: Finger[];
-  chords: ChordSpan[];
-  lh: Note[] | null; // null for bass-clef songs, which are already left-hand songs
-  lhFingers?: Finger[];
+  // the two-hand parts as written in songs.js, when given
+  lhData?: Tokens;
+  chordsData?: string;
+  fingersData?: string;
+  lhFingersData?: string;
 }
 
 // Lesson steps (music.js). Every step asks the child to do something before moving on.
@@ -99,11 +113,20 @@ export interface ChoiceRound {
   tempo?: number;
   vel?: number;
   hl?: Tokens;
+  time?: string;
+  repeat?: boolean;
+  ask?: string; // a note name shown as the question
   options: string[];
   answer: string;
 }
 export type LessonStep =
-  | { type: 'show'; say: string; text: string; keys?: KeysView; staff?: Tokens; clef?: string; hear?: Tokens; clap?: boolean; goal: string; times: number }
+  | {
+      type: 'show'; say: string; text: string; goal: string;
+      times?: number; // goal notes to play (default: each once)
+      keys?: KeysView; staff?: Tokens; clef?: string; time?: string; repeat?: boolean;
+      hear?: Tokens; hearVel?: number[]; clap?: boolean;
+      echo?: boolean; // the staff shows each key as it is played
+    }
   | { type: 'key'; say: string; targets: Tokens; letters?: string; hint?: string; range?: string }
   | { type: 'seq'; say: string; seqs: Tokens[]; range?: string }
   | { type: 'name'; say: string; notes: Tokens; pool: string; clef?: string; range?: string }
