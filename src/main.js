@@ -454,18 +454,28 @@ function buildEvents() {
       beat += BEATS[n.d];
     });
   };
-  if (P.hands !== 'lh' || !twoHands()) add(P.song.notes, 'rh');
-  if (P.hands !== 'rh' && twoHands()) add(P.song.lh, 'lh');
+  if (P.hands !== 'lh' || !twoHands()) add(partNotes('rh'), 'rh');
+  if (P.hands !== 'rh' && twoHands()) add(partNotes('lh'), 'lh');
   P.events = [...map.values()].sort((x, y) => x.beat - y.beat);
   P.events.forEach((ev) => { ev.need = ev.items.flatMap((it) => it.n.keys.map((k) => ({ ...k, part: it.part, i: it.i }))); });
 }
 const evNow = () => P.events[P.e];
+// A hand's notes as played now: moved up or down by octaves when it's shown in the other clef.
+const partNotes = (name) => (P.solo === name && P.soloNotes) || (name === 'lh' ? P.song.lh : P.song.notes);
+// Octaves to move a part so it sits on the other clef (middle of the notes near B4 on treble, D3 on bass).
+function shiftTo(notes, clef) {
+  const ms = notes.filter((n) => !n.r).flatMap((n) => n.keys.map((k) => k.m)).sort((a, b) => a - b);
+  const mid = ms.length ? ms[Math.floor(ms.length / 2)] : 60;
+  const oct = Math.round(((clef === 'bass' ? 50 : 71) - mid) / 12);
+  if (!oct) return notes;
+  return notes.map((n) => (n.r ? n : { ...n, keys: n.keys.map((k) => ({ ...k, m: k.m + 12 * oct, oct: k.oct + oct })), m: n.m + 12 * oct }));
+}
 const fingersOf = (part) => (part === 'lh' ? P.song.lhFingers : P.song.fingers) || [];
 // a chord's fingers are listed lowest key first
 const fingerFor = (k) => {
   const f = fingersOf(k.part)[k.i];
   if (!Array.isArray(f)) return f;
-  const keys = (k.part === 'lh' ? P.song.lh : P.song.notes)[k.i].keys.map((x) => x.m).sort((a, b) => a - b);
+  const keys = partNotes(k.part)[k.i].keys.map((x) => x.m).sort((a, b) => a - b);
   return f[keys.indexOf(k.m)];
 };
 
@@ -477,6 +487,13 @@ function setLetters() {
 }
 $('#btnLetters').addEventListener('click', () => { progress.letters = !progress.letters; save(); setLetters(); });
 $('#btnPlayBack').addEventListener('click', () => show(P.back));
+$('#btnClef').addEventListener('click', () => {
+  progress.clefFlip = !progress.clefFlip;
+  save();
+  drawSong();
+  restartSong(false);
+  cluck();
+});
 $('#btnHands').addEventListener('click', () => {
   P.hands = { rh: 'lh', lh: 'both', both: 'rh' }[P.hands];
   progress.hands = P.hands;
@@ -490,17 +507,30 @@ function drawSong() {
   const s = P.song;
   $('#btnHands').style.display = twoHands() ? '' : 'none';
   $('#btnHands').textContent = HANDS[P.hands];
-  const toks = (ns) => (ns || []).filter((n) => !n.r).flatMap((n) => n.keys.map((k) => k.m));
-  const all = toks(s.notes).concat(P.hands !== 'rh' ? toks(s.lh) : []);
-  playKb.setRange(Math.min(...all), Math.max(...all));
-  // On a phone the grand staff is tiny, so one hand alone gets just its own staff.
-  // P.solo = 'lh' means the left hand is drawn (and followed by beat and echo modes) on its own.
-  const grand = twoHands() && (P.hands === 'both' || playCard.clientHeight > 220);
-  P.solo = twoHands() && !grand && P.hands === 'lh' ? 'lh' : null;
+  // One hand at a time can be read on either clef (remembered per player).
+  const one = P.hands !== 'both' || !twoHands();
+  const hand = P.hands === 'lh' && twoHands() ? 'lh' : 'rh';
+  const home = hand === 'lh' ? 'bass' : s.clef || 'treble';
+  const flip = one && !!progress.clefFlip;
+  const clef = flip ? (home === 'bass' ? 'treble' : 'bass') : home;
+  $('#btnClef').style.display = one ? '' : 'none';
+  $('#btnClef').textContent = clef === 'bass' ? '𝄢' : '𝄞';
+  // On a phone the grand staff is tiny, so one hand alone gets just its own staff; so does a flipped clef.
+  // P.solo names the hand drawn on its own (beat and echo modes follow it); P.soloNotes are its notes as shown.
+  const grand = twoHands() && !flip && (P.hands === 'both' || playCard.clientHeight > 220);
+  P.solo = !grand && (flip || hand === 'lh') ? hand : null;
+  P.soloNotes = null;
   if (P.solo) {
-    P.drawn = drawStaff(playCard, s.lh, {
-      scroll: true, lyrics: true, bars: s.bars !== false, clef: 'bass', time: s.time, pickup: s.pickup, onTapBeat: jumpToBeat,
-      key: s.key && s.key !== 'C' ? s.key : null, sig: s.keySig, fingers: s.lhFingers,
+    const src = hand === 'lh' ? s.lh : s.notes;
+    P.soloNotes = flip ? shiftTo(src, clef) : src;
+  }
+  const toks = (ns) => (ns || []).filter((n) => !n.r).flatMap((n) => n.keys.map((k) => k.m));
+  const all = P.solo ? toks(P.soloNotes) : toks(s.notes).concat(P.hands !== 'rh' ? toks(s.lh) : []);
+  playKb.setRange(Math.min(...all), Math.max(...all));
+  if (P.solo) {
+    P.drawn = drawStaff(playCard, P.soloNotes, {
+      scroll: true, lyrics: true, bars: s.bars !== false, clef, time: s.time, pickup: s.pickup, onTapBeat: jumpToBeat,
+      key: s.key && s.key !== 'C' ? s.key : null, sig: s.keySig, fingers: hand === 'lh' ? s.lhFingers : s.fingers,
     });
     buildEvents();
     return;
@@ -564,8 +594,8 @@ function setCurrent() {
 // Beat and echo modes step through the melody one note at a time.
 // They follow the hand being played, or the melody when both are.
 const modeHand = () => (!twoHands() ? 'rh' : P.hands === 'both' ? P.song.melodyHand : P.hands);
-const notesP = () => (modeHand() === 'lh' ? P.song.lh : P.song.notes);
-const melDrawn = () => (modeHand() === 'lh' && P.drawn.lh ? P.drawn.lh : P.drawn);
+const notesP = () => partNotes(modeHand());
+const melDrawn = () => (!P.solo && modeHand() === 'lh' && P.drawn.lh ? P.drawn.lh : P.drawn);
 const focusMel = (i) => focusX(playCard, P.drawn, melDrawn().xs[i]);
 const skippable = (i) => notesP()[i] && (notesP()[i].r || (i > 0 && notesP()[i - 1].tie));
 const matches = (n, m) => n.keys.some((k) => pc(k.m) === pc(m));
@@ -666,7 +696,7 @@ $('#btnListen').addEventListener('click', () => {
   playKb.setTarget(null);
   playKb.setFingers({});
   const start = P.e < P.events.length ? evNow().beat : 0;
-  const r = from(P.song.notes, start);
+  const r = from(partNotes('rh'), start);
   const tempo = P.song.tempo * speed();
   const stops = [];
   stops.push(playSequence(r.notes, tempo, (j) => {
@@ -677,7 +707,7 @@ $('#btnListen').addEventListener('click', () => {
     bubble($('#playBubble'), `🎵 ${bigLetter(n.m, n.label)}`);
   }, () => { P.stopDemo = null; stopDemo(); setCurrent(); }, 0.8));
   if (twoHands()) {
-    const l = from(P.song.lh, start);
+    const l = from(partNotes('lh'), start);
     stops.push(playSequence(l.notes, P.song.tempo, (j) => { const n = l.notes[j]; if (!n.r) n.keys.forEach((k) => playKb.flash(k.m, 'hl', 350)); }, null, 0.55));
   }
   P.stopDemo = () => stops.forEach((f) => f());

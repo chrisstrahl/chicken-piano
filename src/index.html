@@ -277,7 +277,9 @@ body.midi #mic:not(.on){opacity:.6}
 .bubble.pop{animation:bpop .3s}
 @keyframes bpop{50%{transform:scale(1.08)}}
 .coach .spacer{flex:1}
-.coach .tools{display:flex;gap:10px;align-items:center}
+.coach .tools{display:flex;gap:min(10px,1vw);align-items:center}
+/* the song screen has many tools: they shrink on narrow screens so all of them fit */
+.coach .tools .btn.round{width:min(clamp(44px,7vh,60px),6.2vw);height:min(clamp(44px,7vh,60px),6.2vw);font-size:min(clamp(20px,3.6vh,30px),3.2vw)}
 .progress{height:14px;border-radius:7px;background:rgba(255,255,255,.6);overflow:hidden;width:min(24vw,240px)}
 .progress i{display:block;height:100%;width:0;background:var(--good);transition:width .3s}
 
@@ -475,6 +477,7 @@ body.midi #mic:not(.on){opacity:.6}
         <button class="btn round" id="btnSpeed" aria-label="Speed">🐇</button>
         <button class="btn round" id="btnRestart" aria-label="Start over">⏮️</button>
         <button class="btn round" id="btnHands" aria-label="Which hand">🫱</button>
+        <button class="btn round" id="btnClef" aria-label="Treble or bass clef">𝄞</button>
         <button class="btn round" id="btnLetters" aria-label="Letters">🔤</button>
       </div>
     </div>
