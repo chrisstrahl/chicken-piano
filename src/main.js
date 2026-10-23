@@ -558,7 +558,7 @@ function openSong(id, back = 'songs') {
   drawSong();
   restartSong(true);
   onNote = playInput;
-  leaveHooks.push(stopDemo, stopMode);
+  leaveHooks.push(stopDemo, stopMode, stopHint);
   setSpeedBtn();
   if (!micOn()) micBtn.classList.add('nudge'), setTimeout(() => micBtn.classList.remove('nudge'), 3200);
 }
@@ -590,6 +590,7 @@ function setCurrent() {
   playKb.setTarget(ev.need.map((k) => k.m));
   playKb.setFingers(Object.fromEntries(ev.need.map((k) => [k.m, fingerFor(k)]).filter((x) => x[1])));
   bubble($('#playBubble'), `👉 ${needHtml(ev.need)}`);
+  if (!P.mode) armHint($('#btnHint'));
 }
 // Beat and echo modes step through the melody one note at a time.
 // They follow the hand being played, or the melody when both are.
@@ -642,7 +643,7 @@ function playInput(m, source) {
     act(playChicken(), 'oops');
     bubble($('#playBubble'), `${bigLetter(m)} 🙈 👉 ${needHtml(ev.need)}`);
     playCard.classList.remove('shake'); void playCard.offsetWidth; playCard.classList.add('shake');
-    if (P.wrongRow === 2) say(oopsFind(ev.need[0].label));
+    if (P.wrongRow === 2) { say(oopsFind(ev.need[0].label)); nudgeHint($('#btnHint')); }
   }
 }
 function finishSong(eggs = P.mistakes === 0 ? 3 : P.mistakes <= 3 ? 2 : 1) {
@@ -876,6 +877,7 @@ function echoPlay() {
     expectNote(notesP()[P.i].m);
     act(playChicken(), 'happy');
     bubble($('#playBubble'), '🐣 👉 🎹');
+    armHint($('#btnHint'));
   });
 }
 function echoInput(m) {
@@ -941,6 +943,58 @@ window.addEventListener('resize', () => {
   focusX(playCard, P.drawn, ev ? P.drawn.beatX(ev.beat) : null);
 });
 
+/* ---------- HINT: the chicken shows (and plays) the next note ---------- */
+// The 🐔 button bounces after 8 seconds without a right note, or after two wrong notes in a row.
+const STUCK_MS = 8000;
+let stuckTimer = null;
+function armHint(btn) { clearTimeout(stuckTimer); btn.classList.remove('nudge'); stuckTimer = setTimeout(() => btn.classList.add('nudge'), STUCK_MS); }
+function nudgeHint(btn) { clearTimeout(stuckTimer); btn.classList.add('nudge'); }
+function stopHint() { clearTimeout(stuckTimer); $('#btnHint').classList.remove('nudge'); $('#btnLessonHint').classList.remove('nudge'); }
+// play the keys, make them hop, then say the note's name
+function showHint(kb, keys, label, chicken) {
+  playNote(keys, 0.8);
+  keys.forEach((m) => kb.flash(m, 'hint', 1600));
+  act(chicken, 'happy', 600);
+  setTimeout(() => say(noteWords(label)), 700);
+}
+const pulse = (el) => { if (!el) return; el.classList.remove('pulse'); void el.getBoundingClientRect(); el.classList.add('pulse'); };
+$('#btnHint').addEventListener('click', () => {
+  stopHint();
+  if (P.stopDemo || P.mode === 'beat') return;
+  if (P.mode === 'echo') {
+    if (!P.turn) return;
+    const n = notesP()[P.i];
+    playKb.setTarget(n.m);
+    bubble($('#playBubble'), `🐔 👉 ${bigLetter(n.m, n.label)}`);
+    showHint(playKb, n.keys.map((k) => k.m), n.label, playChicken());
+    return armHint($('#btnHint'));
+  }
+  const ev = evNow();
+  if (!ev) return;
+  bubble($('#playBubble'), `🐔 👉 ${needHtml(ev.need)}`);
+  pulse(P.drawn.cur);
+  showHint(playKb, ev.need.map((k) => k.m), ev.need[0].label, playChicken());
+  armHint($('#btnHint'));
+});
+$('#btnLessonHint').addEventListener('click', () => {
+  stopHint();
+  const s = stepObj();
+  if (L.locked || L.done) return;
+  let m = null, label = null;
+  if (s.type === 'key') ({ m, label } = parse(s.targets)[L.sub]);
+  else if (s.type === 'seq') { ({ m, label } = parse(s.seqs[L.sub])[L.seqPos]); pulse(L.seqDrawn && L.seqDrawn.cur); }
+  else if (s.type === 'show') {
+    const g = goalPcs(s);
+    const want = g.find((p) => !L.got.has(p)) ?? g[0];
+    m = ms(s.goal).find((x) => pc(x) === want);
+    label = labelFor(s, want);
+  }
+  if (m == null) return;
+  if (s.type === 'key') lessonKb.setTarget(m);
+  showHint(lessonKb, [m], label, lessonChicken());
+  armHint($('#btnLessonHint'));
+});
+
 /* ---------- record and share ---------- */
 // Recordings are kept per player; a removed player's recordings go with them
 const recs = setupRecordings({ show, toast, ask: (...a) => ask(...a), bubble, bigLetter, player: playerId });
@@ -992,7 +1046,7 @@ function openLesson(n, i) {
   L.lv = LEVELS[n - 1]; L.li = i; L.step = 0;
   levelN = n;
   onNote = lessonInput;
-  leaveHooks.push(stopHear);
+  leaveHooks.push(stopHear, stopHint);
   preloadVoice(lesson().steps.map((st) => [st.say, st.hint]));
   renderStep();
 }
@@ -1040,6 +1094,8 @@ function renderStep() {
   $('#lessonTitle').textContent = `${les.emoji} ${les.title}`;
   $('#lessonDots').innerHTML = les.steps.map((_, i) => `<i class="${i < L.step ? 'done' : i === L.step ? 'on' : ''}"></i>`).join('');
   $('#btnNext').style.display = 'none';
+  $('#btnLessonHint').style.display = ['key', 'seq', 'show'].includes(s.type) ? '' : 'none';
+  stopHint();
   $('#btnHear').style.display = s.hear || (s.type === 'choice' && s.rounds.some((r) => r.hear)) ? '' : 'none';
   lessonCard.style.display = 'none';
   choices('');
@@ -1129,6 +1185,7 @@ function showInput(m) {
   if (L.done) return;
   const g = goalPcs(s);
   if (g.includes(pc(m))) {
+    armHint($('#btnLessonHint'));
     lessonKb.flash(m, 'good', 400);
     act(lessonChicken(), 'peck', 300);
     L.hits++;
@@ -1160,8 +1217,10 @@ function keyPrompt(first) {
   const s = stepObj();
   const n = parse(s.targets)[L.sub];
   expectNote(n.m);
+  lessonKb.setTarget(null); // a hint may have lit the last one
   bubble($('#lessonBubble'), `🎹 ${bigLetter(n.m, n.label)}`);
   if (first) sayThen(s.say); else say(noteWords(n.label));
+  armHint($('#btnLessonHint'));
 }
 function keyInput(m) {
   const s = stepObj();
@@ -1199,6 +1258,7 @@ function seqTarget() {
   expectNote(n.m);
   L.seqDrawn.cur.setAttribute('x', L.seqDrawn.xs[L.seqPos] - 22);
   L.seqDrawn.noteEls.forEach((e, j) => e && e.classList.toggle('done', j < L.seqPos));
+  armHint($('#btnLessonHint'));
   bubble($('#lessonBubble'), `${tune.map((x, j) => (j < L.seqPos ? '🥚' : j === L.seqPos ? bigLetter(x.m, x.label) : '<i class="egg0">🥚</i>')).join('')}`);
 }
 function seqInput(m) {
@@ -1394,7 +1454,7 @@ document.addEventListener('keydown', (e) => {
 });
 document.addEventListener('keyup', (e) => { if (typing(e)) return; const m = KEYMAP[e.key.toLowerCase()]; if (m) keyUp(m); });
 
-window.__cp = { recs, players, usePlayer, say, show, openSong, openLesson, noteIn, jumpToBeat, P, L, progress, LEVELS, SONGS, startBeatMode, startEcho };
+window.__cp = { recs, players, usePlayer, say, show, openSong, openLesson, noteIn, jumpToBeat, P, L, progress, LEVELS, SONGS, startBeatMode, startEcho, lessonStep: (i) => { L.step = i; renderStep(); } };
 window.__cpMs = ms;
 window.__cpHeard = () => heardCount;
 window.__cpFree = () => F.notes;

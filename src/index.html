@@ -284,7 +284,7 @@ body.midi #mic:not(.on){opacity:.6}
 .coach .spacer{flex:1}
 .coach .tools{display:flex;gap:min(10px,1vw);align-items:center}
 /* the song screen has many tools: they shrink on narrow screens so all of them fit */
-.coach .tools .btn.round{width:min(clamp(44px,7vh,60px),6.2vw);height:min(clamp(44px,7vh,60px),6.2vw);font-size:min(clamp(20px,3.6vh,30px),3.2vw)}
+.coach .tools .btn.round{width:min(clamp(44px,7vh,60px),5.4vw);height:min(clamp(44px,7vh,60px),5.4vw);font-size:min(clamp(20px,3.6vh,30px),2.8vw)}
 .progress{height:14px;border-radius:7px;background:rgba(255,255,255,.6);overflow:hidden;width:min(24vw,240px)}
 .progress i{display:block;height:100%;width:0;background:var(--good);transition:width .3s}
 
@@ -306,6 +306,15 @@ body.midi #mic:not(.on){opacity:.6}
 .wkey.target:after{content:"🐣";position:absolute;top:10%;font-size:clamp(22px,5vh,44px);animation:hopK .8s ease-in-out infinite}
 @keyframes hopK{50%{transform:translateY(-8px)}}
 @keyframes glow{50%{box-shadow:inset 0 0 0 6px rgba(255,255,255,.75)}}
+/* hint: the key to press hops and shines */
+.wkey.hint,.bkey.hint{animation:hinthop .5s ease-in-out 3;z-index:3}
+.wkey.hint{background:var(--c)}
+.bkey.hint{background:var(--violet)}
+@keyframes hinthop{50%{transform:translateY(-10px);box-shadow:0 0 0 6px #ffe45c}}
+/* the hint button bounces when the child seems stuck */
+#btnHint.nudge,#btnLessonHint.nudge{animation:pulse 1s ease-in-out infinite;background:#ffe45c}
+.staffcard .cur.pulse{animation:curpulse .5s ease-in-out 3}
+@keyframes curpulse{50%{opacity:1;fill:#ffd23f}}
 .wkey.hl{background:color-mix(in srgb,var(--c) 45%,white)}
 .wkey.good{background:var(--good)!important}
 .wkey.bad,.bkey.bad{background:#ffb3b3!important}
@@ -480,6 +489,7 @@ body.midi #mic:not(.on){opacity:.6}
         <button class="btn round" id="btnBeat" aria-label="Play with the beat">🥁</button>
         <button class="btn round" id="btnEcho" aria-label="Echo: listen, then copy">🦜</button>
         <button class="btn round" id="btnSpeed" aria-label="Speed">🐇</button>
+        <button class="btn round" id="btnHint" aria-label="Hint">🐔</button>
         <button class="btn round" id="btnRestart" aria-label="Start over">⏮️</button>
         <button class="btn round" id="btnHands" aria-label="Which hand">🫱</button>
         <button class="btn round" id="btnClef" aria-label="Treble or bass clef">𝄞</button>
@@ -502,6 +512,7 @@ body.midi #mic:not(.on){opacity:.6}
       <div class="bubble" id="lessonBubble"></div>
       <div class="spacer"></div>
       <div class="tools">
+        <button class="btn round" id="btnLessonHint" aria-label="Hint">🐔</button>
         <button class="btn round blue" id="btnSay" aria-label="Say again">🔊</button>
         <button class="btn round blue" id="btnHear" aria-label="Hear it">🎵</button>
         <button class="btn orange pulse" id="btnNext" aria-label="Next" style="font-size:clamp(24px,5vh,40px);padding:6px 26px">➡️</button>
