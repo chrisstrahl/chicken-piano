@@ -45,16 +45,16 @@ const btn = (page) => page.evaluate(() => { const b = document.querySelector('#m
   await page.waitForTimeout(400);
   await page.evaluate(() => { __fake.on(64); __fake.off(64); });
   await page.waitForTimeout(200);
-  check(await page.evaluate(() => window.__cp.P.i) === 1, 'MIDI E -> song moves to note 2');
+  check(await page.evaluate(() => window.__cp.P.e) === 1, 'MIDI E -> song moves to note 2');
   await page.evaluate(() => { __fake.on(64); __fake.off(64, true); }); // note-on velocity 0 = note-off
   await page.waitForTimeout(200);
-  check(await page.evaluate(() => window.__cp.P.i) === 2, 'second MIDI E (velocity-0 release) -> note 3');
+  check(await page.evaluate(() => window.__cp.P.e) === 2, 'second MIDI E (velocity-0 release) -> note 3');
   await page.evaluate(() => window.__cp.noteIn(64, 'mic'));
   await page.waitForTimeout(200);
-  check(await page.evaluate(() => window.__cp.P.i) === 2, 'mic note ignored while the keyboard is plugged in');
+  check(await page.evaluate(() => window.__cp.P.e) === 2, 'mic note ignored while the keyboard is plugged in');
   await page.evaluate(() => { __fake.on(62); __fake.off(62); }); // wrong note: no move
   await page.waitForTimeout(200);
-  check(await page.evaluate(() => window.__cp.P.i) === 2, 'wrong MIDI note does not advance');
+  check(await page.evaluate(() => window.__cp.P.e) === 2, 'wrong MIDI note does not advance');
 
   // free play: how long the real key is held becomes the note length
   await page.evaluate(() => window.__cp.show('free'));
@@ -69,7 +69,7 @@ const btn = (page) => page.evaluate(() => { const b = document.querySelector('#m
   await page.evaluate(() => { __fake.unplug(); });
   await page.waitForTimeout(100);
   check(await btn(page) === 'dim', 'unplugged -> 🎹 dim');
-  check(await page.evaluate(() => window.__cpFree().slice(-3).map((n) => n.d).join(' ')) === '8 8 8', 'unplugged mid-chord -> held notes are let go');
+  check(await page.evaluate(() => window.__cpFree().slice(-3).map((n) => n.d).join(' ')) === 'q q q', 'unplugged mid-chord -> held notes are let go (a short chord stays a quarter)');
   await page.evaluate(() => window.__cp.noteIn(65, 'mic'));
   check(await page.evaluate(() => window.__cpFree().slice(-1)[0].m) === 65, 'unplugged -> mic notes count again');
   await page.evaluate(() => __fake.plug());

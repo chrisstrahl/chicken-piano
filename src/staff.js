@@ -231,11 +231,13 @@ export function drawStaff(card, notes, opts = {}) {
       Lh = labels(svg, lp, lh, yL, { letters, fingers: lhFingers, lyricsY: 0 });
     }
     if (grand && lyrics) {
-      notes.forEach((n, i) => {
+      // the words go with the melody, which is the left hand in bass-clef songs
+      const [src, part] = !notes.some((n) => n.lyric) && Lh ? [lh, Lh] : [notes, R];
+      src.forEach((n, i) => {
         if (!n.lyric) return;
-        const t = svgEl('text', { x: R.xs[i], y: H - 12, 'text-anchor': 'middle', 'font-size': 15, class: 'ly' }, svg);
+        const t = svgEl('text', { x: part.xs[i], y: H - 12, 'text-anchor': 'middle', 'font-size': 15, class: 'ly' }, svg);
         t.textContent = n.lyric;
-        R.lyricEls[i] = t;
+        part.lyricEls[i] = t;
       });
     }
   }
