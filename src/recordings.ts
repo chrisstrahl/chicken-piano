@@ -126,10 +126,10 @@ export function setupRecordings(app: RecordingsApp) {
     R.timer = notes.map(([t, m, d, v], j) => setTimeout(() => {
       playNote(m, Math.max(0.15, d / 1000), undefined, v);
       kb.flash(m, 'down', Math.max(180, d));
-      if (R.index[j] !== undefined) focusNote(card, R.drawn, R.index[j]);
+      if (R.index[j] !== undefined) focusNote(card, R.drawn!, R.index[j]!);
       app.bubble($('#recBubble'), `🎵 ${app.bigLetter(m)}`);
     }, t));
-    R.timer.push(setTimeout(() => { R.timer = null; paintPlay(); focusNote(card, R.drawn, 0); app.bubble($('#recBubble'), '▶️ 📤'); }, lengthMs(notes) + 600));
+    R.timer.push(setTimeout(() => { R.timer = null; paintPlay(); focusNote(card, R.drawn!, 0); app.bubble($('#recBubble'), '▶️ 📤'); }, lengthMs(notes) + 600));
     paintPlay();
   }
   $('#recPlay').addEventListener('click', () => (R.timer ? stopPlay() : play()));
