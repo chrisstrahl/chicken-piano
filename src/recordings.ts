@@ -5,7 +5,7 @@ import { playNote, stopPiano, pianoSamples, say, stopTalking, cluck, bawk, audio
 import { drawStaff, focusNote } from './staff.js';
 import { throwAwayAsk } from './lines.js';
 import { makeKeyboard } from './keyboard.js';
-import type { RecInfo, Recording, RecNote, NoteSource, Note } from './types';
+import type { RecInfo, Recording, NoteSource, Note } from './types';
 import { makeRecorder, toTokens, guessTempo, lengthMs, listRecordings, saveRecording, deleteRecording, renderAudio, MAX_MS } from './recorder.js';
 
 // every element looked up here is in index.html, so a missing one is a bug worth a loud error
@@ -55,7 +55,7 @@ export function setupRecordings(app: RecordingsApp) {
   function finish({ open = true } = {}): Recording | null {
     if (!recorder.on) return null;
     clearInterval(ticker);
-    const notes = recorder.stop() as RecNote[] | null;
+    const notes = recorder.stop();
     paint();
     if (!notes) { if (open) say('I did not hear any notes!'); return null; }
     const rec: Recording = { id: 'r' + Date.now().toString(36), at: Date.now(), ...info!, notes };
@@ -73,7 +73,7 @@ export function setupRecordings(app: RecordingsApp) {
 
   /* ---------- the shelf of saved recordings ---------- */
   function renderShelf() {
-    const recs: Recording[] = listRecordings(app.player());
+    const recs = listRecordings(app.player());
     $('#recCards').innerHTML = recs.map((r) => `<button class="card reccard" data-rec="${r.id}"><div class="em">${r.emoji}</div><div class="t">${r.title}</div>
       <div class="when">${new Date(r.at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} · ${clock(lengthMs(r.notes))}</div></button>`).join('');
     $('#recEmpty').style.display = recs.length ? 'none' : '';
@@ -95,7 +95,7 @@ export function setupRecordings(app: RecordingsApp) {
   } = { rec: null, drawn: null, index: [], timer: null, file: null };
   const card = $('#recStaff');
   function openRec(id: string) {
-    const rec = (listRecordings(app.player()) as Recording[]).find((r) => r.id === id);
+    const rec = listRecordings(app.player()).find((r) => r.id === id);
     if (!rec) return app.show('recs');
     app.show('rec');
     R.rec = rec;

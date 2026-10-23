@@ -2,7 +2,7 @@
 // at a quiet "propped on the piano" level with background noise, and reports what it heard.
 // usage: node test/octaves.mjs <pcm dir>
 import fs from 'node:fs';
-const { NoteListener } = await import(process.env.LISTENER || '../src/listener.js');
+const { NoteListener } = await import(process.env.LISTENER || '../src/listener.ts');
 
 const dir = process.argv[2];
 const SR = 48000, SIZE = +(process.env.SIZE || 4096), HOP = Math.round(SR * 0.04);

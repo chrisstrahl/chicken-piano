@@ -1,7 +1,7 @@
 // Offline test: overlapping piano notes in a row (like a real performance) must be heard once each, in order.
 // usage: node test/sequence.mjs <pcm dir>
 import fs from 'node:fs';
-const { NoteListener } = await import(process.env.LISTENER || '../src/listener.js');
+const { NoteListener } = await import(process.env.LISTENER || '../src/listener.ts');
 
 const dir = process.argv[2];
 const SR = 48000, SIZE = 4096, HOP = Math.round(SR * 0.04);

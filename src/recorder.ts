@@ -1,7 +1,8 @@
 // Recording a performance: every played note (screen keys, microphone or a MIDI keyboard) with its timing,
 // so it can be played back, drawn as music, saved per player and turned into an audio file to share.
 // No DOM in here except renderAudio (needs Web Audio), so the logic can be tested in node.
-import { BEATS, letterOf, isBlack } from './music.js';
+import { BEATS, letterOf, isBlack } from './music.ts';
+import type { RecNote, Recording, NoteSource } from './types.ts';
 
 export const MAX_MS = 5 * 60 * 1000; // a recording stops by itself after 5 minutes
 const MIC_HOLD = 1500; // the mic hears a key go down but not up: a heard note rings until the next one, at most this long
@@ -9,34 +10,34 @@ const LEAD = 300; // silence kept before the first note
 
 // A note is [start ms, midi, length ms, velocity 0..1]
 export function makeRecorder(now = () => performance.now()) {
-  let t0 = null;
-  let notes = [];
-  let open = new Map(); // midi -> note still held down
-  let micNote = null;
-  const t = () => now() - t0;
-  const close = (n, at, cap = Infinity) => { n[2] = Math.max(40, Math.min(at - n[0], cap)); };
+  let t0: number | null = null;
+  let notes: RecNote[] = [];
+  let open = new Map<number, RecNote>(); // midi -> note still held down
+  let micNote: RecNote | null = null;
+  const t = () => now() - t0!;
+  const close = (n: RecNote, at: number, cap = Infinity) => { n[2] = Math.max(40, Math.min(at - n[0], cap)); };
   return {
     get on() { return t0 !== null; },
     get ms() { return t0 === null ? 0 : t(); },
     get count() { return notes.length; },
     start() { t0 = now(); notes = []; open = new Map(); micNote = null; },
-    down(m, source, vel = 0.8) {
+    down(m: number, source: NoteSource, vel = 0.8) {
       if (t0 === null) return;
       const at = t();
       if (micNote) { close(micNote, at, MIC_HOLD); micNote = null; }
-      if (open.has(m)) close(open.get(m), at);
-      const n = [at, m, 0, Math.round(Math.max(0.05, Math.min(1, vel)) * 100) / 100];
+      if (open.has(m)) close(open.get(m)!, at);
+      const n: RecNote = [at, m, 0, Math.round(Math.max(0.05, Math.min(1, vel)) * 100) / 100];
       notes.push(n);
       if (source === 'mic') micNote = n; else open.set(m, n);
     },
-    up(m) {
+    up(m: number) {
       if (t0 === null || !open.has(m)) return;
-      close(open.get(m), t());
+      close(open.get(m)!, t());
       open.delete(m);
     },
     // Ends the recording and returns its notes, starting LEAD ms in (or null if nothing was played).
     // Keys still down (the last note of a song, say) ring a little longer than the stop.
-    stop() {
+    stop(): RecNote[] | null {
       if (t0 === null) return null;
       const at = t();
       if (micNote) close(micNote, Infinity, MIC_HOLD);
@@ -44,16 +45,16 @@ export function makeRecorder(now = () => performance.now()) {
       t0 = null;
       if (!notes.length) return null;
       const shift = notes[0][0] - LEAD;
-      return notes.map(([s, m, d, v]) => [Math.round(s - shift), m, Math.round(d), v]);
+      return notes.map(([s, m, d, v]): RecNote => [Math.round(s - shift), m, Math.round(d), v]);
     },
   };
 }
 
-export const lengthMs = (notes) => (notes.length ? Math.max(...notes.map((n) => n[0] + n[2])) : 0);
+export const lengthMs = (notes: RecNote[]): number => (notes.length ? Math.max(...notes.map((n) => n[0] + n[2])) : 0);
 
 /* ---------- notation ---------- */
 // Children play at their own speed, so count the beat from the playing: the usual time between notes is one beat.
-export function guessTempo(notes) {
+export function guessTempo(notes: RecNote[]): number {
   const starts = notes.map((n) => n[0]).sort((a, b) => a - b).filter((s, i, a) => i === 0 || s - a[i - 1] >= 70); // a chord is one start
   const gaps = starts.slice(1).map((s, i) => s - starts[i]).sort((a, b) => a - b);
   if (gaps.length < 2) return 90;
@@ -61,16 +62,16 @@ export function guessTempo(notes) {
   return Math.round(Math.max(50, Math.min(150, 60000 / gaps[Math.floor((gaps.length - 1) / 2)])));
 }
 
-const VALUES = [[0.5, '8'], [1, 'q'], [1.5, 'qd'], [2, 'h'], [3, 'hd'], [4, 'w']];
+const VALUES: [number, string][] = [[0.5, '8'], [1, 'q'], [1.5, 'qd'], [2, 'h'], [3, 'hd'], [4, 'w']];
 // the written length closest to a number of beats
-export function noteValue(beats) {
+export function noteValue(beats: number): string {
   let best = VALUES[0];
   for (const v of VALUES) if (Math.abs(Math.log(beats / v[0])) < Math.abs(Math.log(beats / best[0]))) best = v;
   return best[1];
 }
 // rests for a gap (at most one bar of them, so a long pause doesn't fill the page)
-function restTokens(beats) {
-  const out = [];
+function restTokens(beats: number) {
+  const out: string[] = [];
   beats = Math.min(beats, 4);
   while (beats >= 0.375) {
     const v = [...VALUES].reverse().find(([b]) => b <= beats + 0.25) || VALUES[0];
@@ -79,20 +80,20 @@ function restTokens(beats) {
   }
   return out;
 }
-const pitchToken = (m) => `${letterOf(m)}${isBlack(m) ? '#' : ''}${Math.floor(m / 12) - 1}`;
+const pitchToken = (m: number) => `${letterOf(m)}${isBlack(m) ? '#' : ''}${Math.floor(m / 12) - 1}`;
 
 // Recorded notes -> note tokens for parse() (keys pressed together become a chord; pauses become rests).
 // index[j] is the written note for recorded note j, so playback can move along the music.
-export function toTokens(notes, tempo = 90) {
+export function toTokens(notes: RecNote[], tempo = 90): { tokens: string; index: number[] } {
   const beat = 60000 / tempo;
   const sorted = notes.map((n, j) => ({ n, j })).sort((a, b) => a.n[0] - b.n[0]);
-  const groups = [];
+  const groups: { t: number; items: { n: RecNote; j: number }[] }[] = [];
   for (const x of sorted) {
     const g = groups[groups.length - 1];
     if (g && x.n[0] - g.t < 70) g.items.push(x); else groups.push({ t: x.n[0], items: [x] });
   }
-  const tokens = [];
-  const index = [];
+  const tokens: string[] = [];
+  const index: number[] = [];
   groups.forEach((g, i) => {
     const next = groups[i + 1];
     const held = Math.max(...g.items.map((x) => x.n[2]));
@@ -109,11 +110,13 @@ export function toTokens(notes, tempo = 90) {
 /* ---------- saved recordings, per player ---------- */
 export const STORE_KEY = 'chicken-piano-recordings-v1';
 export const MAX_SAVED = 30; // per player; the oldest goes when a new one comes
-function readAll(storage) { try { return JSON.parse(storage.getItem(STORE_KEY) || '{}') || {}; } catch (e) { return {}; } }
-function writeAll(storage, all) { try { storage.setItem(STORE_KEY, JSON.stringify(all)); return true; } catch (e) { return false; } }
-export function listRecordings(pid, storage = localStorage) { return readAll(storage)[pid] || []; }
+type Store = Pick<Storage, 'getItem' | 'setItem'>;
+type All = Record<string, Recording[]>;
+function readAll(storage: Store): All { try { return JSON.parse(storage.getItem(STORE_KEY) || '{}') || {}; } catch (e) { return {}; } }
+function writeAll(storage: Store, all: All) { try { storage.setItem(STORE_KEY, JSON.stringify(all)); return true; } catch (e) { return false; } }
+export function listRecordings(pid: string, storage: Store = localStorage): Recording[] { return readAll(storage)[pid] || []; }
 // Newest first. Returns false if the device is out of room.
-export function saveRecording(pid, rec, storage = localStorage) {
+export function saveRecording(pid: string, rec: Recording, storage: Store = localStorage): boolean {
   const all = readAll(storage);
   const mine = [rec, ...(all[pid] || []).filter((r) => r.id !== rec.id)];
   all[pid] = mine.slice(0, MAX_SAVED);
@@ -123,13 +126,13 @@ export function saveRecording(pid, rec, storage = localStorage) {
   }
   return true;
 }
-export function deleteRecording(pid, id, storage = localStorage) {
+export function deleteRecording(pid: string, id: string, storage: Store = localStorage) {
   const all = readAll(storage);
   all[pid] = (all[pid] || []).filter((r) => r.id !== id);
   writeAll(storage, all);
 }
 // A grown-up removed a player: their recordings go too
-export function deletePlayerRecordings(pid, storage = localStorage) {
+export function deletePlayerRecordings(pid: string, storage: Store = localStorage) {
   const all = readAll(storage);
   delete all[pid];
   writeAll(storage, all);
@@ -137,10 +140,10 @@ export function deletePlayerRecordings(pid, storage = localStorage) {
 
 /* ---------- audio file ---------- */
 // mono float samples -> 16-bit PCM .wav (plays on iPhones, Android phones and computers)
-export function encodeWav(samples, sampleRate) {
+export function encodeWav(samples: ArrayLike<number>, sampleRate: number): ArrayBuffer {
   const buf = new ArrayBuffer(44 + samples.length * 2);
   const v = new DataView(buf);
-  const str = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  const str = (o: number, s: string) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
   str(0, 'RIFF'); v.setUint32(4, 36 + samples.length * 2, true); str(8, 'WAVE');
   str(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
   v.setUint32(24, sampleRate, true); v.setUint32(28, sampleRate * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
@@ -152,15 +155,16 @@ export function encodeWav(samples, sampleRate) {
   return buf;
 }
 
-const NOTE_M = { C: 0, 'C#': 1, D: 2, 'D#': 3, E: 4, F: 5, 'F#': 6, G: 7, 'G#': 8, A: 9, 'A#': 10, B: 11 };
-const sampleMidi = (name) => { const [, p, o] = name.match(/^([A-G]#?)(\d)$/); return 12 * (+o + 1) + NOTE_M[p]; };
+const NOTE_M: Record<string, number> = { C: 0, 'C#': 1, D: 2, 'D#': 3, E: 4, F: 5, 'F#': 6, G: 7, 'G#': 8, A: 9, 'A#': 10, B: 11 };
+const sampleMidi = (name: string) => { const [, p, o] = name.match(/^([A-G]#?)(\d)$/)!; return 12 * (+o + 1) + NOTE_M[p]; };
 
 // Plays the notes through the app's own piano samples (the clean sound, even when the mic did the listening)
 // in an offline audio context. samples: { 'C4': AudioBuffer, ... }. Returns a .wav Blob.
-export async function renderAudio(notes, samples, sampleRate = 44100) {
+export async function renderAudio(notes: RecNote[], samples: Record<string, AudioBuffer>, sampleRate = 44100): Promise<Blob> {
   const banks = Object.entries(samples).map(([name, b]) => ({ m: sampleMidi(name), b }));
   const end = lengthMs(notes) / 1000 + 1.6;
-  const Ctx = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+  // older Safari only has the webkit-prefixed one
+  const Ctx: typeof OfflineAudioContext = window.OfflineAudioContext || (window as any).webkitOfflineAudioContext;
   const ctx = new Ctx(1, Math.ceil(end * sampleRate), sampleRate);
   for (const [t, m, d, v] of notes) {
     const bank = banks.reduce((a, b) => (Math.abs(b.m - m) < Math.abs(a.m - m) ? b : a));
@@ -177,7 +181,7 @@ export async function renderAudio(notes, samples, sampleRate = 44100) {
     src.start(s);
     src.stop(Math.min(end, off + 1.5));
   }
-  const out = await new Promise((res, rej) => {
+  const out = await new Promise<AudioBuffer>((res, rej) => {
     ctx.oncomplete = (e) => res(e.renderedBuffer);
     const p = ctx.startRendering();
     if (p && p.then) p.then(res, rej);

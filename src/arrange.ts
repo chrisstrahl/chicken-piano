@@ -1,30 +1,31 @@
 // Arranging a song for two hands: key signatures, chord symbols, a left-hand part and finger numbers.
 // Songs only store the melody (songs.js). Everything here is worked out from it, unless a song gives its own
 // `chords` ('C:w F:h G:h') or `lh` (note tokens) in songs.js, which then win.
-import { BEATS } from './music.js';
+import { BEATS } from './music.ts';
+import type { Note, Song, SongInput, Chord, ChordSpan, ScaleNote, KeySig, Finger, Pitch } from './types.ts';
 
 const L7 = 'CDEFGAB';
-const BASE = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
-const ACC = { '#': 1, b: -1, '': 0 };
+const BASE: Record<string, number> = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+const ACC: Record<string, number> = { '#': 1, b: -1, '': 0 };
 const SHARPS = 'FCGDAEB';
 const FLATS = 'BEADGCF';
 // how many sharps (+) or flats (-) each key has
-const KEYS = {
+const KEYS: Record<string, number> = {
   C: 0, G: 1, D: 2, A: 3, E: 4, B: 5, 'F#': 6, F: -1, Bb: -2, Eb: -3, Ab: -4, Db: -5,
   Am: 0, Em: 1, Bm: 2, 'F#m': 3, 'C#m': 4, Dm: -1, Gm: -2, Cm: -3, Fm: -4,
 };
 
 // { F: '#', C: '#' } for D major
-export function keySig(key = 'C') {
+export function keySig(key = 'C'): KeySig {
   const n = KEYS[key] ?? 0;
-  const sig = {};
+  const sig: KeySig = {};
   for (let i = 0; i < Math.abs(n); i++) sig[n > 0 ? SHARPS[i] : FLATS[i]] = n > 0 ? '#' : 'b';
   return sig;
 }
-const isMinor = (key) => /m$/.test(key);
+const isMinor = (key: string) => /m$/.test(key);
 
 // Seven scale notes spelled for the key: [{ letter, acc, pc }]
-function scale(key) {
+function scale(key: string): ScaleNote[] {
   const sig = keySig(key);
   const tonic = key.replace('m', '');
   const t = L7.indexOf(tonic[0]);
@@ -34,12 +35,12 @@ function scale(key) {
     return { letter, acc, pc: (BASE[letter] + ACC[acc] + 12) % 12 };
   });
 }
-const label = (n) => n.letter + (n.acc === '#' ? '♯' : n.acc === 'b' ? '♭' : '');
+const label = (n: ScaleNote) => n.letter + (n.acc === '#' ? '♯' : n.acc === 'b' ? '♭' : '');
 
 // The chords a beginner song uses: I IV V vi (major) or i iv V III (minor), as spelled triads.
-function chordSet(key) {
+function chordSet(key: string): Chord[] {
   const sc = scale(key);
-  const triad = (d, raise3 = false) => {
+  const triad = (d: number, raise3 = false): Chord => {
     const notes = [sc[d % 7], sc[(d + 2) % 7], { ...sc[(d + 4) % 7] }];
     if (raise3) { // harmonic minor: the V chord's third goes up (E major in A minor)
       const third = { ...notes[1] };
@@ -55,11 +56,13 @@ function chordSet(key) {
     : [{ ...triad(0), bonus: 0.3 }, { ...triad(4), bonus: 0.2 }, { ...triad(3), bonus: 0.1 }, { ...triad(5), bonus: 0 }];
 }
 
-// Bars of the melody: [{ start, len, notes: [{ beat, len, pc }] }]. A pickup is its own short bar.
-function bars(song) {
+// Bars of the melody: [{ start, len, notes: [{ beat, len, pcs }] }]. A pickup is its own short bar.
+type BarNote = { beat: number; len: number; pcs: number[] };
+type Bar = { start: number; len: number; pickup?: boolean; notes: BarNote[] };
+function bars(song: SongInput): Bar[] {
   const per = perBar(song.time);
   const total = song.notes.reduce((s, n) => s + BEATS[n.d], 0);
-  const out = [];
+  const out: Bar[] = [];
   let start = 0;
   if (song.pickup) { out.push({ start: 0, len: song.pickup, pickup: true, notes: [] }); start = song.pickup; }
   while (start < total - 1e-6) { out.push({ start, len: Math.min(per, total - start), notes: [] }); start += per; }
@@ -71,23 +74,23 @@ function bars(song) {
   }
   return out;
 }
-export const perBar = (time = '4/4') => (+time.split('/')[0] * 4) / +time.split('/')[1];
+export const perBar = (time = '4/4'): number => (+time.split('/')[0] * 4) / +time.split('/')[1];
 
-function score(chord, notes) {
-  let s = chord.bonus;
+function score(chord: Chord, notes: BarNote[]) {
+  let s = chord.bonus ?? 0;
   for (const n of notes) {
     const w = n.len + (n.beat === 0 ? 1 : n.beat % 2 === 0 ? 0.4 : 0);
     s += n.pcs.some((p) => chord.pcs.includes(p)) ? w : -0.6 * w;
   }
   return s;
 }
-const best = (set, notes) => set.reduce((a, c) => (score(c, notes) > score(a, notes) ? c : a));
+const best = (set: Chord[], notes: BarNote[]) => set.reduce((a, c) => (score(c, notes) > score(a, notes) ? c : a));
 
 // Chord symbols: one per bar, or two in a 4-beat bar whose halves clearly want different chords.
 // [{ beat, len, chord }]
-export function harmonize(song) {
+export function harmonize(song: SongInput): ChordSpan[] {
   const set = chordSet(song.key || 'C');
-  const out = [];
+  const out: ChordSpan[] = [];
   const bs = bars(song).filter((b) => !b.pickup);
   bs.forEach((b, i) => {
     const last = i === bs.length - 1;
@@ -108,13 +111,13 @@ export function harmonize(song) {
 }
 
 // Given chords as 'C:w F:h G7:h' from songs.js
-function chordsFromData(song, str) {
+function chordsFromData(song: SongInput, str: string): ChordSpan[] {
   const set = chordSet(song.key || 'C');
   let beat = song.pickup || 0;
   return str.trim().split(/\s+/).map((tok) => {
     const [sym, d = 'w'] = tok.split(':');
     const name = sym.replace('#', '♯').replace(/^([A-G])b/, '$1♭');
-    const chord = set.find((c) => c.sym === name) || { sym: name, pcs: [], notes: [] };
+    const chord: Chord = set.find((c) => c.sym === name) || { sym: name, pcs: [], notes: [] };
     const seg = { beat, len: BEATS[d], chord };
     beat += BEATS[d];
     return seg;
@@ -122,22 +125,22 @@ function chordsFromData(song, str) {
 }
 
 // Note values that add up to `beats`, longest first
-const DUR = [['w', 4], ['hd', 3], ['h', 2], ['qd', 1.5], ['q', 1], ['8', 0.5]];
-function split(beats) {
-  const out = [];
+const DUR: [string, number][] = [['w', 4], ['hd', 3], ['h', 2], ['qd', 1.5], ['q', 1], ['8', 0.5]];
+function split(beats: number) {
+  const out: string[] = [];
   let left = beats;
   for (const [d, b] of DUR) while (left >= b - 1e-6) { out.push(d); left -= b; }
   return out;
 }
 // A spelled note placed in the left hand's home range (roots from G2 up to F#3)
-function low(n) {
+function low(n: ScaleNote) {
   let oct = 3;
   let m = 12 * (oct + 1) + BASE[n.letter] + ACC[n.acc];
   if (m > 54) { oct--; m -= 12; }
   return { tok: `${n.letter}${n.acc}${oct}`, m, oct };
 }
 // The same letter at or just above `m`
-function above(n, m) {
+function above(n: ScaleNote, m: number) {
   let oct = 1;
   let x = 12 * (oct + 1) + BASE[n.letter] + ACC[n.acc];
   while (x <= m) { oct++; x += 12; }
@@ -146,8 +149,8 @@ function above(n, m) {
 
 // Left hand, simple at first and fuller later:
 //   levels 1-3: the chord's root, held   4-6: root then fifth   7-8: broken chord   10: block chords
-export function leftHand(song, chords) {
-  const toks = [];
+export function leftHand(song: SongInput, chords: ChordSpan[]): string {
+  const toks: string[] = [];
   if (song.pickup) split(song.pickup).forEach((d) => toks.push(`R:${d}`));
   for (const { len, chord } of chords) {
     if (!chord.notes.length) { split(len).forEach((d) => toks.push(`R:${d}`)); continue; }
@@ -174,18 +177,21 @@ export function leftHand(song, chords) {
 
 // Finger numbers. Fingers cover five white keys in a row; when a note falls outside, the hand moves so the
 // thumb (right hand) or pinky (left hand) sits on the lowest note of the next stretch that fits.
-const pos = (k) => (k.oct + 1) * 7 + L7.indexOf(k.letter);
-export function fingering(notes, hand = 'rh') {
-  const out = [];
-  let b = null;
+const pos = (k: Pitch) => (k.oct + 1) * 7 + L7.indexOf(k.letter);
+// the second half of a tie is not played again
+const tiedOn = (notes: Note[], i: number) => { const p = notes[i - 1]; return !!p && !p.r && p.tie; };
+export function fingering(notes: Note[], hand = 'rh'): Finger[] {
+  const out: Finger[] = [];
+  let b: number | null = null;
   notes.forEach((n, i) => {
-    if (n.r || (i > 0 && notes[i - 1].tie)) { out.push(null); return; }
+    if (n.r || tiedOn(notes, i)) { out.push(null); return; }
     const p = pos(n.keys[0]);
     if (b === null || p < b || p > b + 4) {
       let lo = p, hi = p;
       for (let j = i + 1; j < notes.length; j++) {
-        if (notes[j].r) continue;
-        const q = pos(notes[j].keys[0]);
+        const nj = notes[j];
+        if (nj.r) continue;
+        const q = pos(nj.keys[0]);
         if (Math.max(hi, q) - Math.min(lo, q) > 4) break;
         lo = Math.min(lo, q); hi = Math.max(hi, q);
       }
@@ -198,11 +204,11 @@ export function fingering(notes, hand = 'rh') {
 
 // Given fingers as '1 2 3 _ 5 1+3+5' from songs.js: one token per sounding note (rests and the second half
 // of a tie are skipped), '_' for no number, 'a+b+c' for a chord (lowest key first).
-export function fingersFromData(str, notes) {
+export function fingersFromData(str: string, notes: Note[]): Finger[] {
   const toks = str.trim().split(/\s+/);
   let j = 0;
   return notes.map((n, i) => {
-    if (n.r || (i > 0 && notes[i - 1].tie)) return null;
+    if (n.r || tiedOn(notes, i)) return null;
     const t = toks[j++];
     return !t || t === '_' ? null : t.includes('+') ? t.split('+').map(Number) : +t;
   });
@@ -210,8 +216,8 @@ export function fingersFromData(str, notes) {
 
 // A right hand for bass-clef songs: each chord held as a close triad just above middle C (lowest chord note
 // from C4 up), so the melody stays in the left hand.
-export function rightHand(song, chords) {
-  const toks = [];
+export function rightHand(song: SongInput, chords: ChordSpan[]): string {
+  const toks: string[] = [];
   if (song.pickup) split(song.pickup).forEach((d) => toks.push(`R:${d}`));
   for (const { len, chord } of chords) {
     if (!chord.notes.length) { split(len).forEach((d) => toks.push(`R:${d}`)); continue; }
@@ -224,7 +230,9 @@ export function rightHand(song, chords) {
 
 // Everything a song needs for two hands. In bass-clef songs the melody is the left hand, and the right hand
 // gets chords (melodyHand 'lh'); otherwise the melody is the right hand.
-export function arrange(song, parse) {
+export function arrange(input: SongInput, parse: (tokens: string) => Note[]): Song {
+  // fills the song in place: the arranged fields are added below
+  const song = input as Song;
   song.keySig = keySig(song.key);
   song.fingers = song.fingersData ? fingersFromData(song.fingersData, song.notes) : fingering(song.notes, song.clef === 'bass' ? 'lh' : 'rh');
   if (song.clef === 'bass') {

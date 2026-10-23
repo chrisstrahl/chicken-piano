@@ -2,7 +2,7 @@
 // usage: node test/speech.mjs <speech f32 dir>   (48 kHz mono float32 clips, e.g. decoded dist/voice/*.mp3)
 // LEVEL: speech peak relative to a played piano note (1 = as loud as the piano), EXPECT=1 simulates a song waiting for a note
 import fs from 'node:fs';
-const { NoteListener } = await import(process.env.LISTENER || '../src/listener.js');
+const { NoteListener } = await import(process.env.LISTENER || '../src/listener.ts');
 const dir = process.argv[2];
 const SR = 48000, SIZE = 4096, HOP = Math.round(SR * 0.04);
 const LEVEL = +(process.env.LEVEL || 1), noise = +(process.env.NOISE || 0.003);
