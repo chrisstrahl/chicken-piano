@@ -44,6 +44,16 @@ export const whoPlays = 'Who is playing?';
 export const pickChicken = 'Pick your chicken!';
 export const hello = (name: string) => `Hi, ${name}! Let's play!`;
 export const removeAsk = (name: string) => `Take ${name} out of the coop? Their eggs go too.`;
+// Practice days (streaks.ts): DAILY_GOAL is 2 songs or lessons a day, and "two" below says so
+export const MAX_STREAK_CLIP = 100; // longer streaks use the device voice
+export const inARow = (n: number) => `That's ${n} days in a row!`;
+export const dayEgg = (n: number): string[] => ["You laid today's egg!", n > 1 ? inARow(n) : 'Play again tomorrow for two in a row!'];
+export const ONE_MORE = "One more to lay today's egg!";
+export const dayTalk = (n: number, laid: boolean, wins: number): string[] => [
+  laid ? "Today's egg is laid!" : wins ? ONE_MORE : "Finish two songs or lessons to lay today's egg!",
+  ...(n > 1 ? [inARow(n)] : []),
+  ...(n && !laid ? ['Play today to keep it going!'] : []),
+];
 export const LAST_LEVEL = 10;
 export const lessonDone = (newSongs: string[], finishedLevel: number): string[] => [
   'You did it! You got an egg!',
@@ -75,7 +85,9 @@ export function templatedLines(songs: Song[], levels: Level[]): string[] {
     pickChicken,
     ...AVATARS.map((a) => hello(a.name)),
     ...AVATARS.map((a) => removeAsk(a.name)),
+    ...dayEgg(1), ...dayTalk(1, false, 0), ...dayTalk(0, true, 0), ONE_MORE,
   ];
+  for (let n = 2; n <= MAX_STREAK_CLIP; n++) out.push(inARow(n));
   for (let e = 0; e <= maxEggs; e++) out.push(...coop(e, 0));
   for (let c = 1; c <= levels.length; c++) out.push(...coop(1, c));
   return out;

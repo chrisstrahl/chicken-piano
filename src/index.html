@@ -284,7 +284,7 @@ body.midi #mic:not(.on){opacity:.6}
 .coach .spacer{flex:1}
 .coach .tools{display:flex;gap:min(10px,1vw);align-items:center}
 /* the song screen has many tools: they shrink on narrow screens so all of them fit */
-.coach .tools .btn.round{width:min(clamp(44px,7vh,60px),6.2vw);height:min(clamp(44px,7vh,60px),6.2vw);font-size:min(clamp(20px,3.6vh,30px),3.2vw)}
+.coach .tools .btn.round{width:min(clamp(44px,7vh,60px),5.4vw);height:min(clamp(44px,7vh,60px),5.4vw);font-size:min(clamp(20px,3.6vh,30px),2.8vw)}
 .progress{height:14px;border-radius:7px;background:rgba(255,255,255,.6);overflow:hidden;width:min(24vw,240px)}
 .progress i{display:block;height:100%;width:0;background:var(--good);transition:width .3s}
 
@@ -306,6 +306,15 @@ body.midi #mic:not(.on){opacity:.6}
 .wkey.target:after{content:"🐣";position:absolute;top:10%;font-size:clamp(22px,5vh,44px);animation:hopK .8s ease-in-out infinite}
 @keyframes hopK{50%{transform:translateY(-8px)}}
 @keyframes glow{50%{box-shadow:inset 0 0 0 6px rgba(255,255,255,.75)}}
+/* hint: the key to press hops and shines */
+.wkey.hint,.bkey.hint{animation:hinthop .5s ease-in-out 3;z-index:3}
+.wkey.hint{background:var(--c)}
+.bkey.hint{background:var(--violet)}
+@keyframes hinthop{50%{transform:translateY(-10px);box-shadow:0 0 0 6px #ffe45c}}
+/* the hint button bounces when the child seems stuck */
+#btnHint.nudge,#btnLessonHint.nudge{animation:pulse 1s ease-in-out infinite;background:#ffe45c}
+.staffcard .cur.pulse{animation:curpulse .5s ease-in-out 3}
+@keyframes curpulse{50%{opacity:1;fill:#ffd23f}}
 .wkey.hl{background:color-mix(in srgb,var(--c) 45%,white)}
 .wkey.good{background:var(--good)!important}
 .wkey.bad,.bkey.bad{background:#ffb3b3!important}
@@ -377,6 +386,29 @@ body.midi #mic:not(.on){opacity:.6}
 @keyframes crack{50%{transform:scale(1.25) rotate(8deg)}100%{transform:scale(0) rotate(-30deg)}}
 @keyframes fadeOut{to{opacity:0}}
 .coop{cursor:pointer}
+/* COOP: practice calendar, one egg a day (streaks.ts) */
+#nest .topbar .totals{display:flex;gap:14px;font-weight:700;font-size:clamp(20px,4vh,32px);background:rgba(255,255,255,.8);border-radius:999px;padding:4px 18px}
+.nestbody{flex:1;display:flex;align-items:center;justify-content:center;gap:4vw;padding:2vh 3vw;min-height:0}
+.nestside{display:flex;flex-direction:column;align-items:center;gap:1.5vh}
+.nestside .chicken{height:min(26vh,20vw)}
+.streak{display:flex;align-items:center;gap:6px;font-weight:700;font-size:min(10vh,7vw);line-height:1}
+.streak .fire.off{filter:grayscale(1) opacity(.35)}
+.today{min-height:min(8vh,6vw);display:flex;align-items:center;font-size:min(7vh,5vw)}
+.pips{display:inline-flex;gap:.25em}
+.pips i{width:.55em;height:.7em;border-radius:50% 50% 46% 46% / 58% 58% 42% 42%;background:rgba(0,0,0,.12);display:inline-block}
+.pips i.on{background:#fffaf0;box-shadow:inset 0 -2px 0 #e7d9bd,0 0 0 2px var(--yolk)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:min(1.4vh,1vw);width:min(60vw,92vh)}
+.cal .day{position:relative;aspect-ratio:1;border-radius:22%;background:#e9cf9a;box-shadow:inset 0 -5px 0 #cfae6d;display:flex;align-items:center;justify-content:center;font-size:min(6vh,4vw)}
+.cal .day .dt{position:absolute;top:4%;left:9%;font-size:.32em;font-weight:700;color:rgba(60,35,10,.55)}
+.cal .day .pips{font-size:.6em}
+.cal .day.egg{background:#f4dc9c}
+.cal .day .em{display:inline-block}
+.cal .day.egg .em{animation:eggIn .5s backwards}
+.cal .day.today{outline:4px solid var(--accent);outline-offset:2px}
+.cal .day.future{opacity:.35}
+#party .dayrow{display:flex;align-items:center;gap:14px;font-size:min(6vh,4.5vw);font-weight:700}
+#party .dayrow .fire{display:inline-block}
+#party .dayrow.laid .fire{animation:eggIn .6s 1.2s backwards}
 #toast{position:fixed;left:50%;bottom:4vh;transform:translateX(-50%) translateY(150%);background:#3b2716;color:#fff;padding:12px 20px;border-radius:16px;
   font-size:18px;z-index:99;max-width:min(90vw,560px);text-align:center;transition:transform .3s,opacity .3s;opacity:0;pointer-events:none}
 #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
@@ -443,6 +475,18 @@ body.midi #mic:not(.on){opacity:.6}
   <button id="btnWho" aria-label="Who is playing?"></button>
 </section>
 
+<section id="nest" class="screen">
+  <div class="topbar"><button class="btn round" data-go="home" aria-label="Home">🏠</button><h2>🏡</h2><div class="totals" id="nestTotals"></div></div>
+  <div class="nestbody">
+    <div class="nestside">
+      <div data-chicken></div>
+      <div class="streak" id="nestStreak"></div>
+      <div class="today" id="nestToday"></div>
+    </div>
+    <div class="cal" id="nestCal"></div>
+  </div>
+</section>
+
 <section id="who" class="screen">
   <div class="whohead">🐔❓</div>
   <div class="players" id="players"></div>
@@ -487,6 +531,7 @@ body.midi #mic:not(.on){opacity:.6}
         <button class="btn round" id="btnBeat" aria-label="Play with the beat">🥁</button>
         <button class="btn round" id="btnEcho" aria-label="Echo: listen, then copy">🦜</button>
         <button class="btn round" id="btnSpeed" aria-label="Speed">🐇</button>
+        <button class="btn round" id="btnHint" aria-label="Hint">🐔</button>
         <button class="btn round" id="btnRestart" aria-label="Start over">⏮️</button>
         <button class="btn round" id="btnHands" aria-label="Which hand">🫱</button>
         <button class="btn round" id="btnClef" aria-label="Treble or bass clef">𝄞</button>
@@ -509,6 +554,7 @@ body.midi #mic:not(.on){opacity:.6}
       <div class="bubble" id="lessonBubble"></div>
       <div class="spacer"></div>
       <div class="tools">
+        <button class="btn round" id="btnLessonHint" aria-label="Hint">🐔</button>
         <button class="btn round blue" id="btnSay" aria-label="Say again">🔊</button>
         <button class="btn round blue" id="btnHear" aria-label="Hear it">🎵</button>
         <button class="btn orange pulse" id="btnNext" aria-label="Next" style="font-size:clamp(24px,5vh,40px);padding:6px 26px">➡️</button>
@@ -592,6 +638,7 @@ body.midi #mic:not(.on){opacity:.6}
   <div class="right">
     <h3 id="partyTitle">BAWK!</h3>
     <div class="eggs" id="partyEggs"></div>
+    <div class="dayrow" id="partyDay"></div>
     <div class="row">
       <button class="btn round" id="partyAgain" aria-label="Again">🔁</button>
       <button class="btn round" id="partyHome" aria-label="Home">🏠</button>

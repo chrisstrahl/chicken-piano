@@ -1,5 +1,5 @@
 import { SONGS, LEVELS, PRAISE, COLORS, BEATS, letterOf, nameOf, isBlack, parse, songById, songsForLevel } from './music.js';
-import { coop, openSongsAsk, letsPlay, oopsFind, songDone, lessonDone, noteWords, whoPlays, pickChicken, hello, removeAsk, originalName, SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN } from './lines.js';
+import { coop, openSongsAsk, letsPlay, oopsFind, songDone, lessonDone, noteWords, whoPlays, pickChicken, hello, removeAsk, originalName, dayEgg, dayTalk, SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN } from './lines.js';
 import { startAudio, playNote, noteDown, noteUp, playSequence, cluck, peck, bawk, silly, say, stopTalking, preloadVoice, startBeat } from './audio.js';
 import { BeatJudge, phrases, SPEEDS, barBeats, peckEvery, MIC_LAG } from './beat.js';
 import { startMic, stopMic, micOn, micSupported, expectNote, micHealth } from './mic.js';
@@ -12,6 +12,7 @@ import { players, playerId, AVATARS, MAX_PLAYERS, avatarOf } from './profiles.js
 import { deletePlayerRecordings } from './recorder.js';
 import { CHICKEN, lookOf, avatarChicken } from './chicken.js';
 import { startOffline } from './offline.js';
+import { addWin, streak, todayWins, calendar, DAILY_GOAL } from './streaks.js';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -22,9 +23,11 @@ const ms = (tokens) => (tokens ? parse(tokens).filter((n) => !n.r).flatMap((n) =
 const range = (tokens) => { const r = ms(tokens); return r.length ? [Math.min(...r), Math.max(...r)] : [LOW, HIGH]; };
 
 /* ---------- progress (per player, see profiles.js) ---------- */
-const loadProgress = () => ({ songs: {}, lessons: {}, letters: true, all: false, ...players.progress() });
+const loadProgress = () => ({ songs: {}, lessons: {}, days: {}, letters: true, all: false, ...players.progress() });
 let progress = loadProgress();
 const save = () => players.save(progress);
+// a song or lesson was finished today (see streaks.ts)
+const dayWin = () => { const r = addWin(progress.days); save(); return r; };
 const totalEggs = () => Object.values(progress.songs).reduce((a, b) => a + b, 0) + Object.keys(progress.lessons).length + earEggTotal(progress);
 
 // Progress: any level can be picked. The "current" level is the first one with lessons left, and the map
@@ -100,7 +103,7 @@ function show(id) {
   onNote = null;
   onRelease = null;
   expectNote(null);
-  ({ home: renderHome, who: renderWho, songs: renderSongs, map: renderMap, level: renderLevel, free: openFree, ...recs.screens, ...ears.screens })[id]?.();
+  ({ home: renderHome, who: renderWho, songs: renderSongs, map: renderMap, level: renderLevel, free: openFree, nest: renderNest, ...recs.screens, ...ears.screens })[id]?.();
 }
 document.addEventListener('click', (e) => {
   const b = e.target.closest('[data-go]');
@@ -222,17 +225,29 @@ function renderHome() {
   $('#homeLevel').textContent = currentLevel();
   const eggs = totalEggs();
   const chicks = LEVELS.filter(levelDone).length;
-  $('#coop').innerHTML = `<span class="lbl">🏡</span><span class="cnt">🥚 ${eggs}</span>${chicks ? `<span class="cnt">${'🐥'.repeat(chicks)}</span>` : ''}`;
+  const days = streak(progress.days);
+  $('#coop').innerHTML = `<span class="lbl">🏡</span><span class="cnt">🥚 ${eggs}</span>${chicks ? `<span class="cnt">${'🐥'.repeat(chicks)}</span>` : ''}${days ? `<span class="cnt">🔥 ${days}</span>` : ''}`;
 }
+$('#coop').addEventListener('click', () => show('nest'));
 
-// The coop: eggs from lessons (1 each) and songs (up to 3 each), plus one chick for every finished level.
-$('#coop').addEventListener('click', () => {
+// The coop: eggs from lessons (1 each) and songs (up to 3 each), one chick for every finished level,
+// and the practice calendar: a day's egg is laid by finishing DAILY_GOAL songs or lessons that day.
+const goalPips = (wins) => Array.from({ length: DAILY_GOAL }, (_, i) => `<i class="${i < wins ? 'on' : ''}"></i>`).join('');
+function renderNest() {
   const eggs = totalEggs();
-  act($('#home .chicken'), 'happy');
-  cluck(2);
   const chicks = LEVELS.filter(levelDone).length;
-  say(coop(eggs, chicks));
-});
+  const days = streak(progress.days);
+  const wins = todayWins(progress.days);
+  const laid = wins >= DAILY_GOAL;
+  $('#nestTotals').innerHTML = `<span>🥚 ${eggs}</span>${chicks ? `<span>${'🐥'.repeat(chicks)}</span>` : ''}`;
+  $('#nestStreak').innerHTML = `<span class="fire${days ? '' : ' off'}">🔥</span><span class="n">${days}</span>`;
+  $('#nestToday').innerHTML = laid ? '<span class="egg">🥚</span>' : `<span class="pips">${goalPips(wins)}</span>`;
+  $('#nestCal').innerHTML = calendar(progress.days).map((row) => row.map((d) => `<div class="day${d.egg ? ' egg' : ''}${d.today ? ' today' : ''}${d.future ? ' future' : ''}">
+    <span class="dt">${d.date}</span>${d.egg ? '<span class="em">🥚</span>' : d.today ? `<span class="pips">${goalPips(d.wins)}</span>` : ''}</div>`).join('')).join('');
+  act($('#nest .chicken'), 'happy');
+  cluck(2);
+  say([...coop(eggs, chicks), ...dayTalk(days, laid, wins)]);
+}
 
 // First tap: browsers only allow sound after a tap, so the egg on the start screen hatches with a silly chicken noise.
 $('#start').addEventListener('pointerdown', async () => {
@@ -560,7 +575,7 @@ function openSong(id, back = 'songs') {
   drawSong();
   restartSong(true);
   onNote = playInput;
-  leaveHooks.push(stopDemo, stopMode);
+  leaveHooks.push(stopDemo, stopMode, stopHint);
   setSpeedBtn();
   if (!micOn()) micBtn.classList.add('nudge'), setTimeout(() => micBtn.classList.remove('nudge'), 3200);
 }
@@ -592,6 +607,7 @@ function setCurrent() {
   playKb.setTarget(ev.need.map((k) => k.m));
   playKb.setFingers(Object.fromEntries(ev.need.map((k) => [k.m, fingerFor(k)]).filter((x) => x[1])));
   bubble($('#playBubble'), `👉 ${needHtml(ev.need)}`);
+  if (!P.mode) armHint($('#btnHint'));
 }
 // Beat and echo modes step through the melody one note at a time.
 // They follow the hand being played, or the melody when both are.
@@ -644,7 +660,7 @@ function playInput(m, source) {
     act(playChicken(), 'oops');
     bubble($('#playBubble'), `${bigLetter(m)} 🙈 👉 ${needHtml(ev.need)}`);
     playCard.classList.remove('shake'); void playCard.offsetWidth; playCard.classList.add('shake');
-    if (P.wrongRow === 2) say(oopsFind(ev.need[0].label));
+    if (P.wrongRow === 2) { say(oopsFind(ev.need[0].label)); nudgeHint($('#btnHint')); }
   }
 }
 function finishSong(eggs = P.mistakes === 0 ? 3 : P.mistakes <= 3 ? 2 : 1) {
@@ -663,6 +679,7 @@ function finishSong(eggs = P.mistakes === 0 ? 3 : P.mistakes <= 3 ? 2 : 1) {
     next: () => (nxt && songOpen(nxt) ? openSong(nxt.id, P.back) : show('level')),
     words: songDone(eggs),
     rec,
+    day: dayWin(),
   });
 }
 function stopDemo() {
@@ -878,6 +895,7 @@ function echoPlay() {
     expectNote(notesP()[P.i].m);
     act(playChicken(), 'happy');
     bubble($('#playBubble'), '🐣 👉 🎹');
+    armHint($('#btnHint'));
   });
 }
 function echoInput(m) {
@@ -943,6 +961,58 @@ window.addEventListener('resize', () => {
   focusX(playCard, P.drawn, ev ? P.drawn.beatX(ev.beat) : null);
 });
 
+/* ---------- HINT: the chicken shows (and plays) the next note ---------- */
+// The 🐔 button bounces after 8 seconds without a right note, or after two wrong notes in a row.
+const STUCK_MS = 8000;
+let stuckTimer = null;
+function armHint(btn) { clearTimeout(stuckTimer); btn.classList.remove('nudge'); stuckTimer = setTimeout(() => btn.classList.add('nudge'), STUCK_MS); }
+function nudgeHint(btn) { clearTimeout(stuckTimer); btn.classList.add('nudge'); }
+function stopHint() { clearTimeout(stuckTimer); $('#btnHint').classList.remove('nudge'); $('#btnLessonHint').classList.remove('nudge'); }
+// play the keys, make them hop, then say the note's name
+function showHint(kb, keys, label, chicken) {
+  playNote(keys, 0.8);
+  keys.forEach((m) => kb.flash(m, 'hint', 1600));
+  act(chicken, 'happy', 600);
+  setTimeout(() => say(noteWords(label)), 700);
+}
+const pulse = (el) => { if (!el) return; el.classList.remove('pulse'); void el.getBoundingClientRect(); el.classList.add('pulse'); };
+$('#btnHint').addEventListener('click', () => {
+  stopHint();
+  if (P.stopDemo || P.mode === 'beat') return;
+  if (P.mode === 'echo') {
+    if (!P.turn) return;
+    const n = notesP()[P.i];
+    playKb.setTarget(n.m);
+    bubble($('#playBubble'), `🐔 👉 ${bigLetter(n.m, n.label)}`);
+    showHint(playKb, n.keys.map((k) => k.m), n.label, playChicken());
+    return armHint($('#btnHint'));
+  }
+  const ev = evNow();
+  if (!ev) return;
+  bubble($('#playBubble'), `🐔 👉 ${needHtml(ev.need)}`);
+  pulse(P.drawn.cur);
+  showHint(playKb, ev.need.map((k) => k.m), ev.need[0].label, playChicken());
+  armHint($('#btnHint'));
+});
+$('#btnLessonHint').addEventListener('click', () => {
+  stopHint();
+  const s = stepObj();
+  if (L.locked || L.done) return;
+  let m = null, label = null;
+  if (s.type === 'key') ({ m, label } = parse(s.targets)[L.sub]);
+  else if (s.type === 'seq') { ({ m, label } = parse(s.seqs[L.sub])[L.seqPos]); pulse(L.seqDrawn && L.seqDrawn.cur); }
+  else if (s.type === 'show') {
+    const g = goalPcs(s);
+    const want = g.find((p) => !L.got.has(p)) ?? g[0];
+    m = ms(s.goal).find((x) => pc(x) === want);
+    label = labelFor(s, want);
+  }
+  if (m == null) return;
+  if (s.type === 'key') lessonKb.setTarget(m);
+  showHint(lessonKb, [m], label, lessonChicken());
+  armHint($('#btnLessonHint'));
+});
+
 /* ---------- record and share ---------- */
 // Recordings are kept per player; a removed player's recordings go with them
 const recs = setupRecordings({ show, toast, ask: (...a) => ask(...a), bubble, bigLetter, player: playerId });
@@ -966,7 +1036,8 @@ function ask(html, words, onYes) {
 /* ---------- CELEBRATION ---------- */
 // eggs won (a lesson gives 1, a song up to 3); chick: a level was just finished
 // rec: a recording that just stopped with the song, to listen to from here
-function party(eggs, { again, next, words, chick = false, rec = null }) {
+// day: today's practice (dayWin()); laying today's egg gets its own cheer
+function party(eggs, { again, next, words, chick = false, rec = null, day = null }) {
   $('#partyEggs').innerHTML = chick ? '<span>🥚</span><span>🐣</span>'
     : '<span>🥚</span>'.repeat(eggs) + '<span style="filter:grayscale(1) opacity(.25)">🥚</span>'.repeat(3 - eggs);
   $('#partyTitle').textContent = eggs === 3 ? 'BAWK-TASTIC!' : 'BAWK!';
@@ -974,6 +1045,14 @@ function party(eggs, { again, next, words, chick = false, rec = null }) {
   $('#partyChicken').classList.add('dance');
   bawk();
   confetti();
+  const pd = $('#partyDay');
+  pd.style.display = day ? '' : 'none';
+  if (day) {
+    const n = streak(progress.days);
+    pd.classList.toggle('laid', day.laid);
+    pd.innerHTML = `<span class="pips">${goalPips(day.today)}</span>${day.laid ? `<span class="fire">🔥 ${n}</span>` : ''}`;
+    if (day.laid) { words = [].concat(words, dayEgg(n)); setTimeout(() => confetti(40), 2500); }
+  }
   setTimeout(() => say(words), 1300);
   const close = () => { $('#party').classList.remove('show'); $('#partyChicken').classList.remove('dance'); };
   $('#partyAgain').onclick = () => { close(); again(); };
@@ -997,7 +1076,7 @@ function openLesson(n, i) {
   L.lv = LEVELS[n - 1]; L.li = i; L.step = 0;
   levelN = n;
   onNote = lessonInput;
-  leaveHooks.push(stopHear);
+  leaveHooks.push(stopHear, stopHint);
   preloadVoice(lesson().steps.map((st) => [st.say, st.hint]));
   renderStep();
 }
@@ -1045,6 +1124,8 @@ function renderStep() {
   $('#lessonTitle').textContent = `${les.emoji} ${les.title}`;
   $('#lessonDots').innerHTML = les.steps.map((_, i) => `<i class="${i < L.step ? 'done' : i === L.step ? 'on' : ''}"></i>`).join('');
   $('#btnNext').style.display = 'none';
+  $('#btnLessonHint').style.display = ['key', 'seq', 'show'].includes(s.type) ? '' : 'none';
+  stopHint();
   $('#btnHear').style.display = s.hear || (s.type === 'choice' && s.rounds.some((r) => r.hear)) ? '' : 'none';
   lessonCard.style.display = 'none';
   choices('');
@@ -1078,6 +1159,7 @@ function finishLesson() {
       show('level');
     },
     words,
+    day: dayWin(),
   });
 }
 function stepDone() {
@@ -1134,6 +1216,7 @@ function showInput(m) {
   if (L.done) return;
   const g = goalPcs(s);
   if (g.includes(pc(m))) {
+    armHint($('#btnLessonHint'));
     lessonKb.flash(m, 'good', 400);
     act(lessonChicken(), 'peck', 300);
     L.hits++;
@@ -1165,8 +1248,10 @@ function keyPrompt(first) {
   const s = stepObj();
   const n = parse(s.targets)[L.sub];
   expectNote(n.m);
+  lessonKb.setTarget(null); // a hint may have lit the last one
   bubble($('#lessonBubble'), `🎹 ${bigLetter(n.m, n.label)}`);
   if (first) sayThen(s.say); else say(noteWords(n.label));
+  armHint($('#btnLessonHint'));
 }
 function keyInput(m) {
   const s = stepObj();
@@ -1204,6 +1289,7 @@ function seqTarget() {
   expectNote(n.m);
   L.seqDrawn.cur.setAttribute('x', L.seqDrawn.xs[L.seqPos] - 22);
   L.seqDrawn.noteEls.forEach((e, j) => e && e.classList.toggle('done', j < L.seqPos));
+  armHint($('#btnLessonHint'));
   bubble($('#lessonBubble'), `${tune.map((x, j) => (j < L.seqPos ? '🥚' : j === L.seqPos ? bigLetter(x.m, x.label) : '<i class="egg0">🥚</i>')).join('')}`);
 }
 function seqInput(m) {
@@ -1399,7 +1485,7 @@ document.addEventListener('keydown', (e) => {
 });
 document.addEventListener('keyup', (e) => { if (typing(e)) return; const m = KEYMAP[e.key.toLowerCase()]; if (m) keyUp(m); });
 
-window.__cp = { recs, players, usePlayer, say, show, openSong, openLesson, noteIn, jumpToBeat, P, L, progress, LEVELS, SONGS, startBeatMode, startEcho, ears };
+window.__cp = { recs, players, usePlayer, say, show, openSong, openLesson, noteIn, jumpToBeat, P, L, progress, LEVELS, SONGS, startBeatMode, startEcho, lessonStep: (i) => { L.step = i; renderStep(); }, ears };
 window.__cpMs = ms;
 window.__cpHeard = () => heardCount;
 window.__cpFree = () => F.notes;
