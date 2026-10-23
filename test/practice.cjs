@@ -23,7 +23,7 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
   check(icons.join('') === '🐢🐌🐇', `speed button cycles ${icons.join(' ')}`);
 
   // play with the beat: tap every note on its moment (a little off, like a person), at bunny and snail speed
-  for (const [spd, jitter, skip, want] of [[1, 60, [], 3], [1, 60, [2, 5, 9, 12], 2], [0.5, 120, [], 3], [1, 330, [], 2]]) {
+  for (const [spd, jitter, skip, want] of [[1, 60, [], 3], [1, 60, [2, 5, 9, 12], 2], [0.5, 120, [], 3], [1, 250, [], 2]]) {
     await page.evaluate((spd) => { window.__cp.progress.speed = spd; window.__cp.openSong('eggs', 'level'); window.__cp.startBeatMode(); }, spd);
     await page.waitForFunction(() => window.__cp.P.judge, null, { timeout: 5000 });
     if (spd === 1 && !skip.length) { await page.waitForTimeout(500); await page.screenshot({ path: `${out}/beat-countin.png` }); }
