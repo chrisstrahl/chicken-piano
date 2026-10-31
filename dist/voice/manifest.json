@@ -444,6 +444,11 @@
   "spoken": "Let's play Rocking Nest!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "12899406": {
+  "text": "Rhythm games",
+  "spoken": "Rhythm games",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "12ad430f": {
   "text": "You have 159 eggs.",
   "spoken": "You have 159 eggs.",
@@ -662,6 +667,11 @@
  "1d4b2d18": {
   "text": "That's 6 days in a row!",
   "spoken": "That's 6 days in a row!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "1d4cfe96": {
+  "text": "Lessons",
+  "spoken": "Lessons",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "1dd71338": {
@@ -962,6 +972,11 @@
  "2e8e5ec8": {
   "text": "You have 91 eggs.",
   "spoken": "You have 91 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "2ea506e8": {
+  "text": "Reading games",
+  "spoken": "Reading games",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "2ec7ced6": {
@@ -2154,6 +2169,11 @@
   "spoken": "That's 82 days in a row!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "706b03fa": {
+  "text": "I saved your jam in My Songs!",
+  "spoken": "I saved your jam in My Songs!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "709a3a80": {
   "text": "Start on A flat.",
   "spoken": "Start on \"A\" flat.",
@@ -2487,6 +2507,11 @@
  "7e7cbb39": {
   "text": "You have 12 eggs.",
   "spoken": "You have 12 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "7ea40f5c": {
+  "text": "Make music",
+  "spoken": "Make music",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "7f083816": {
@@ -4369,6 +4394,11 @@
   "spoken": "Take Pickle out of the coop? Their eggs go too.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "d5018bd0": {
+  "text": "Ear games",
+  "spoken": "Ear games",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "d50c35a0": {
   "text": "You have 2 eggs.",
   "spoken": "You have 2 eggs.",
@@ -4797,6 +4827,11 @@
  "e63f3364": {
   "text": "That's 33 days in a row!",
   "spoken": "That's 33 days in a row!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "e6487880": {
+  "text": "Black key jam! Pick a groove, then play any black keys. I will record it!",
+  "spoken": "Black key jam! Pick a groove, then play any black keys. I will record it!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "e6ecfebd": {
