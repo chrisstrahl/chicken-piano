@@ -19,6 +19,7 @@ const TEMPO = 96;
 
 type Party = (eggs: number, o: { again: () => void; next: () => void; words: string | string[] }) => void;
 export interface FreshApp {
+  missed: (m: number) => void; // a note wanted and missed (once per note), for the grown-ups' page
   show: (screen: string) => void;
   bubble: (el: HTMLElement, html: string) => void;
   bigLetter: (m: number) => string;
@@ -106,6 +107,7 @@ export function setupFreshTunes(app: FreshApp) {
       return;
     }
     if (source === 'mic' && pc(m) === pc(F.last.m) && performance.now() - F.last.at < RING) return;
+    if (!F.missHere) app.missed(want);
     F.misses++; F.missHere++;
     kb.flash(m, 'bad', 500);
     app.act(chicken(), 'oops');

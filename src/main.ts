@@ -13,8 +13,9 @@ import { setupGames, gameEggTotal } from './games.js';
 import { setupJam } from './jam.js';
 import { setupQuizzes } from './quizgames.js';
 import { setupFreshTunes } from './freshtunes.js';
+import { setupParent } from './parent.js';
 import { players, playerId, AVATARS, MAX_PLAYERS, avatarOf } from './profiles.js';
-import { deletePlayerRecordings } from './recorder.js';
+import { deletePlayerRecordings, listRecordings } from './recorder.js';
 import { CHICKEN, lookOf, avatarChicken } from './chicken.js';
 import { startOffline } from './offline.js';
 import { addWin, streak, todayWins, calendar, DAILY_GOAL } from './streaks.js';
@@ -31,6 +32,7 @@ type Progress = {
   songs: Record<string, number>; lessons: Record<string, boolean>; days: Days; letters: boolean; all: boolean;
   open?: Record<number, boolean>; hands?: Hands; clefFlip?: boolean; speed?: number; ears?: Record<string, number>;
   games?: Record<string, number>; rushBest?: Record<string, number>;
+  missed?: Record<string, number>; // note name -> wrong keys when it was wanted (songs, Fresh Tunes), for the grown-ups' page
 };
 // a key to press now in a song, and which hand's note it belongs to
 type Need = Pitch & { part: Part; i: number };
@@ -58,6 +60,8 @@ let progress = loadProgress();
 const save = () => players.save(progress);
 // a song or lesson was finished today (see streaks.ts)
 const dayWin = () => { const r = addWin(progress.days); save(); return r; };
+// counts a note the kid was looking for and missed (once per note), for the grown-ups' page
+const missedNote = (label: string) => { progress.missed = { ...(progress.missed || {}), [label]: ((progress.missed || {})[label] || 0) + 1 }; };
 const totalEggs = () => Object.values(progress.songs).reduce((a, b) => a + b, 0) + Object.keys(progress.lessons).length + earEggTotal(progress) + gameEggTotal(progress);
 
 // Progress: any level can be picked. The "current" level is the first one with lessons left, and the map
@@ -137,7 +141,7 @@ function show(id: string) {
   onNote = null;
   onRelease = null;
   expectNote(null);
-  ({ home: renderHome, learn: renderLearn, who: renderWho, songs: renderSongs, map: renderMap, level: renderLevel, free: openFree, nest: renderNest, ...recs.screens, ...ears.screens, ...games.screens, ...jam.screens, ...quizzes.screens, ...fresh.screens } as Record<string, () => void>)[id]?.();
+  ({ home: renderHome, learn: renderLearn, who: renderWho, songs: renderSongs, map: renderMap, level: renderLevel, free: openFree, nest: renderNest, ...recs.screens, ...ears.screens, ...games.screens, ...jam.screens, ...quizzes.screens, ...fresh.screens, ...parent.screens } as Record<string, () => void>)[id]?.();
 }
 document.addEventListener('click', (e) => {
   const b = (e.target as Element).closest<HTMLElement>('[data-go]');
@@ -702,7 +706,7 @@ function playInput(m: number, source: NoteSource) {
     if (gap > 0.01) bubble($('#playBubble'), `🤫 👉 ${needHtml(evNow().need)}`);
     else if (P.e % 6 === 0) { bubble($('#playBubble'), `${pick(PRAISE)} 👉 ${needHtml(evNow().need)}`); act(playChicken(), 'happy'); }
   } else if (!ev.need.some((k) => pc(k.m) === pc(m))) {
-    if (!P.missed) P.mistakes++;
+    if (!P.missed) { P.mistakes++; missedNote(ev.need[0].label); }
     P.missed = true;
     P.wrongRow++;
     playKb.flash(m, 'bad', 500);
@@ -1197,7 +1201,15 @@ const ears = setupEarTraining({ show, bubble, bigLetter, act, party: (...a) => p
 const games = setupGames({ show, bubble, bigLetter, act, party: (...a) => party(...a), progress: () => progress, save, setInput: (f) => { onNote = f; }, noteIn, keyUp });
 
 /* ---------- Fresh Tunes sight reading (src/freshtunes.ts) ---------- */
-const fresh = setupFreshTunes({ show, bubble, bigLetter, act, party: (...a) => party(...a), progress: () => progress, save, setInput: (f) => { onNote = f; }, noteIn, keyUp });
+const fresh = setupFreshTunes({ missed: (m) => missedNote(nameOf(m)), show, bubble, bigLetter, act, party: (...a) => party(...a), progress: () => progress, save, setInput: (f) => { onNote = f; }, noteIn, keyUp });
+
+/* ---------- grown-ups' page (src/parent.ts) ---------- */
+const parent = setupParent({
+  show, players: () => players.list(), levels: LEVELS, songs: SONGS,
+  progressOf: (id) => (id === playerId() ? progress : players.progress(id)),
+  recordingsOf: (id) => listRecordings(id).length,
+  avatar: (p) => `<span class="av">${avatarChicken(p.avatar)}</span>`,
+});
 
 /* ---------- ear quizzes: Mystery Melodies, Happy or Sad (src/quizgames.ts) ---------- */
 const quizzes = setupQuizzes({ show, bubble, act, party: (...a) => party(...a), progress: () => progress, save });
