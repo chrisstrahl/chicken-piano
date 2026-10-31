@@ -1,5 +1,5 @@
 import { SONGS, LEVELS, PRAISE, COLORS, BEATS, letterOf, nameOf, isBlack, parse, songById, songsForLevel } from './music.js';
-import { coop, openSongsAsk, letsPlay, oopsFind, songDone, lessonDone, noteWords, whoPlays, pickChicken, hello, removeAsk, originalName, dayEgg, dayTalk, SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN, RHYTHM_TURN, RHYTHM_AGAIN, RHYTHM_GOOD, RHYTHM_OK, RHYTHM_HOLD, RHYTHM_SHH } from './lines.js';
+import { coop, openSongsAsk, letsPlay, oopsFind, songDone, lessonDone, noteWords, whoPlays, pickChicken, hello, removeAsk, originalName, dayEgg, dayTalk, SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN, RHYTHM_TURN, RHYTHM_AGAIN, RHYTHM_GOOD, RHYTHM_OK, RHYTHM_HOLD, RHYTHM_SHH, LEARN_CATS, SPOT_START, SPOT_FASTER, SPOT_AGAIN, SPOT_FIXED } from './lines.js';
 import { startAudio, playNote, noteDown, noteUp, playSequence, cluck, peck, bawk, silly, say, stopTalking, preloadVoice, startBeat } from './audio.js';
 import { BeatJudge, phrases, SPEEDS, barBeats, peckEvery, timeline } from './beat.js';
 import { struckAt, markTap, setLag } from './timing.js';
@@ -11,8 +11,12 @@ import type { Keyboard } from './keyboard.ts';
 import { setupRecordings } from './recordings.js';
 import { setupEarTraining, earEggTotal } from './eartraining.js';
 import { setupGames, gameEggTotal } from './games.js';
+import { setupJam } from './jam.js';
+import { setupQuizzes } from './quizgames.js';
+import { setupFreshTunes } from './freshtunes.js';
+import { setupParent } from './parent.js';
 import { players, playerId, AVATARS, MAX_PLAYERS, avatarOf } from './profiles.js';
-import { deletePlayerRecordings, makeRecorder, toTokens, guessTempo } from './recorder.js';
+import { deletePlayerRecordings, listRecordings, makeRecorder, toTokens, guessTempo } from './recorder.js';
 import { CHICKEN, lookOf, avatarChicken } from './chicken.js';
 import { startOffline } from './offline.js';
 import { addWin, streak, todayWins, calendar, DAILY_GOAL } from './streaks.js';
@@ -29,6 +33,7 @@ type Progress = {
   songs: Record<string, number>; lessons: Record<string, boolean>; days: Days; letters: boolean; all: boolean;
   open?: Record<number, boolean>; hands?: Hands; clefFlip?: boolean; speed?: number; ears?: Record<string, number>;
   games?: Record<string, number>; rushBest?: Record<string, number>;
+  missed?: Record<string, number>; // note name -> wrong keys when it was wanted (songs, Fresh Tunes), for the grown-ups' page
 };
 // a key to press now in a song, and which hand's note it belongs to
 type Need = Pitch & { part: Part; i: number };
@@ -56,6 +61,8 @@ let progress = loadProgress();
 const save = () => players.save(progress);
 // a song or lesson was finished today (see streaks.ts)
 const dayWin = () => { const r = addWin(progress.days); save(); return r; };
+// counts a note the kid was looking for and missed (once per note), for the grown-ups' page
+const missedNote = (label: string) => { progress.missed = { ...(progress.missed || {}), [label]: ((progress.missed || {})[label] || 0) + 1 }; };
 const totalEggs = () => Object.values(progress.songs).reduce((a, b) => a + b, 0) + Object.keys(progress.lessons).length + earEggTotal(progress) + gameEggTotal(progress);
 
 // Progress: any level can be picked. The "current" level is the first one with lessons left, and the map
@@ -123,6 +130,9 @@ function show(id: string) {
   recs.leave(id);
   ears.leave();
   games.leave();
+  jam.leave();
+  quizzes.leave();
+  fresh.leave();
   leaveHooks.forEach((f) => f());
   leaveHooks = [];
   stopTalking();
@@ -132,7 +142,7 @@ function show(id: string) {
   onNote = null;
   onRelease = null;
   expectNote(null);
-  ({ home: renderHome, learn: renderLearn, who: renderWho, songs: renderSongs, map: renderMap, level: renderLevel, free: openFree, nest: renderNest, ...recs.screens, ...ears.screens, ...games.screens } as Record<string, () => void>)[id]?.();
+  ({ home: renderHome, learn: renderLearn, who: renderWho, songs: renderSongs, map: renderMap, level: renderLevel, free: openFree, nest: renderNest, ...recs.screens, ...ears.screens, ...games.screens, ...jam.screens, ...quizzes.screens, ...fresh.screens, ...parent.screens } as Record<string, () => void>)[id]?.();
 }
 document.addEventListener('click', (e) => {
   const b = (e.target as Element).closest<HTMLElement>('[data-go]');
@@ -489,7 +499,7 @@ const playCard = $('#playStaff');
 type PlayState = {
   song: Song; e: number; events: SongEvent[]; hands: Hands; mistakes: number; missed: boolean; wrongRow: number;
   drawn: Drawn | null; stopDemo: (() => void) | null; back: string;
-  i: number; mode: 'beat' | 'echo' | null; tok: object | null; beat: ReturnType<typeof startBeat> | null;
+  i: number; mode: 'beat' | 'echo' | 'spot' | null; tok: object | null; beat: ReturnType<typeof startBeat> | null;
   loop: ReturnType<typeof setInterval> | null; judge: BeatJudge | null; stopEcho: (() => void) | null;
   phrases: [number, number][]; ph: number; turn: boolean; echoWrong: number;
   solo?: Part | null; soloNotes?: Note[] | null; shown?: number; grade?: string;
@@ -679,6 +689,7 @@ function jumpToBeat(beat: number) {
 function playInput(m: number, source: NoteSource) {
   if (P.mode === 'beat') return beatInput(m, source);
   if (P.mode === 'echo') return echoInput(m);
+  if (P.mode === 'spot') return spotInput(m, source);
   if (P.stopDemo) return;
   const ev = evNow();
   if (!ev) return;
@@ -696,7 +707,7 @@ function playInput(m: number, source: NoteSource) {
     if (gap > 0.01) bubble($('#playBubble'), `🤫 👉 ${needHtml(evNow().need)}`);
     else if (P.e % 6 === 0) { bubble($('#playBubble'), `${pick(PRAISE)} 👉 ${needHtml(evNow().need)}`); act(playChicken(), 'happy'); }
   } else if (!ev.need.some((k) => pc(k.m) === pc(m))) {
-    if (!P.missed) P.mistakes++;
+    if (!P.missed) { P.mistakes++; missedNote(ev.need[0].label); }
     P.missed = true;
     P.wrongRow++;
     playKb.flash(m, 'bad', 500);
@@ -808,6 +819,8 @@ function stopMode() {
   P.mode = null; P.judge = null; P.turn = false;
   $('#btnBeat').classList.remove('on');
   $('#btnEcho').classList.remove('on');
+  $('#btnSpot').classList.remove('on');
+  spot = null;
   playChicken()?.classList.remove('dance');
   [P.drawn, P.drawn && P.drawn.lh].forEach((d) => d && [d.noteEls, d.letterEls, d.lyricEls].forEach((list) => list.forEach((e) => e && e.classList.remove('miss', 'later'))));
 }
@@ -997,6 +1010,125 @@ $('#btnEcho').addEventListener('click', () => {
   stopDemo();
   startEcho();
 });
+/* ---------- TRICKY SPOT: loop one phrase, slow then faster ---------- */
+// 🔁 loops the phrase you're on (tap the music first to pick another spot). The chicken plays it, then you play
+// it with the pecks at snail speed; a clean pass goes up to turtle, then bunny. A clean bunny pass fixes it,
+// and the song carries on from there.
+const SPOT_SPEEDS = [0.5, 0.75, 1];
+const SPOT_ICON = ['🐌', '🐢', '🐇'];
+type Spot = { a: number; b: number; lvl: number; tries: number };
+let spot: Spot | null = null;
+function startSpot() {
+  stopDemo();
+  stopTalking();
+  const notes = notesP();
+  const tl = timeline(notes);
+  const beat = evNow() ? evNow().beat : 0;
+  const phs = phrases(notes, P.song);
+  const ph = phs.find(([, b]) => tl[b - 1].at + tl[b - 1].len > beat + 1e-6) || phs[phs.length - 1];
+  P.mode = 'spot';
+  P.tok = {};
+  spot = { a: ph[0], b: ph[1], lvl: 0, tries: 0 };
+  $('#btnSpot').classList.add('on');
+  const tok = P.tok;
+  say(SPOT_START, () => tok === P.tok && spotRound());
+}
+// one go round the loop: listen at this speed, then play it with the pecks
+function spotRound() {
+  const tok = P.tok, sp = spot!;
+  const d = melDrawn();
+  const part = notesP().slice(sp.a, sp.b);
+  const tempo = P.song.tempo * SPOT_SPEEDS[sp.lvl];
+  markUpTo(d.beats[sp.a]);
+  [d.noteEls, d.letterEls, d.lyricEls].forEach((list) => list.forEach((e, j) => e && (e.classList.toggle('later', j >= sp.b), e.classList.remove('miss'))));
+  playKb.setTarget(null);
+  expectNote(null);
+  focusMel(sp.a);
+  playChicken().classList.add('dance');
+  bubble($('#playBubble'), `🔁 ${SPOT_ICON[sp.lvl]} 👂`);
+  P.stopEcho = playSequence(part, tempo, (j) => {
+    focusMel(sp.a + j);
+    part[j].r || part[j].keys.forEach((k) => playKb.flash(k.m, 'hl', 350));
+  }, () => {
+    P.stopEcho = null;
+    if (tok !== P.tok) return;
+    playChicken().classList.remove('dance');
+    markUpTo(d.beats[sp.a]);
+    const beatMs = 60000 / tempo, per = barBeats(P.song.time);
+    P.beat = startBeat({
+      bpm: tempo, accent: (k) => k % per === 0,
+      onBeat: (k) => {
+        if (tok !== P.tok) return;
+        act(playChicken(), 'peck', Math.min(280, beatMs * 0.6));
+        if (k < per) bubble($('#playBubble'), `<span class="count">${Array.from({ length: per }, (_, j) => `<i class="${j === k ? 'on' : ''}">${j + 1}</i>`).join('')}</span>`);
+      },
+    });
+    P.judge = new BeatJudge(part, beatMs, P.beat.t0 + per * beatMs);
+    P.shown = -1;
+    P.loop = setInterval(spotLoop, 40);
+  });
+}
+function spotLoop() {
+  const j = P.judge, sp = spot;
+  if (!j || !sp) return;
+  const now = performance.now();
+  j.tick(now).forEach((k) => melDrawn().noteEls[sp.a + j.items[k].i]?.classList.add('miss'));
+  if (j.done) return spotPassDone();
+  const k = j.current(now);
+  if (k === null || k === P.shown) return;
+  const it = j.items[k];
+  if (it.t - now > Math.max(600, j.beatMs)) return;
+  P.shown = k;
+  const n = j.notes[it.i] as Sounding;
+  focusMel(sp.a + it.i);
+  playKb.setTarget(n.m);
+  expectNote(n.m);
+}
+function spotInput(m: number, source: NoteSource) {
+  const j = P.judge, sp = spot;
+  if (!j || !sp) return;
+  const r = j.input(m, struckAt(source));
+  if (!r) return;
+  if (r.grade === 'wrong') { playKb.flash(m, 'bad', 400); act(playChicken(), 'oops'); return; }
+  markDone(sp.a + j.items[r.k].i);
+  playKb.flash(m, 'good', 300);
+  bubble($('#playBubble'), `${GRADE[r.grade]} ${SPOT_ICON[sp.lvl]}`);
+  if (j.done) setTimeout(() => P.judge === j && spotPassDone(), 400);
+}
+function spotPassDone() {
+  const j = P.judge!, sp = spot!;
+  if (P.beat) { P.beat.stop(); P.beat = null; }
+  clearInterval(P.loop!);
+  P.loop = null;
+  P.judge = null;
+  playKb.setTarget(null);
+  expectNote(null);
+  const c = j.counts();
+  const clean = c.miss === 0 && c.good >= j.items.length / 2;
+  const tok = P.tok;
+  sp.tries++;
+  if (clean && sp.lvl === SPOT_SPEEDS.length - 1) {
+    // fixed: back to normal playing, from the start of the spot
+    cluck(2); confetti(20); act(playChicken(), 'happy', 900);
+    bubble($('#playBubble'), '✅ 🔁 🎉');
+    say(SPOT_FIXED);
+    const beat = melDrawn().beats[sp.a];
+    stopMode();
+    jumpToBeat(beat);
+    return;
+  }
+  // after three tries at one speed it goes up anyway (practice still counts)
+  if (clean || sp.tries >= 3) { sp.lvl++; sp.tries = 0; cluck(2); act(playChicken(), 'happy', 700); }
+  else act(playChicken(), 'oops');
+  bubble($('#playBubble'), `🎯 ${c.good} · 👍 ${c.early + c.late} · 🙈 ${c.miss} → ${SPOT_ICON[sp.lvl]}`);
+  say(sp.tries === 0 ? SPOT_FASTER : SPOT_AGAIN, () => tok === P.tok && spotRound());
+}
+$('#btnSpot').addEventListener('click', () => {
+  if (P.mode === 'spot') { stopMode(); setCurrent(); return; }
+  if (P.mode) stopMode();
+  startSpot();
+});
+
 window.addEventListener('resize', () => {
   if (current !== 'play' || !P.drawn) return;
   if (P.mode) return focusMel(P.i);
@@ -1021,7 +1153,7 @@ function showHint(kb: Keyboard, keys: number[], label: string, chicken: Element 
 const pulse = (el: Element | null | undefined) => { if (!el) return; el.classList.remove('pulse'); void el.getBoundingClientRect(); el.classList.add('pulse'); };
 $('#btnHint').addEventListener('click', () => {
   stopHint();
-  if (P.stopDemo || P.mode === 'beat') return;
+  if (P.stopDemo || P.mode === 'beat' || P.mode === 'spot') return;
   if (P.mode === 'echo') {
     if (!P.turn) return;
     const n = notesP()[P.i];
@@ -1068,6 +1200,31 @@ const ears = setupEarTraining({ show, bubble, bigLetter, act, party: (...a) => p
 
 /* ---------- learn games: Egg Rush, Echo Game, Twinkle Twist (src/games.ts) ---------- */
 const games = setupGames({ show, bubble, bigLetter, act, party: (...a) => party(...a), progress: () => progress, save, setInput: (f) => { onNote = f; }, noteIn, keyUp });
+
+/* ---------- Fresh Tunes sight reading (src/freshtunes.ts) ---------- */
+const fresh = setupFreshTunes({ missed: (m) => missedNote(nameOf(m)), show, bubble, bigLetter, act, party: (...a) => party(...a), progress: () => progress, save, setInput: (f) => { onNote = f; }, noteIn, keyUp });
+
+/* ---------- grown-ups' page (src/parent.ts) ---------- */
+const parent = setupParent({
+  show, players: () => players.list(), levels: LEVELS, songs: SONGS,
+  progressOf: (id) => (id === playerId() ? progress : players.progress(id)),
+  recordingsOf: (id) => listRecordings(id).length,
+  avatar: (p) => `<span class="av">${avatarChicken(p.avatar)}</span>`,
+});
+
+/* ---------- ear quizzes: Mystery Melodies, Happy or Sad (src/quizgames.ts) ---------- */
+const quizzes = setupQuizzes({ show, bubble, act, party: (...a) => party(...a), progress: () => progress, save });
+
+/* ---------- Black-key Jam (src/jam.ts) ---------- */
+const jam = setupJam({
+  setInput: (f) => { onNote = f; }, noteIn, keyUp, bubble, bigLetter, act,
+  micEars: () => micOn() && !midiNames.length,
+  record: (b, what) => recs.begin(b, what),
+  stopRecording: () => !!recs.finish({ open: false }),
+});
+recs.button($('#jamRec'), () => ({ title: 'Black-key Jam', emoji: '⚫', song: null }));
+// Learn: tapping a column's icon says what kind of games it holds
+document.querySelectorAll<HTMLElement>('#learn [data-cat]').forEach((b) => b.addEventListener('click', () => say(LEARN_CATS[+b.dataset.cat!])));
 
 /* ---------- yes / no question ---------- */
 function ask(html: string, words: string, onYes: () => void) {
@@ -1758,7 +1915,7 @@ document.addEventListener('keydown', (e) => {
 });
 document.addEventListener('keyup', (e) => { if (typing(e)) return; const m = KEYMAP[e.key.toLowerCase()]; if (m) keyUp(m); });
 
-window.__cp = { recs, players, usePlayer, say, show, openSong, openLesson, noteIn, jumpToBeat, P, L, progress, LEVELS, SONGS, startBeatMode, startEcho, lessonStep: (i: number) => { L.step = i; renderStep(); }, ears, games };
+window.__cp = { recs, players, usePlayer, say, show, openSong, openLesson, noteIn, jumpToBeat, P, L, progress, LEVELS, SONGS, startBeatMode, startEcho, spot: () => spot, lessonStep: (i: number) => { L.step = i; renderStep(); }, ears, games, jam, quizzes, fresh };
 window.__cpMs = ms;
 window.__cpHeard = () => heardCount;
 window.__cpFree = () => F.notes;

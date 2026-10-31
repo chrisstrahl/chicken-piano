@@ -443,9 +443,48 @@ body.midi #mic:not(.on){opacity:.6}
 #home .menu .tile{width:min(26vw,36vh)}
 #home .menu .tile .em{font-size:min(15vh,11vw)}
 #learn{justify-content:flex-start}
-#learn .menu{flex:1;align-items:center;align-content:center}
-#learn .menu .tile{width:min(17vw,30vh);height:auto}
-#learn .menu .tile .em{font-size:min(10vh,7.5vw)}
+/* Learn: one column per kind of game, led by a big icon (tap it to hear its name) */
+.cats{flex:1;display:flex;gap:1.4vw;padding:1.5vh 1vw 2vh;min-height:0}
+.cat{flex:1;min-width:0;display:flex;flex-direction:column;align-items:stretch;gap:1.8vh;background:rgba(255,255,255,.55);border-radius:26px;padding:1vh .9vw 1.6vh}
+.cat .cath{font-size:min(7vh,5vw);line-height:1.1;align-self:center;background:none}
+.cat .tile{width:100%;height:min(21vh,15vw);border-radius:22px;flex-direction:column;justify-content:center;gap:.3vh;font-size:min(3vh,2.1vw);line-height:1.1;text-align:center;padding:6px}
+.cat .tile .em{font-size:min(8vh,5.6vw);line-height:1}
+.cat .tile.big{flex:1;height:auto;font-size:min(4vh,2.8vw)}
+.cat .tile.big .em{font-size:min(14vh,9vw)}
+/* Grown-ups' page */
+.parentbtn{margin-left:auto;opacity:.75}
+.parentbtn.holding{background:var(--good);transition:background 1.5s}
+.pcards{flex:1;overflow:auto;display:flex;gap:16px;padding:1vh 4px 3vh;align-items:flex-start;-webkit-overflow-scrolling:touch}
+.pcard{flex:0 0 min(420px,88vw);background:var(--card);border-radius:22px;box-shadow:0 5px 0 rgba(0,0,0,.12);padding:14px 18px;font-size:15px;color:var(--ink)}
+.phead{display:flex;align-items:center;gap:10px;font-size:22px;margin-bottom:6px}
+.phead .av{height:48px}
+.prow{display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 10px;padding:4px 0;border-top:1px solid #f1e6cf}
+.prow b{font-weight:600;text-align:right}
+.prow.sub{border-top:none;padding-top:0;color:var(--muted);font-size:13px}
+.prow .pbar{grid-column:1/-1;height:6px;border-radius:3px;background:#f1e6cf;overflow:hidden}
+.prow .pbar i{display:block;height:100%;background:var(--good)}
+.psec{margin-top:10px;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.psec small{text-transform:none;font-weight:500;letter-spacing:0}
+.pmiss{display:flex;flex-wrap:wrap;gap:8px;padding-top:6px}
+.pmiss span{background:#fff3c4;border-radius:999px;padding:2px 10px}
+/* Fresh Tunes: the next note to play */
+.staffcard .vf-stavenote.now{filter:drop-shadow(0 0 5px var(--accent)) drop-shadow(0 0 3px var(--accent))}
+/* Ear quizzes: Mystery Melodies, Happy or Sad */
+.quizchoices{flex:1}
+.quizchoices .choice{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6vh;line-height:1.1}
+.quizchoices .choice small{font-size:min(2.6vh,1.8vw);font-weight:700;color:var(--ink);padding:0 6px;text-align:center}
+.quizchoices.mood .choice{width:min(24vw,30vh);height:min(26vw,32vh);font-size:min(13vh,9vw)}
+.quizchoices.mood .choice small{font-size:min(3.4vh,2.4vw)}
+.quizchoices .choice.right small{color:#fff}
+.quizchoices .choice.hint{animation:glow 1s ease-in-out infinite;box-shadow:0 0 0 6px var(--yolk)}
+.kbwrap.quizkb{flex:0 0 24%}
+/* Black-key Jam */
+.grooves{display:flex;gap:10px;margin-left:auto}
+.grooves .btn.on{background:var(--good);box-shadow:0 5px 0 #239a50}
+#jam .recbtn{margin-left:10px}
+.jamcoach{justify-content:center}
+.jamcoach .chicken{height:min(30vh,22vw)}
+.kbwrap.jamkb{flex:0 0 46%}
 .newrec{margin-left:auto;font-size:clamp(24px,5.5vh,44px);padding:.25em .7em;border-radius:22px}
 #recEmpty .bubble{cursor:pointer}
 /* barnyard games */
@@ -498,17 +537,40 @@ body.midi #mic:not(.on){opacity:.6}
 
 <section id="learn" class="screen">
   <div class="topbar"><button class="btn round" data-go="home" aria-label="Home">🏠</button><h2>🎓 Learn</h2></div>
-  <div class="menu">
-    <button class="btn blue tile" data-go="map"><span class="em">🗺️</span>Lessons<span class="tbadge" id="learnLevel"></span></button>
-    <button class="btn violet tile" data-pick="cluck"><span class="em">👏</span>Echo Game</button>
-    <button class="btn orange tile" data-pick="rush"><span class="em">🥚</span>Egg Rush</button>
-    <button class="btn green tile" data-go="ears"><span class="em">👂</span>Find it</button>
-    <button class="btn pink tile" data-pick="twinkle"><span class="em">⭐</span>Twinkle Twist</button>
+  <div class="cats">
+    <div class="cat c0"><button class="cath" data-cat="0">🗺️</button>
+      <button class="btn blue tile big" data-go="map"><span class="em">🗺️</span>Lessons<span class="tbadge" id="learnLevel"></span></button></div>
+    <div class="cat c1"><button class="cath" data-cat="1">👀</button>
+      <button class="btn orange tile" data-pick="rush"><span class="em">🥚</span>Egg Rush</button>
+      <button class="btn green tile" data-go="freshes"><span class="em">📜</span>Fresh Tunes</button></div>
+    <div class="cat c2"><button class="cath" data-cat="2">👂</button>
+      <button class="btn green tile" data-go="ears"><span class="em">👂</span>Find it</button>
+      <button class="btn violet tile" data-quiz="mystery"><span class="em">🎁</span>Mystery Melodies</button>
+      <button class="btn blue tile" data-quiz="mood"><span class="em">😊😢</span>Happy or Sad</button></div>
+    <div class="cat c3"><button class="cath" data-cat="3">🥁</button>
+      <button class="btn violet tile" data-pick="cluck"><span class="em">👏</span>Echo Game</button>
+      <button class="btn pink tile" data-pick="twinkle"><span class="em">⭐</span>Twinkle Twist</button></div>
+    <div class="cat c4"><button class="cath" data-cat="4">🎨</button>
+      <button class="btn red tile" data-go="jam"><span class="em">⚫</span>Black-key Jam</button></div>
+  </div>
+</section>
+
+<section id="jam" class="screen">
+  <div class="topbar"><button class="btn round" data-go="learn" aria-label="Back">⬅️</button><h2>⚫ 🎹</h2>
+    <div class="grooves"><button class="btn round" data-groove="slow" aria-label="Slow groove">🐢</button><button class="btn round" data-groove="fast" aria-label="Fast groove">🐇</button><button class="btn round" data-groove="moon" aria-label="Dreamy groove">🌙</button></div>
+    <button class="btn round recbtn" id="jamRec" aria-label="Record"><span class="ic">🔴</span><span class="tm"></span></button></div>
+  <div class="stage">
+    <div class="coach jamcoach">
+      <div data-chicken id="jamChicken"></div>
+      <div class="bubble" id="jamBubble"></div>
+    </div>
+    <div class="kbwrap jamkb"><div id="jamKb"></div></div>
   </div>
 </section>
 
 <section id="nest" class="screen">
-  <div class="topbar"><button class="btn round" data-go="home" aria-label="Home">🏠</button><h2>🏡</h2><div class="totals" id="nestTotals"></div></div>
+  <div class="topbar"><button class="btn round" data-go="home" aria-label="Home">🏠</button><h2>🏡</h2><div class="totals" id="nestTotals"></div>
+    <button class="btn round keybtn parentbtn" id="btnParent" aria-label="Grown-ups: hold to see progress">📊</button></div>
   <div class="nestbody">
     <div class="nestside">
       <div data-chicken></div>
@@ -517,6 +579,11 @@ body.midi #mic:not(.on){opacity:.6}
     </div>
     <div class="cal" id="nestCal"></div>
   </div>
+</section>
+
+<section id="parent" class="screen">
+  <div class="topbar"><button class="btn round" data-go="nest" aria-label="Back">⬅️</button><h2>📊 For grown-ups</h2></div>
+  <div class="pcards" id="parentCards"></div>
 </section>
 
 <section id="who" class="screen">
@@ -562,6 +629,7 @@ body.midi #mic:not(.on){opacity:.6}
         <button class="btn round blue" id="btnListen" aria-label="Listen">👂</button>
         <button class="btn round" id="btnBeat" aria-label="Play with the beat">🥁</button>
         <button class="btn round" id="btnEcho" aria-label="Echo: listen, then copy">🦜</button>
+        <button class="btn round" id="btnSpot" aria-label="Practice this tricky spot">🔁</button>
         <button class="btn round" id="btnSpeed" aria-label="Speed">🐇</button>
         <button class="btn round" id="btnHint" aria-label="Hint">🐔</button>
         <button class="btn round" id="btnRestart" aria-label="Start over">⏮️</button>
@@ -660,6 +728,43 @@ body.midi #mic:not(.on){opacity:.6}
       <div class="tools"><button class="btn round big green" id="beatHear" aria-label="Hear it again">👂</button></div>
     </div>
     <div class="kbwrap"><div id="beatKb"></div></div>
+  </div>
+</section>
+
+<section id="freshes" class="screen">
+  <div class="topbar"><button class="btn round" data-go="learn" aria-label="Back">⬅️</button><h2>📜 Fresh Tunes</h2></div>
+  <div class="reclist" id="freshCards"></div>
+</section>
+
+<section id="fresh" class="screen">
+  <div class="topbar"><button class="btn round" data-go="freshes" aria-label="Back">⬅️</button><h2 id="freshTitle">📜</h2><div class="stepdots" id="freshDots"></div></div>
+  <div class="stage">
+    <div class="staffcard static" id="freshStaff"><div class="scroller"><div class="strip"></div></div></div>
+    <div class="coach">
+      <div data-chicken id="freshChicken"></div>
+      <div class="bubble" id="freshBubble"></div>
+      <div class="spacer"></div>
+    </div>
+    <div class="kbwrap"><div id="freshKb"></div></div>
+  </div>
+</section>
+
+<section id="quizzes" class="screen">
+  <div class="topbar"><button class="btn round" data-go="learn" aria-label="Back">⬅️</button><h2 id="quizzesTitle">🎁</h2></div>
+  <div class="reclist" id="quizCards"></div>
+</section>
+
+<section id="quiz" class="screen">
+  <div class="topbar"><button class="btn round" data-go="quizzes" aria-label="Back">⬅️</button><h2 id="quizTitle">🎁</h2><div class="stepdots" id="quizDots"></div></div>
+  <div class="stage">
+    <div class="coach">
+      <div data-chicken id="quizChicken"></div>
+      <div class="bubble" id="quizBubble"></div>
+      <div class="spacer"></div>
+      <div class="tools"><button class="btn round big green" id="quizHear" aria-label="Hear it again">👂</button></div>
+    </div>
+    <div class="choices quizchoices" id="quizChoices"></div>
+    <div class="kbwrap quizkb"><div id="quizKb"></div></div>
   </div>
 </section>
 
