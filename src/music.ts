@@ -59,7 +59,13 @@ const song = (id: string, level: number, emoji: string, title: string, sub: stri
 
 // Songs live in songs.js (raw strings, grouped by level, easiest first).
 export const SONGS: Song[] = (SONG_DATA as SongData[]).map(({ notes, lyrics, ...x }) => song(x.id, x.level, x.emoji, x.title, x.sub, notes, lyrics, x));
-export const songById = (id: string): Song | undefined => SONGS.find((s) => s.id === id);
+// Songs the kids wrote themselves (Write a Song; saved per player in src/mysongs.ts). Level 0: not in a level.
+const USER_SONGS: Song[] = [];
+export function setUserSongs(list: { id: string; emoji: string; title: string; notes: string }[]) {
+  USER_SONGS.splice(0, USER_SONGS.length, ...list.map((u) => song(u.id, 0, u.emoji, u.title, '', u.notes, '')));
+}
+export const userSongs = (): Song[] => USER_SONGS.slice();
+export const songById = (id: string): Song | undefined => SONGS.find((s) => s.id === id) || USER_SONGS.find((s) => s.id === id);
 
 /* ------------------------------------------------------------------------------------------------
  Lessons. Every step asks the child to do something before moving on:
