@@ -23,3 +23,24 @@ jobs:
         run: node test/songlib.mjs
       - name: Recorder check
         run: node test/recorder.mjs
+
+  # Robot kids play the built app (test/kidbot). Not a required check: it reports, and fails only on real bugs
+  # (page errors, stuck screens). The report and screenshots are attached to the run as "kid-report".
+  kid-playtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm i --no-save playwright@1.63.0 && npx playwright install --with-deps chromium
+      - run: npm run kid
+        env:
+          KID_SECONDS: 120
+          KID_CAREFUL_SECONDS: 300
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: kid-report
+          path: test/kidbot/out/
