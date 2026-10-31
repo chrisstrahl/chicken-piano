@@ -6,6 +6,7 @@ import { AVATARS } from './profiles.ts';
 import { EAR_MAX_EGGS } from './ear.js';
 import { GAME_MAX_EGGS, TWINKLE_STAGES } from './barnyard.js';
 import { QUIZ_MAX_EGGS, knownSongs } from './quiz.ts';
+import { FRESH_MAX_EGGS } from './sightread.ts';
 import type { Song, Level } from './types.ts';
 
 const LETTERS = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
@@ -59,6 +60,8 @@ export const MYSTERY_START = 'Mystery melody! Listen. Which song is it?';
 export const MOOD_START = 'Happy or sad? Listen to my music, then pick a face.';
 export const MOOD_RIGHT: Record<'happy' | 'sad', string> = { happy: 'Yes! That sounds happy. Musicians call it major.', sad: 'Yes! That sounds sad. Musicians call it minor.' };
 export const mysteryWas = (title: string) => `Yes! It was ${title}!`;
+export const FRESH_START = 'Fresh tune! Nobody has played it before. Read the notes and play them!';
+export const FRESH_HEAR = 'You played a brand new tune! Listen.';
 export const LEARN_CATS = ['Lessons', 'Reading games', 'Ear games', 'Rhythm games', 'Make music'];
 export const twinkleStart = (word: string) => `Twinkle twist! Play Twinkle with a new rhythm. ${word}!`;
 // players (profiles.ts): a typed name has no recorded clip, so the device voice says those
@@ -89,7 +92,7 @@ const firstLabel = (s: Song) => { const n = s.notes.find((x) => !x.r); return n 
 // Every templated sentence the app can say, for the clip recorder.
 export function templatedLines(songs: Song[], levels: Level[]): string[] {
   const labels = LETTERS.flatMap((l) => [l, l + '♯', l + '♭']);
-  const maxEggs = songs.length * 3 + levels.reduce((a, lv) => a + lv.lessons.length, 0) + EAR_MAX_EGGS + GAME_MAX_EGGS + QUIZ_MAX_EGGS;
+  const maxEggs = songs.length * 3 + levels.reduce((a, lv) => a + lv.lessons.length, 0) + EAR_MAX_EGGS + GAME_MAX_EGGS + QUIZ_MAX_EGGS + FRESH_MAX_EGGS;
   const out = [
     ...songs.flatMap((s) => letsPlay(s, firstLabel(s))),
     ...labels.map(startOn),
@@ -104,7 +107,7 @@ export function templatedLines(songs: Song[], levels: Level[]): string[] {
     ...SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN,
     RHYTHM_TURN, RHYTHM_AGAIN, RHYTHM_GOOD, RHYTHM_OK, RHYTHM_HOLD, RHYTHM_SHH,
     EAR_PICK, EAR_START(1), EAR_START(2), EAR_HINT,
-    GAMES_PICK, RUSH_START, RUSH_BEST, CLUCK_START, JAM_START, JAM_STOP, ...LEARN_CATS, MYSTERY_START, MOOD_START, ...Object.values(MOOD_RIGHT), ...knownSongs(songs).map((s) => mysteryWas(s.title)), ...TWINKLE_STAGES.map((s) => twinkleStart(s.word)),
+    GAMES_PICK, RUSH_START, RUSH_BEST, CLUCK_START, JAM_START, JAM_STOP, ...LEARN_CATS, MYSTERY_START, MOOD_START, FRESH_START, FRESH_HEAR, ...Object.values(MOOD_RIGHT), ...knownSongs(songs).map((s) => mysteryWas(s.title)), ...TWINKLE_STAGES.map((s) => twinkleStart(s.word)),
     whoPlays,
     pickChicken,
     ...AVATARS.map((a) => hello(a.name)),

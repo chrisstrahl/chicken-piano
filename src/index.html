@@ -451,6 +451,8 @@ body.midi #mic:not(.on){opacity:.6}
 .cat .tile .em{font-size:min(8vh,5.6vw);line-height:1}
 .cat .tile.big{flex:1;height:auto;font-size:min(4vh,2.8vw)}
 .cat .tile.big .em{font-size:min(14vh,9vw)}
+/* Fresh Tunes: the next note to play */
+.staffcard .vf-stavenote.now{filter:drop-shadow(0 0 5px var(--accent)) drop-shadow(0 0 3px var(--accent))}
 /* Ear quizzes: Mystery Melodies, Happy or Sad */
 .quizchoices{flex:1}
 .quizchoices .choice{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6vh;line-height:1.1}
@@ -523,7 +525,8 @@ body.midi #mic:not(.on){opacity:.6}
     <div class="cat c0"><button class="cath" data-cat="0">🗺️</button>
       <button class="btn blue tile big" data-go="map"><span class="em">🗺️</span>Lessons<span class="tbadge" id="learnLevel"></span></button></div>
     <div class="cat c1"><button class="cath" data-cat="1">👀</button>
-      <button class="btn orange tile" data-pick="rush"><span class="em">🥚</span>Egg Rush</button></div>
+      <button class="btn orange tile" data-pick="rush"><span class="em">🥚</span>Egg Rush</button>
+      <button class="btn green tile" data-go="freshes"><span class="em">📜</span>Fresh Tunes</button></div>
     <div class="cat c2"><button class="cath" data-cat="2">👂</button>
       <button class="btn green tile" data-go="ears"><span class="em">👂</span>Find it</button>
       <button class="btn violet tile" data-quiz="mystery"><span class="em">🎁</span>Mystery Melodies</button>
@@ -702,6 +705,24 @@ body.midi #mic:not(.on){opacity:.6}
       <div class="tools"><button class="btn round big green" id="beatHear" aria-label="Hear it again">👂</button></div>
     </div>
     <div class="kbwrap"><div id="beatKb"></div></div>
+  </div>
+</section>
+
+<section id="freshes" class="screen">
+  <div class="topbar"><button class="btn round" data-go="learn" aria-label="Back">⬅️</button><h2>📜 Fresh Tunes</h2></div>
+  <div class="reclist" id="freshCards"></div>
+</section>
+
+<section id="fresh" class="screen">
+  <div class="topbar"><button class="btn round" data-go="freshes" aria-label="Back">⬅️</button><h2 id="freshTitle">📜</h2><div class="stepdots" id="freshDots"></div></div>
+  <div class="stage">
+    <div class="staffcard static" id="freshStaff"><div class="scroller"><div class="strip"></div></div></div>
+    <div class="coach">
+      <div data-chicken id="freshChicken"></div>
+      <div class="bubble" id="freshBubble"></div>
+      <div class="spacer"></div>
+    </div>
+    <div class="kbwrap"><div id="freshKb"></div></div>
   </div>
 </section>
 
