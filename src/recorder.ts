@@ -5,42 +5,64 @@ import { BEATS, letterOf, isBlack } from './music.ts';
 import type { RecNote, Recording, NoteSource } from './types.ts';
 
 export const MAX_MS = 5 * 60 * 1000; // a recording stops by itself after 5 minutes
-const MIC_HOLD = 1500; // the mic hears a key go down but not up: a heard note rings until the next one, at most this long
+const MIC_HOLD = 4000; // a heard note whose end the mic missed rings until the next one, at most this long
+const QUICK_TAP = 350; // a tap on the glass is always quick: a key let go sooner than this rings until the next note
 const LEAD = 300; // silence kept before the first note
 
 // A note is [start ms, midi, length ms, velocity 0..1]
+// when: performance.now()-clock time the key was struck or let go (inputs stamp it; see src/timing.ts),
+// so a note heard a moment late by the mic still gets its real start and length.
 export function makeRecorder(now = () => performance.now()) {
   let t0: number | null = null;
   let notes: RecNote[] = [];
   let open = new Map<number, RecNote>(); // midi -> note still held down
-  let micNote: RecNote | null = null;
-  const t = () => now() - t0!;
+  let loose: RecNote[] = []; // heard notes and quick taps: they last until the next note (or until the mic hears them stop)
+  const taps = new WeakSet<RecNote>();
+  const t = (when?: number) => Math.max(0, (when ?? now()) - t0!);
   const close = (n: RecNote, at: number, cap = Infinity) => { n[2] = Math.max(40, Math.min(at - n[0], cap)); };
   return {
     get on() { return t0 !== null; },
     get ms() { return t0 === null ? 0 : t(); },
     get count() { return notes.length; },
-    start() { t0 = now(); notes = []; open = new Map(); micNote = null; },
-    down(m: number, source: NoteSource, vel = 0.8) {
+    start() { t0 = now(); notes = []; open = new Map(); loose = []; },
+    down(m: number, source: NoteSource, vel = 0.8, when?: number) {
       if (t0 === null) return;
-      const at = t();
-      if (micNote) { close(micNote, at, MIC_HOLD); micNote = null; }
+      const at = t(when);
+      loose.forEach((n) => close(n, at, MIC_HOLD));
+      loose = [];
       if (open.has(m)) close(open.get(m)!, at);
       const n: RecNote = [at, m, 0, Math.round(Math.max(0.05, Math.min(1, vel)) * 100) / 100];
       notes.push(n);
-      if (source === 'mic') micNote = n; else open.set(m, n);
+      if (source === 'mic') loose.push(n); else open.set(m, n);
+      if (source === 'tap') taps.add(n);
     },
-    up(m: number) {
-      if (t0 === null || !open.has(m)) return;
-      close(open.get(m)!, t());
+    // a key let go, or (mic: true) the mic heard the note stop
+    up(m: number, when?: number, mic = false) {
+      if (t0 === null) return;
+      const at = t(when);
+      if (mic) {
+        const n = loose.find((x) => x[1] === m);
+        if (n) { close(n, at); loose = loose.filter((x) => x !== n); }
+        return;
+      }
+      const n = open.get(m);
+      if (!n) return;
       open.delete(m);
+      if (taps.has(n) && at - n[0] < QUICK_TAP) loose.push(n);
+      else close(n, at);
+    },
+    // The notes so far (for drawing while playing): keys still down and notes still ringing last until now.
+    peek(): RecNote[] {
+      if (t0 === null) return [];
+      const at = t();
+      return notes.map(([s0, m, d, v]): RecNote => [s0, m, d || Math.max(40, Math.min(at - s0, loose.some((x) => x[0] === s0 && x[1] === m) ? MIC_HOLD : Infinity)), v]);
     },
     // Ends the recording and returns its notes, starting LEAD ms in (or null if nothing was played).
     // Keys still down (the last note of a song, say) ring a little longer than the stop.
     stop(): RecNote[] | null {
       if (t0 === null) return null;
       const at = t();
-      if (micNote) close(micNote, Infinity, MIC_HOLD);
+      loose.forEach((n) => close(n, Infinity, MIC_HOLD));
       open.forEach((n) => close(n, Math.max(at, n[0] + 600), 2500));
       t0 = null;
       if (!notes.length) return null;
@@ -62,7 +84,7 @@ export function guessTempo(notes: RecNote[]): number {
   return Math.round(Math.max(50, Math.min(150, 60000 / gaps[Math.floor((gaps.length - 1) / 2)])));
 }
 
-const VALUES: [number, string][] = [[0.5, '8'], [1, 'q'], [1.5, 'qd'], [2, 'h'], [3, 'hd'], [4, 'w']];
+const VALUES: [number, string][] = [[0.25, '16'], [0.5, '8'], [1, 'q'], [1.5, 'qd'], [2, 'h'], [3, 'hd'], [4, 'w']];
 // the written length closest to a number of beats
 export function noteValue(beats: number): string {
   let best = VALUES[0];

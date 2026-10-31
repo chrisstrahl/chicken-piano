@@ -6,7 +6,8 @@
 // Nest data is in src/games.js.
 import { COLORS, letterOf, nameOf, parse } from './music.js';
 import { playNote, say, stopTalking, cluck, peck, startBeat } from './audio.js';
-import { BeatJudge, barBeats, MIC_LAG, timeline } from './beat.js';
+import { BeatJudge, barBeats, timeline } from './beat.js';
+import { struckAt } from './timing.js';
 import { expectNote } from './mic.js';
 import { drawStaff } from './staff.js';
 import { makeKeyboard } from './keyboard.js';
@@ -273,7 +274,7 @@ export function setupGames(app: GamesApp) {
   function beatInput(m: number, source: NoteSource) {
     const j = B.judge;
     if (!j || B.done) return;
-    const at = performance.now() - (source === 'mic' ? MIC_LAG : 0);
+    const at = struckAt(source);
     // Echo Game: any key is the chicken's C
     const r = j.input(B.kind === 'cluck' ? 72 : m, at);
     if (!r) {

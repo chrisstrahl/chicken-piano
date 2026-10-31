@@ -2,6 +2,8 @@
 // Works in Chrome/Edge/Firefox on Android, Chromebooks, Windows and Mac. Not on iPad or iPhone:
 // Safari (and every iOS browser, which all use Safari's engine) has no Web MIDI.
 
+import { markMidi } from './timing.js';
+
 // One key going down or up. m = MIDI note number (60 = middle C), vel = 0..1
 export type MidiKey = { type: 'on' | 'off'; m: number; vel: number };
 export type MidiHandlers = {
@@ -23,6 +25,8 @@ export function parseMidi(data: ArrayLike<number> | null | undefined): MidiKey |
   return null;
 }
 
+// Control change 64 is the sustain pedal (value 64 and up = down).
+export const isPedal = (d: Uint8Array | null | undefined): boolean => !!d && d.length >= 3 && (d[0] & 0xf0) === 0xb0 && d[1] === 64;
 export const midiSupported = (nav: MidiNavigator = globalThis.navigator): boolean => !!(nav && nav.requestMIDIAccess);
 
 // Has this site already been allowed to use MIDI? Then we can connect without asking (no prompt).
@@ -38,20 +42,37 @@ export async function midiAllowed(nav: NonNullable<MidiNavigator> = globalThis.n
 export async function startMidi({ onDown, onUp, onChange }: MidiHandlers, nav: NonNullable<MidiNavigator> = globalThis.navigator): Promise<MIDIAccess> {
   const access = await nav.requestMIDIAccess();
   const held = new Set<number>();
+  // sustain pedal: keys let go while it is down keep ringing, so they count as held until it comes up
+  const ringing = new Set<number>();
+  let pedal = false;
   const hook = () => {
     const names: string[] = [];
     access.inputs.forEach((input) => {
       if (input.state === 'disconnected') return;
       names.push(input.name || 'Keyboard');
       input.onmidimessage = (e) => {
+        if (isPedal(e.data)) {
+          pedal = e.data![2] >= 64;
+          // pedal up: every key let go while it was down stops now
+          if (!pedal) { ringing.forEach((m) => { if (!held.has(m)) onUp(m); }); ringing.clear(); }
+          return;
+        }
         const ev = parseMidi(e.data);
         if (!ev) return;
-        if (ev.type === 'on') { held.add(ev.m); onDown(ev.m, ev.vel); }
-        else if (held.delete(ev.m)) onUp(ev.m);
+        if (ev.type === 'on') {
+          markMidi(e.timeStamp);
+          // the same key again while the pedal kept it ringing: that note ends here
+          if (ringing.delete(ev.m)) onUp(ev.m);
+          held.add(ev.m);
+          onDown(ev.m, ev.vel);
+        } else if (held.delete(ev.m)) {
+          if (pedal) ringing.add(ev.m);
+          else onUp(ev.m);
+        }
       };
     });
     // unplugged mid-note: let go of anything still held so nothing sticks
-    if (!names.length) { held.forEach((m) => onUp(m)); held.clear(); }
+    if (!names.length) { new Set([...held, ...ringing]).forEach((m) => onUp(m)); held.clear(); ringing.clear(); pedal = false; }
     onChange(names);
   };
   access.onstatechange = hook;

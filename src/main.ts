@@ -1,8 +1,9 @@
 import { SONGS, LEVELS, PRAISE, COLORS, BEATS, letterOf, nameOf, isBlack, parse, songById, songsForLevel, setUserSongs, userSongs } from './music.js';
 import { coop, openSongsAsk, letsPlay, oopsFind, songDone, lessonDone, noteWords, whoPlays, pickChicken, hello, removeAsk, originalName, dayEgg, dayTalk, SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN, RHYTHM_TURN, RHYTHM_AGAIN, RHYTHM_GOOD, RHYTHM_OK, RHYTHM_HOLD, RHYTHM_SHH, LEARN_CATS, SPOT_START, SPOT_FASTER, SPOT_AGAIN, SPOT_FIXED } from './lines.js';
 import { startAudio, playNote, noteDown, noteUp, playSequence, cluck, peck, bawk, silly, say, stopTalking, preloadVoice, startBeat } from './audio.js';
-import { BeatJudge, phrases, SPEEDS, barBeats, peckEvery, MIC_LAG, timeline } from './beat.js';
-import { startMic, stopMic, micOn, micSupported, expectNote, micHealth, lastHeardAt } from './mic.js';
+import { BeatJudge, phrases, SPEEDS, barBeats, peckEvery, timeline } from './beat.js';
+import { struckAt, markTap, setLag } from './timing.js';
+import { startMic, stopMic, micOn, micSupported, expectNote, micHealth } from './mic.js';
 import { startMidi, midiSupported, midiAllowed } from './midi.js';
 import { drawStaff, focusX } from './staff.js';
 import { makeKeyboard, LOW, HIGH } from './keyboard.js';
@@ -17,7 +18,7 @@ import { setupParent } from './parent.js';
 import { setupWrite } from './write.js';
 import { listMySongs, deletePlayerSongs } from './mysongs.js';
 import { players, playerId, AVATARS, MAX_PLAYERS, avatarOf } from './profiles.js';
-import { deletePlayerRecordings, listRecordings } from './recorder.js';
+import { deletePlayerRecordings, listRecordings, makeRecorder, toTokens, guessTempo } from './recorder.js';
 import { CHICKEN, lookOf, avatarChicken } from './chicken.js';
 import { startOffline } from './offline.js';
 import { addWin, streak, todayWins, calendar, DAILY_GOAL } from './streaks.js';
@@ -43,7 +44,7 @@ type SongEvent = { beat: number; items: { part: Part; i: number; n: Sounding }[]
 type DayWin = ReturnType<typeof addWin>;
 // handles for the browser tests (test/*.cjs)
 declare global {
-  interface Window { __cp: { progress: Progress } & Record<string, unknown>; __cpMs: unknown; __cpHeard: unknown; __cpFree: unknown; __cpMidi: unknown }
+  interface Window { __cp: { progress: Progress } & Record<string, unknown>; __cpMs: unknown; __cpHeard: unknown; __cpFree: unknown; __cpFreeTokens: unknown; __cpMidi: unknown }
 }
 type PartyOptions = { again: () => void; next: () => void; words: string | string[]; chick?: boolean; rec?: { id: string } | null; day?: DayWin | null };
 
@@ -162,7 +163,7 @@ function keyUp(m: number) {
 // vel: 0..1, only known for MIDI.
 function noteIn(m: number, source: NoteSource, vel?: number) {
   if (source === 'mic' && midiNames.length) return; // a plugged-in keyboard is exact; don't let the mic second-guess it
-  recs.down(m, source, vel);
+  recs.down(m, source, vel, struckAt(source, true));
   if (source === 'tap') noteDown(m);
   const hd = $('#mic .heard');
   if (source === 'mic') heardCount++;
@@ -193,9 +194,9 @@ micBtn.addEventListener('click', async () => {
   try {
     await startMic({
       onNote: (m) => noteIn(m, 'mic'),
+      onEnd: (m, at) => { recs.up(m, at, true); micEnd && micEnd(m, at); },
       onLevel: (v, quietMs) => {
         $('#mic .lvl i').style.width = Math.round(v * 100) + '%';
-        freeLevel && freeLevel(v);
         // nothing loud enough for 20s while waiting for notes: the tablet is probably too far from the piano
         if (quietMs! > 20000 && ['play', 'lesson'].includes(current) && performance.now() - lastQuietTip > 120000) {
           lastQuietTip = performance.now();
@@ -906,7 +907,7 @@ function beatLoop() {
 function beatInput(m: number, source: NoteSource) {
   const j = P.judge;
   if (!j) return; // still counting in
-  const r = j.input(m, performance.now() - (source === 'mic' ? MIC_LAG : 0));
+  const r = j.input(m, struckAt(source));
   if (!r) return;
   if (r.grade === 'wrong') { playKb.flash(m, 'bad', 400); act(playChicken(), 'oops'); return; }
   const i = j.items[r.k].i;
@@ -1096,7 +1097,7 @@ function spotLoop() {
 function spotInput(m: number, source: NoteSource) {
   const j = P.judge, sp = spot;
   if (!j || !sp) return;
-  const r = j.input(m, performance.now() - (source === 'mic' ? MIC_LAG : 0));
+  const r = j.input(m, struckAt(source));
   if (!r) return;
   if (r.grade === 'wrong') { playKb.flash(m, 'bad', 400); act(playChicken(), 'oops'); return; }
   markDone(sp.a + j.items[r.k].i);
@@ -1778,7 +1779,7 @@ function rhythmInput(m: number, source: NoteSource) {
   const s = stepObj() as Step<'rhythm'>;
   const j = L.judge;
   if (!j || L.done) return; // listening or counting in
-  const at = performance.now() - (source === 'mic' ? MIC_LAG : 0);
+  const at = struckAt(source);
   const r = j.input(m, at);
   if (!r) {
     // a key during a rest
@@ -1791,7 +1792,7 @@ function rhythmInput(m: number, source: NoteSource) {
   if (r.grade === 'wrong') { lessonKb.flash(m, 'bad', 400); act(lessonChicken(), 'oops'); return; }
   const it = j.items[r.k];
   lessonKb.flash(m, 'good', 300);
-  L.pressed![m] = { t: performance.now(), len: holdBeats(j.notes, it.i) };
+  L.pressed![m] = { t: struckAt(source, true), len: holdBeats(j.notes, it.i) };
   rhythmMarks(j);
   bubble($('#lessonBubble'), r.grade === 'good' ? '🎯' : r.grade === 'early' ? '🐇 👍' : '🐢 👍');
   if (r.grade === 'good') act(lessonChicken(), 'happy', 400);
@@ -1810,96 +1811,118 @@ function lessonRelease(m: number) {
 /* ---------- FREE PLAY ---------- */
 const freeKb = makeKeyboard($('#freeKb'), (m) => noteIn(m, 'tap'), keyUp);
 freeKb.setRange(48, 76);
-type FreeNote = Sounding & { d: string };
-const F: {
-  notes: FreeNote[]; down: Record<number, { n: FreeNote; t: number }>; last?: { ns: FreeNote[]; t: number } | null;
-  ring?: { ns: FreeNote[]; t: number } | null; lv: number[];
-} = { notes: [], down: {}, lv: [] };
-// Note lengths in free play, counted at 90 beats a minute. Short values come from how soon the NEXT note starts
-// (a tap is always quick, so how long a finger rests on the glass says nothing about eighths); long values come
-// from how long the key is held. Held boundaries sit a bit below the halfway points (on a log scale), because
-// children let go early: when in doubt, the longer note wins. The sixteenth/eighth boundary sits at the
-// halfway point (235 ms), since heard notes are only timed to within a few tens of ms.
-const FREE_BEAT = 60000 / 90;
-const heldLength = (ms: number) => { const b = ms / FREE_BEAT; return b < 1.3 ? 'q' : b < 2.3 ? 'h' : b < 3.2 ? 'hd' : 'w'; };
-const gapLength = (ms: number) => { const b = ms / FREE_BEAT; return b < 0.35 ? '16' : b < 0.6 ? '8' : 'q'; };
-// Heard notes (microphone) have no key-up: they last until their sound stops, or until the next note starts.
-// The sound has stopped when the meter falls near the room's noise, or drops fast (the key was let go and
-// the damper landed; a held piano note fades much more slowly than that).
-const QUIET = 0.27; // meter level of about 2.5x the room noise
-const DROP = 0.25; // meter fall within about 150 ms
-const ringLength = (ms: number) => { const b = ms / FREE_BEAT; return b < 0.6 ? gapLength(ms) : heldLength(ms); };
-let freeLevel: ((v: number) => void) | null = null;
-function endRing(now: number, stillSounding: boolean) {
-  const r = F.ring;
-  if (!r) return;
-  F.ring = null;
-  const len = stillSounding ? ringLength(now - r.t) : heldLength(now - r.t);
-  r.ns.forEach((n) => { if (F.notes.includes(n)) n.d = len; });
-  drawFree();
-}
+// Free play draws what is played the way a saved recording is drawn (src/recorder.ts): every note keeps
+// its real start and length (taps, USB keys and heard notes are all timed from the strike, and the mic
+// hears a note stop), the beat is counted from the playing (or is the metronome's when it's on), and a
+// pause becomes a rest.
+const F: { rec: ReturnType<typeof makeRecorder>; notes: Note[]; drawn: string; iv?: ReturnType<typeof setInterval> } = { rec: makeRecorder(), notes: [], drawn: '' };
+const FREE_SHOW = 8; // notes (and rests) on the staff
 function drawFree() {
+  const all = F.rec.peek();
+  const recent = all.slice(-24);
+  const { tokens } = toTokens(recent, freeBeat ? FREE_BPM : guessTempo(all.slice(-40)));
+  if (tokens === F.drawn) return;
+  F.drawn = tokens;
+  const notes = parse(tokens);
+  // start the staff on a note, not a rest
+  let from = Math.max(0, notes.length - FREE_SHOW);
+  while (from < notes.length - 1 && notes[from].r) from++;
+  F.notes = notes.slice(from);
   // low notes read better on the bass staff
-  const low = F.notes.filter((n) => n.m < 60).length > F.notes.length / 2;
+  const ns = F.notes.filter((n) => !n.r);
+  const low = ns.filter((n) => n.m < 60).length > ns.length / 2;
   drawStaff($('#freeStaff'), F.notes, { minWidth: FREE_W, clef: low ? 'bass' : 'treble', pack: true });
 }
+let micEnd: ((m: number, at: number) => void) | null = null;
 const FREE_W = 560; // room for 8 notes, so the staff stays the same size as it fills
-// Free play metronome: pecks at free play's own 90 beats a minute, so held notes come out the right length.
+// Free play metronome: pecks at 90 beats a minute, and then the notes are counted in that beat.
+const FREE_BPM = 90;
 let freeBeat: ReturnType<typeof startBeat> | null = null;
 function stopFreeBeat() { if (freeBeat) freeBeat.stop(); freeBeat = null; $('#btnFreeBeat').classList.remove('on'); }
+// Grown-ups: hold 🥁 for 2 s for the tap-along check (calibrate below).
+let freeBeatHeld = false;
+{
+  const b = $('#btnFreeBeat');
+  let t: ReturnType<typeof setTimeout> | null = null;
+  b.addEventListener('pointerdown', () => { freeBeatHeld = false; t = setTimeout(() => { freeBeatHeld = true; calibrate(); }, 2000); });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) => b.addEventListener(ev, () => clearTimeout(t!)));
+}
 $('#btnFreeBeat').addEventListener('click', () => {
+  if (freeBeatHeld) return;
   if (freeBeat) return stopFreeBeat();
   $('#btnFreeBeat').classList.add('on');
-  freeBeat = startBeat({ bpm: 90, onBeat: () => act($('#freeChicken'), 'peck', 250) });
+  freeBeat = startBeat({ bpm: FREE_BPM, onBeat: () => act($('#freeChicken'), 'peck', 250) });
 });
+// Tap-along check: the chicken pecks 12 beats and a grown-up plays any key on each one, with the input the
+// kids use (screen, microphone or USB keyboard). The usual gap between peck and key is this device's delay
+// for that input (speaker, mic, keyboard app), and every game played in time takes it off from then on.
+const CAL_N = 12, CAL_BPM = 80;
+function calibrate() {
+  stopFreeBeat();
+  startAudio();
+  const g = gen;
+  const ov = document.createElement('div');
+  ov.className = 'calib';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2vh;background:rgba(255,248,225,.96);font-size:min(8vw,8vh);touch-action:none;user-select:none';
+  ov.innerHTML = `<div class="chicken" style="font-size:2.4em">🐔</div><div>🥁 👆 🎹 🎤</div><div class="dots" style="letter-spacing:.15em;font-size:.6em">${'○'.repeat(CAL_N)}</div>`;
+  document.body.appendChild(ov);
+  const hen = ov.querySelector('.chicken'), dots = ov.querySelector<HTMLElement>('.dots')!;
+  const hits: { t: number; source: NoteSource }[] = [];
+  const prev = { onNote, onRelease };
+  onNote = (_m, source) => hits.push({ t: struckAt(source, true), source });
+  onRelease = null;
+  ov.addEventListener('pointerdown', (e) => { e.preventDefault(); hits.push({ t: e.timeStamp, source: 'tap' }); });
+  const beat = startBeat({
+    bpm: CAL_BPM,
+    accent: (k) => k % 4 === 0,
+    onBeat: (k) => {
+      act(hen, 'peck', 250);
+      dots.textContent = '●'.repeat(Math.min(k + 1, CAL_N)) + '○'.repeat(Math.max(0, CAL_N - k - 1));
+      if (k === CAL_N) finish();
+    },
+  });
+  function finish() {
+    beat.stop();
+    ov.remove();
+    if (g === gen) { onNote = prev.onNote; onRelease = prev.onRelease; }
+    const r = calibration(hits, beat.t0, beat.gap);
+    if (!r) { toast('🤷 🥁 👆 🔁', 5000); return; }
+    setLag(r.source, r.lag);
+    toast(`✅ ${{ tap: '👆', mic: '🎤', midi: '🎹' }[r.source]} ${r.lag >= 0 ? '+' : ''}${r.lag} ms`, 6000);
+  }
+}
+// The usual (median) gap between peck and key, for the input used most; the first two pecks are for listening.
+function calibration(hits: { t: number; source: NoteSource }[], t0: number, gap: number): { source: NoteSource; lag: number } | null {
+  const by: Partial<Record<NoteSource, number[]>> = {};
+  hits.forEach((h) => {
+    const k = Math.round((h.t - t0) / gap);
+    const d = h.t - (t0 + k * gap);
+    if (k >= 2 && k < CAL_N && Math.abs(d) < gap * 0.4) (by[h.source] = by[h.source] || []).push(d);
+  });
+  const best = (Object.entries(by) as [NoteSource, number[]][]).sort((a, b) => b[1].length - a[1].length)[0];
+  if (!best || best[1].length < 5) return null;
+  const xs = best[1].sort((a, b) => a - b);
+  return { source: best[0], lag: Math.round(xs[Math.floor(xs.length / 2)]) };
+}
 function openFree() {
-  leaveHooks.push(stopFreeBeat, () => { freeLevel = null; F.ring = null; });
+  leaveHooks.push(stopFreeBeat, () => { micEnd = null; clearInterval(F.iv); F.rec.stop(); });
+  F.rec.start();
   F.notes = [];
+  F.drawn = '';
   drawStaff($('#freeStaff'), [], { minWidth: FREE_W, pack: true });
   bubble($('#freeBubble'), '🎹 🎤 ❓');
-  F.down = {};
-  F.last = null;
   onNote = (m, source) => {
-    const n = noteOf(m);
-    // a heard note is recognized a little after its key was struck; time it from the strike
-    const now = source === 'mic' ? Math.min(performance.now(), Math.max(lastHeardAt(), F.last ? F.last.t : 0)) : performance.now();
-    // Notes within 60 ms of each other are one chord. The chord before this one was short if this one came
-    // quickly (and it wasn't held longer than a beat).
-    const prev = F.last;
-    // a heard note that is still ringing lasted until this one
-    if (F.ring && now - F.ring.t >= 60) endRing(now, true);
-    if (prev && now - prev.t < 60) prev.ns.push(n);
-    else {
-      if (prev) prev.ns.forEach((p) => { if (p.d === 'q' && F.notes.includes(p)) p.d = gapLength(now - prev.t); });
-      F.last = { ns: [n], t: now };
-    }
-    F.notes.push(n);
-    if (F.notes.length > 8) F.notes.shift();
-    // tapped (or USB keyboard) keys start as quarter notes and get their real length when the finger lifts
-    if (source !== 'mic') F.down[m] = { n, t: now };
-    else if (F.ring && now - F.ring.t < 60) F.ring.ns.push(n);
-    else { F.ring = { ns: [n], t: now }; F.lv = []; }
+    F.rec.down(m, source, 0.8, struckAt(source, true));
     drawFree();
     bubble($('#freeBubble'), bigLetter(m));
     freeKb.flash(m, 'hl', 600);
     act($('#freeChicken'), Math.random() < 0.3 ? 'happy' : 'peck', 500);
   };
-  freeLevel = (v) => {
-    const r = F.ring;
-    if (!r) return;
-    F.lv.push(v);
-    if (F.lv.length > 4) F.lv.shift();
-    const now = performance.now();
-    if (now - r.t > 150 && (v < QUIET || Math.max(...F.lv) - v > DROP)) endRing(now, false);
-  };
-  onRelease = (m) => {
-    const d = F.down[m];
-    if (!d) return;
-    delete F.down[m];
-    const len = heldLength(performance.now() - d.t);
-    // only lengthen: a quick next note may already have made it shorter
-    if (len !== 'q' && F.notes.includes(d.n)) { d.n.d = len; drawFree(); }
-  };
+  onRelease = (m) => { F.rec.up(m, performance.now()); drawFree(); };
+  micEnd = (m, at) => { F.rec.up(m, at, true); drawFree(); };
+  // a note still sounding grows on the staff
+  clearInterval(F.iv);
+  F.iv = setInterval(drawFree, 300);
 }
 
 /* ---------- computer keyboard (for grown-ups testing on a laptop) ---------- */
@@ -1908,7 +1931,7 @@ const typing = (e: Event) => e.target && (e.target as Element).tagName === 'INPU
 document.addEventListener('keydown', (e) => {
   if (e.repeat || e.metaKey || e.ctrlKey || typing(e)) return;
   const m = KEYMAP[e.key.toLowerCase()];
-  if (m) { startAudio(); [playKb, lessonKb, freeKb].forEach((kb) => kb.flash(m, 'down', 180)); noteIn(m, 'tap'); }
+  if (m) { markTap(e.timeStamp); startAudio(); [playKb, lessonKb, freeKb].forEach((kb) => kb.flash(m, 'down', 180)); noteIn(m, 'tap'); }
 });
 document.addEventListener('keyup', (e) => { if (typing(e)) return; const m = KEYMAP[e.key.toLowerCase()]; if (m) keyUp(m); });
 
@@ -1916,6 +1939,7 @@ window.__cp = { recs, players, usePlayer, say, show, openSong, openLesson, noteI
 window.__cpMs = ms;
 window.__cpHeard = () => heardCount;
 window.__cpFree = () => F.notes;
+window.__cpFreeTokens = () => toTokens(F.rec.peek(), freeBeat ? FREE_BPM : guessTempo(F.rec.peek().slice(-40))).tokens;
 window.__cpMidi = () => ({ names: midiNames, started: midiStarted, count: midiCount });
 lookLikePlayer();
 renderHome();
