@@ -279,6 +279,22 @@ export function stopTalking() {
 // bpm: quarter beats a minute; every: quarter beats between pecks; accent(k): true for a louder peck
 // onBeat(k, ms): runs at each peck (for the bouncing chicken). Returns { t0, stop } where t0 is the
 // performance.now() time of peck 0.
+// performance.now() time at which audio-clock time a (seconds) comes out of the speaker.
+// getOutputTimestamp() pairs the two clocks at the speaker itself, so it includes the output delay; iPad
+// Safari has it since iOS 14.5, but only reports outputLatency since 18.4 (before that it read as 0, so the
+// beat looked and was judged as if it came out earlier than it did). Fallback: the delays it does report.
+export function heardAt(ctx: AudioContext, a: number): number {
+  const now = performance.now();
+  const guess = now + (a - ctx.currentTime + (ctx.outputLatency || ctx.baseLatency || 0)) * 1000;
+  try {
+    const ts = ctx.getOutputTimestamp && ctx.getOutputTimestamp();
+    if (ts && ts.performanceTime && ts.contextTime) {
+      const t = ts.performanceTime + (a - ts.contextTime) * 1000;
+      if (Math.abs(t - guess) < 400) return t;
+    }
+  } catch (e) {}
+  return guess;
+}
 let peckBuf: AudioBuffer | null = null;
 type BeatOptions = { bpm: number; every?: number; accent?: (k: number) => boolean; onBeat?: (k: number, ms: number) => void; sound?: boolean; lead?: number };
 export function startBeat({ bpm, every = 1, accent = (k) => k % 4 === 0, onBeat, sound = true, lead = 0.25 }: BeatOptions) {
@@ -291,8 +307,8 @@ export function startBeat({ bpm, every = 1, accent = (k) => k % 4 === 0, onBeat,
   }
   const gap = (60 / bpm) * every;
   const a0 = ctx.currentTime + lead;
-  // performance.now() time when peck 0 is heard (the speaker's own delay included where the browser knows it)
-  const p0 = performance.now() + (lead + (ctx.outputLatency || 0)) * 1000;
+  // performance.now() time when peck 0 comes out of the speaker
+  const p0 = heardAt(ctx, a0);
   let k = 0;
   const timers: ReturnType<typeof setTimeout>[] = [];
   const pump = () => {

@@ -269,8 +269,9 @@ export function setupRecordings(app: RecordingsApp) {
   return {
     button, finish, openRec, R,
     get on() { return recorder.on; },
-    down: (m: number, source: NoteSource, vel?: number) => { recorder.down(m, source, vel); },
-    up: (m: number) => recorder.up(m),
+    // when: performance.now() time the key was struck / let go (src/timing.ts); mic: the mic heard the note stop
+    down: (m: number, source: NoteSource, vel?: number, when?: number) => { recorder.down(m, source, vel, when); },
+    up: (m: number, when?: number, mic = false) => recorder.up(m, when, mic),
     screens: { recs: renderShelf },
     leave(to: string) { if (to !== 'rec') stopPlay(); if (recorder.on) { finish({ open: false }); app.toast('🎙️ ✅'); } },
   };

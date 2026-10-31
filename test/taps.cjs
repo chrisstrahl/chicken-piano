@@ -26,8 +26,8 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
   // [hold, then wait before the next note] in ms
   const plan = [[50, 30], [80, 250], [120, 480], [1200, 150], [2400, 150], [1800, 150], [100, 300]];
   for (const [hold, gap] of plan) { await page.mouse.move(fx, fy); await page.mouse.down(); await page.waitForTimeout(hold); await page.mouse.up(); await page.waitForTimeout(gap); }
-  const want = '16 8 q h w hd q';
-  const lens = await page.evaluate(() => window.__cpFree().map((n) => n.d).join(' '));
+  const want = '16 8 q h w hd'; // the last note is still ringing
+  const lens = await page.evaluate(() => window.__cpFree().filter((n) => !n.r).slice(0, 6).map((n) => n.d).join(' '));
   console.log(`${lens === want ? 'PASS' : 'FAIL'} note lengths -> ${lens} (want ${want})`);
   await page.screenshot({ path: (process.argv[2] || '.') + '/free-lengths.png' });
   await browser.close();

@@ -21,8 +21,23 @@ check(!r.on, 'stopped');
 check(eq(notes[0], [300, 60, 400, 0.5]), `first note starts 300ms in with its held length (${notes[0]})`);
 check(notes[1][0] === 800 && notes[1][2] === 1000 && notes[2][1] === 67, 'chord notes keep their own timing');
 check(notes[3][2] === 300, `a mic note rings until the next one (${notes[3][2]})`);
-check(notes[4][2] === 1500, `the last mic note rings at most 1.5s (${notes[4][2]})`);
-check(lengthMs(notes) === notes[4][0] + 1500, 'length');
+check(notes[4][2] === 4000, `a mic note whose end wasn't heard rings at most 4s (${notes[4][2]})`);
+check(lengthMs(notes) === notes[4][0] + 4000, 'length');
+
+// strike times, heard note ends, quick taps
+r.start();
+now += 500; r.down(60, 'mic', 0.8, now - 150); // heard 150 ms after the strike
+now += 400; r.up(60, now, true); // the mic heard it stop
+now += 600; r.down(62, 'tap'); now += 100; r.up(62); // a quick tap...
+now += 700; r.down(64, 'midi'); now += 200; r.up(64); // ...rings until the next note; a USB key keeps its real length
+now += 300;
+const t2 = r.stop();
+check(t2[0][0] === 300 && t2[0][2] === 550, `a heard note starts at its strike and ends when the mic hears it stop (${t2[0]})`);
+check(t2[1][0] === 1450 && t2[1][2] === 800, `a quick tap lasts until the next note (${t2[1]})`);
+check(t2[2][2] === 200, `a USB key keeps its own length (${t2[2]})`);
+const peekR = makeRecorder(() => now);
+peekR.start(); peekR.down(60, 'midi'); now += 700;
+check(peekR.peek()[0][2] === 700, 'peek: a key still down lasts until now');
 
 r.start(); now += 2000;
 check(r.stop() === null, 'an empty recording is null');

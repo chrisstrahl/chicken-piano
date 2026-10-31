@@ -62,14 +62,15 @@ const btn = (page) => page.evaluate(() => { const b = document.querySelector('#m
   for (const ms of [200, 600, 1500, 3200]) { await page.evaluate(() => __fake.on(67)); await page.waitForTimeout(ms); await page.evaluate(() => __fake.off(67)); await page.waitForTimeout(150); }
   const lens = await page.evaluate(() => window.__cpFree().map((n) => n.d).join(' '));
   check(lens === '8 q h w', `MIDI held lengths -> ${lens} (want 8 q h w)`);
-  // a chord: three keys at once arrive as three notes
+  // a chord: three keys at once are one chord
   await page.evaluate(() => { __fake.on(60); __fake.on(64); __fake.on(67); });
   await page.waitForTimeout(100);
-  check(await page.evaluate(() => window.__cpFree().slice(-3).map((n) => n.m).join(' ')) === '60 64 67', 'chord C E G -> three notes');
+  check(await page.evaluate(() => window.__cpFree().slice(-1)[0].keys.map((k) => k.m).join(' ')) === '60 64 67', 'chord C E G -> one chord of three keys');
   await page.evaluate(() => { __fake.unplug(); });
   await page.waitForTimeout(100);
   check(await btn(page) === 'dim', 'unplugged -> 🎹 dim');
-  check(await page.evaluate(() => window.__cpFree().slice(-3).map((n) => n.d).join(' ')) === 'q q q', 'unplugged mid-chord -> held notes are let go (a short chord stays a quarter)');
+  const d1 = await page.evaluate(() => window.__cpFreeTokens()); await page.waitForTimeout(1500);
+  check(await page.evaluate(() => window.__cpFreeTokens()) === d1, `unplugged mid-chord -> held notes are let go, the chord stops growing (${d1.split(' ').slice(-1)})`);
   await page.evaluate(() => window.__cp.noteIn(65, 'mic'));
   check(await page.evaluate(() => window.__cpFree().slice(-1)[0].m) === 65, 'unplugged -> mic notes count again');
   await page.evaluate(() => __fake.plug());

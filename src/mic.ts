@@ -8,15 +8,15 @@ import { Tone, onBusy, onPeck } from './audio.js';
 import { peckMask } from './beat.js';
 
 const SIZE = 4096;
-type MicHandlers = { onNote: (m: number) => void; onLevel: (level: number, sinceLoud?: number) => void };
+type MicHandlers = { onNote: (m: number) => void; onLevel: (level: number, sinceLoud?: number) => void; onEnd?: (m: number, at: number) => void };
 const state: {
   open: boolean; listening: boolean; opening: Promise<void> | null; stream: MediaStream | null;
   source: MediaStreamAudioSourceNode | null; analyser: InstanceType<typeof Tone.Analyser> | null; listener: NoteListener | null;
   timer: ReturnType<typeof setInterval> | undefined; ignoreUntil: number; expectPc: number | null;
-  onNote: MicHandlers['onNote'] | null; onLevel: MicHandlers['onLevel'] | null; pecks: number[]; lastLoud: number;
+  onNote: MicHandlers['onNote'] | null; onLevel: MicHandlers['onLevel'] | null; onEnd: MicHandlers['onEnd'] | null; pecks: number[]; lastLoud: number;
 } = {
   open: false, listening: false, opening: null, stream: null, source: null, analyser: null, listener: null, timer: undefined,
-  ignoreUntil: 0, expectPc: null, onNote: null, onLevel: null, pecks: [], lastLoud: 0,
+  ignoreUntil: 0, expectPc: null, onNote: null, onLevel: null, onEnd: null, pecks: [], lastLoud: 0,
 };
 
 onBusy((ms: number, exact?: boolean) => {
@@ -57,9 +57,10 @@ function close() {
   state.open = false;
 }
 
-export async function startMic({ onNote, onLevel }: MicHandlers) {
+export async function startMic({ onNote, onLevel, onEnd }: MicHandlers) {
   state.onNote = onNote;
   state.onLevel = onLevel;
+  state.onEnd = onEnd || null;
   if (state.listening) return;
   if (!state.open) {
     state.opening = state.opening || open().finally(() => { state.opening = null; });
@@ -75,6 +76,7 @@ export async function startMic({ onNote, onLevel }: MicHandlers) {
 
 export function stopMic() {
   state.listening = false;
+  if (ring) endRing(performance.now());
   clearInterval(state.timer);
   state.onLevel && state.onLevel(0);
 }
@@ -123,6 +125,17 @@ function watchdog(now: number, buf: Float32Array | null) {
 }
 export const micHealth = () => ({ ...health, ctx: Tone.getContext().state, open: state.open });
 
+// The mic hears a key go down but not up. A heard note has stopped when the meter falls near the room's
+// noise, or drops fast (the key was let go and the damper landed; a held piano note fades much more slowly).
+const QUIET = 0.27; // meter level of about 2.5x the room noise
+const DROP = 0.25; // meter fall within about 150 ms
+let ring: { m: number; at: number; lv: number[] } | null = null;
+function endRing(at: number) {
+  const r = ring!;
+  ring = null;
+  state.onEnd && state.onEnd(r.m, at);
+}
+
 function tick() {
   const now = performance.now();
   if (!state.open) { watchdog(now, null); return; }
@@ -134,6 +147,17 @@ function tick() {
   // signal still reads mid-meter. lastLoud lets the app say "come closer" if nothing is ever loud enough.
   const over = r.rms / Math.max(listener.noise, 1e-6);
   if (over > 4) state.lastLoud = now;
-  state.onLevel && state.onLevel(Math.max(0, Math.min(1, Math.log(over) / Math.log(30))), now - state.lastLoud);
-  if (r.midi !== null) { heardAt = r.at ?? now; state.onNote && state.onNote(r.midi); }
+  const level = Math.max(0, Math.min(1, Math.log(over) / Math.log(30)));
+  state.onLevel && state.onLevel(level, now - state.lastLoud);
+  if (r.midi !== null) {
+    heardAt = r.at ?? now;
+    // a new key ends the heard note before it (one heard note at a time)
+    if (ring) endRing(Math.max(ring.at, heardAt));
+    ring = { m: r.midi, at: heardAt, lv: [] };
+    state.onNote && state.onNote(r.midi);
+  } else if (ring) {
+    ring.lv.push(level);
+    if (ring.lv.length > 4) ring.lv.shift();
+    if (now - ring.at > 150 && (level < QUIET || Math.max(...ring.lv) - level > DROP)) endRing(now - 20);
+  }
 }

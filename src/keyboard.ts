@@ -1,5 +1,6 @@
 // On-screen piano keyboard, colored by note letter. The range changes per song or lesson (default C4 to E5).
 import { COLORS, letterOf, isBlack } from './music.js';
+import { markTap } from './timing.js';
 
 export const LOW = 60;
 export const HIGH = 76;
@@ -67,6 +68,7 @@ export function makeKeyboard(root: HTMLElement, onPress: (m: number) => void, on
     e.preventDefault();
     const m = +k.dataset.m!;
     down[e.pointerId] = m;
+    markTap(e.timeStamp); // when the finger touched, even if the page is busy drawing
     k.classList.add('held');
     flash(m, 'down', 180);
     onPress(m);
