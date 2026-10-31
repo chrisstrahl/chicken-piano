@@ -119,7 +119,8 @@ export interface ChoiceRound {
   options: string[];
   answer: string;
 }
-export type LessonStep =
+// more: the longer explanation, spoken only when the 🎓 button is tapped (the chicken says the short `say`)
+export type LessonStep = { more?: string } & (
   | {
       type: 'show'; say: string; text: string; goal: string;
       times?: number; // goal notes to play (default: each once)
@@ -138,7 +139,8 @@ export type LessonStep =
   // The chicken plays the rhythm with the metronome pecking, then counts in and the child plays it back in time.
   // staff: what is drawn (and judged); lh: a left-hand part to draw (grand staff); play: what is judged
   // instead of staff when the hands take turns; tempo: beats a minute (default 72)
-  | { type: 'rhythm'; say: string; staff: Tokens; lh?: Tokens; play?: Tokens; clef?: string; time?: string; tempo?: number; range?: string };
+  | { type: 'rhythm'; say: string; staff: Tokens; lh?: Tokens; play?: Tokens; clef?: string; time?: string; tempo?: number; range?: string }
+);
 
 export interface Lesson { id: string; emoji: string; title: string; steps: LessonStep[] }
 export interface Level { n: number; emoji: string; title: string; color: string; lessons: Lesson[] }

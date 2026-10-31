@@ -349,6 +349,11 @@
   "spoken": "That's 25 days in a row!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "0c64004b": {
+  "text": "Left thumb on middle C. Walk down, then up!",
+  "spoken": "Left thumb on middle C. Walk down, then up!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "0cde1e95": {
   "text": "You have 81 eggs.",
   "spoken": "You have 81 eggs.",
@@ -369,9 +374,19 @@
   "spoken": "No letters this time! Start on a landmark, then follow the steps and skips.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "0d3a1851": {
+  "text": "Black keys come in twos and threes. Tap a two!",
+  "spoken": "Black keys come in twos and threes. Tap a two!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "0d3b9455": {
   "text": "You have 434 eggs.",
   "spoken": "You have 434 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "0d4ce15f": {
+  "text": "Left pinky on low C. Play up to G!",
+  "spoken": "Left pinky on low C. Play up to G!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "0dc61f56": {
@@ -477,6 +492,11 @@
  "114ec4a7": {
   "text": "That's 67 days in a row!",
   "spoken": "That's 67 days in a row!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "11ece2db": {
+  "text": "A and B come after G. Tap A, then B.",
+  "spoken": "A, and B come after G. Tap A, then B.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "11f66e41": {
@@ -1119,6 +1139,11 @@
   "spoken": "That's 73 days in a row!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "2fa04825": {
+  "text": "A rest means shh! Play C, then stay quiet.",
+  "spoken": "A rest means shush! Play C, then stay quiet.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "2faf3f41": {
   "text": "Let's play Good Morning, Chicks!",
   "spoken": "Let's play Good Morning, Chicks!",
@@ -1197,6 +1222,11 @@
  "336ddf68": {
   "text": "You have 420 eggs.",
   "spoken": "You have 420 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "33b02f26": {
+  "text": "Thumb is one, pinky is five. Play C to G!",
+  "spoken": "Thumb is one, pinky is five. Play C to G!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "33c81b3e": {
@@ -1397,6 +1427,16 @@
  "3e22883d": {
   "text": "That's Minuet in G!",
   "spoken": "That's Minuet in G!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "3e2d9080": {
+  "text": "The staff is a five-line fence. Tap any key!",
+  "spoken": "The staff is a five-line fence. Tap any key!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "3ec14dff": {
+  "text": "Black keys have two names! Tap C sharp.",
+  "spoken": "Black keys have two names! Tap C sharp.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "3ec2f939": {
@@ -1614,6 +1654,11 @@
   "spoken": "You have 114 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "47f2c2e3": {
+  "text": "The next key over is a step. Step from C to G!",
+  "spoken": "The next key over is a step. Step from C to G!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "4826acc7": {
   "text": "New song: Little Eggies!",
   "spoken": "New song: Little Eggies!",
@@ -1722,6 +1767,11 @@
  "4e406b86": {
   "text": "A hollow egg with no stick is a whole note. Four beats! Cluuuuuck! Play G and hold it a long time.",
   "spoken": "A hollow egg with no stick is a whole note. Four beats! Cluck, cluck, cluck, cluck! Play G and hold it a long time.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "4e54d2e0": {
+  "text": "A line note, then a space note. Play E, then F.",
+  "spoken": "A line note, then a space note. Play E, then F.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "4f7427be": {
@@ -1979,6 +2029,11 @@
   "spoken": "New song: In the Hall of the Rooster King!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "5abb916f": {
+  "text": "A half step is next door. A whole step skips one. Play E and F, then C and D.",
+  "spoken": "A half step is next door. A whole step skips one. Play E and F, then C and D.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "5ade4289": {
   "text": "Yes! It was Go Tell Aunt Henny!",
   "spoken": "Yes! It was Go Tell Aunt Henny!",
@@ -2054,6 +2109,11 @@
   "spoken": "You have 211 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "5d9ddb1e": {
+  "text": "A tie glues two notes. Play G once and hold!",
+  "spoken": "A tie glues two notes. Play G once and hold!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "5dc159d2": {
   "text": "You have 88 eggs.",
   "spoken": "You have 88 eggs.",
@@ -2077,6 +2137,11 @@
  "5e573d21": {
   "text": "You have 351 eggs.",
   "spoken": "You have 351 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "5eb7921e": {
+  "text": "A dot makes it longer: three beats! Hold G.",
+  "spoken": "A dot makes it longer: three beats! Hold G.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "5eee35bd": {
@@ -2132,6 +2197,11 @@
  "61f38a49": {
   "text": "Let's play Yankee Chicken!",
   "spoken": "Let's play Yankee Chicken!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "623b3bd4": {
+  "text": "Flat means one key down. Tap B flat!",
+  "spoken": "Flat means one key down. Tap B flat!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "632b40b7": {
@@ -2274,6 +2344,16 @@
   "spoken": "That's 10 days in a row!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "699f9b2a": {
+  "text": "D is between the two black keys. Tap D.",
+  "spoken": "D is between the two black keys. Tap D.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "69c6de37": {
+  "text": "Tempo is how fast. Play C, D, E fast, then slow!",
+  "spoken": "Tempo is how fast. Play C, D, E fast, then slow!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "69f0f4f0": {
   "text": "New song: Scrambled Eggs!",
   "spoken": "New song: Scrambled Eggs!",
@@ -2292,6 +2372,11 @@
  "6aaf7d08": {
   "text": "You have 338 eggs.",
   "spoken": "You have 338 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "6ab716c5": {
+  "text": "Same name, higher sound: an octave! Play both Cs.",
+  "spoken": "Same name, higher sound: an octave! Play both Cs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "6abe48dd": {
@@ -2464,9 +2549,24 @@
   "spoken": "You have 204 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "735bcb39": {
+  "text": "This is middle C. Play it!",
+  "spoken": "This is middle C. Play it!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "73b00b7f": {
   "text": "New song: Sharp Little Chick!",
   "spoken": "New song: Sharp Little Chick!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "73c25bc3": {
+  "text": "C is left of the two black keys. Tap C!",
+  "spoken": "C is left of the two black keys. Tap C!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "73e5200e": {
+  "text": "Sharp means one key up. Tap C sharp!",
+  "spoken": "Sharp means one key up. Tap C sharp!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "73ef6d3c": {
@@ -2554,6 +2654,11 @@
   "spoken": "You have 172 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "77f1fe5e": {
+  "text": "Count both notes to name a jump. Play them!",
+  "spoken": "Count both notes to name a jump. Play them!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "77ffe365": {
   "text": "You have 221 eggs.",
   "spoken": "You have 221 eggs.",
@@ -2602,6 +2707,11 @@
  "79651618": {
   "text": "New song: Go Tell Aunt Henny!",
   "spoken": "New song: Go Tell Aunt Henny!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "796b0acc": {
+  "text": "Two dots mean play it again! Play C, D, E twice.",
+  "spoken": "Two dots mean play it again! Play C, D, E twice.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "79a19d6d": {
@@ -2664,6 +2774,11 @@
   "spoken": "New song: Good Morning, Chicks!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "7b46aed4": {
+  "text": "Half rest, two quiet beats. Whole rest, four. Play C!",
+  "spoken": "Half rest, two quiet beats. Whole rest, four. Play C!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "7b4bd1a1": {
   "text": "You have 423 eggs.",
   "spoken": "You have 423 eggs.",
@@ -2674,9 +2789,19 @@
   "spoken": "That's 88 days in a row!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "7b79b1b0": {
+  "text": "Left is low, right is high. Tap one of each!",
+  "spoken": "Left is low, right is high. Tap one of each!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "7c0857a8": {
   "text": "Recording! Play me a song!",
   "spoken": "Recording! Play me a song!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "7c33d8a6": {
+  "text": "Two staffs make the grand staff. Play middle C!",
+  "spoken": "Two staffs make the grand staff. Play middle C!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "7c347817": {
@@ -2917,6 +3042,11 @@
  "86cf04ab": {
   "text": "Yes! It was My Coop, 'Tis of Thee!",
   "spoken": "Yes! It was My Coop, 'Tis of Thee!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "87289215": {
+  "text": "Little lines go below the fence. Play B, A, G.",
+  "spoken": "Little lines go below the fence. Play B, A, G.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "876cb95a": {
@@ -3234,6 +3364,11 @@
   "spoken": "New song: Chord Hop!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "90c6aef1": {
+  "text": "The top 4 means four beats a box. Tap C!",
+  "spoken": "The top 4 means four beats a box. Tap C!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "9150966f": {
   "text": "You have 69 eggs.",
   "spoken": "You have 69 eggs.",
@@ -3419,6 +3554,11 @@
   "spoken": "Nice! Now a little faster.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "9abb089a": {
+  "text": "Each box holds four beats. Play C, D, E, F.",
+  "spoken": "Each box holds four beats. Play C, D, E, F.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "9acf23df": {
   "text": "New song: Henny Henny!",
   "spoken": "New song: Henny Henny!",
@@ -3564,6 +3704,11 @@
   "spoken": "That's Amazing Grace!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "a1770632": {
+  "text": "A step is next door. A skip jumps one. Play E and F, then E and G.",
+  "spoken": "A step is next door. A skip jumps one. Play E and F, then E and G.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "a1810d3c": {
   "text": "You have 266 eggs.",
   "spoken": "You have 266 eggs.",
@@ -3644,6 +3789,11 @@
   "spoken": "That's 100 days in a row!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "a4b7427c": {
+  "text": "Walk up from C to C. Tuck your thumb after E!",
+  "spoken": "Walk up from C to C. Tuck your thumb after E!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "a4bbf505": {
   "text": "You have 250 eggs.",
   "spoken": "You have 250 eggs.",
@@ -3682,6 +3832,11 @@
  "a5c49342": {
   "text": "Let's play Green Feathers!",
   "spoken": "Let's play Green Feathers!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "a5d3922d": {
+  "text": "The treble clef curls around G. Play G!",
+  "spoken": "The treble clef curls around G. Play G!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "a611efa4": {
@@ -4009,6 +4164,11 @@
   "spoken": "You have 75 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "b407eea1": {
+  "text": "Two eighth notes make one beat. Play C eight quick times!",
+  "spoken": "Two eighth notes make one beat. Play C eight quick times!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "b40f1496": {
   "text": "You have 167 eggs.",
   "spoken": "You have 167 eggs.",
@@ -4204,6 +4364,11 @@
   "spoken": "That's When the Saints Go Marching In!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "befd79d9": {
+  "text": "Left pinky on low C. Play C to G!",
+  "spoken": "Left pinky on low C. Play C to G!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "bf0a96f1": {
   "text": "Win eggs in lessons and songs. Finish a level to hatch a baby chick!",
   "spoken": "Win eggs in lessons and songs. Finish a level to hatch a baby chick!",
@@ -4302,6 +4467,11 @@
  "c24ee68a": {
   "text": "That's 31 days in a row!",
   "spoken": "That's 31 days in a row!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "c2769323": {
+  "text": "Left pinky on low C. Play it!",
+  "spoken": "Left pinky on low C. Play it!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "c2f1fa91": {
@@ -4429,6 +4599,11 @@
   "spoken": "Skip up, then skip down!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "c69586da": {
+  "text": "Hold C for two, G for two, then C for four!",
+  "spoken": "Hold C for two, G for two, then C for four!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "c6a489ac": {
   "text": "You have 356 eggs.",
   "spoken": "You have 356 eggs.",
@@ -4447,6 +4622,11 @@
  "c70bfb85": {
   "text": "B",
   "spoken": "Bee!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "c711923b": {
+  "text": "Higher on the fence, higher sound. Play C to G!",
+  "spoken": "Higher on the fence, higher sound. Play C to G!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "c72f557a": {
@@ -4529,6 +4709,11 @@
   "spoken": "Twinkle twist! Play Twinkle with a new rhythm. Chick-en, chick-en!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "cbbd4f04": {
+  "text": "A whole note gets four beats. Hold G a long time!",
+  "spoken": "A whole note gets four beats. Hold G a long time!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "cbc8b7c0": {
   "text": "Let's play Sneaky Chick!",
   "spoken": "Let's play Sneaky Chick!",
@@ -4607,6 +4792,11 @@
  "cde89deb": {
   "text": "You have 432 eggs.",
   "spoken": "You have 432 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "ce5b2ef2": {
+  "text": "Play with the pecks. Hold the half note!",
+  "spoken": "Play with the pecks. Hold the half note!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "ce5c7332": {
@@ -5289,6 +5479,11 @@
   "spoken": "New song: Swing on the Gate!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "e7fdfdeb": {
+  "text": "Music uses seven letters, A to G. Tap some keys!",
+  "spoken": "Music uses seven letters, A to G. Tap some keys!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "e83e858a": {
   "text": "A rest means be quiet! This squiggle is a quarter rest. Stay quiet for one beat. Play C, then shh!",
   "spoken": "A rest means be quiet! This squiggle is a quarter rest. Stay quiet for one beat. Play C, then shush!",
@@ -5424,6 +5619,11 @@
   "spoken": "New song: Egg Hunt!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "f00fd33a": {
+  "text": "f is loud, p is soft. Play C loud, then soft!",
+  "spoken": "f is loud, p is soft. Play C loud, then soft!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "f02be357": {
   "text": "You have one egg.",
   "spoken": "You have one egg.",
@@ -5492,6 +5692,11 @@
  "f357f2a8": {
   "text": "Oops! Find E flat.",
   "spoken": "Oops! Find E flat.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "f3cdacbd": {
+  "text": "Three beats a box, like a dance! Play C, E, G.",
+  "spoken": "Three beats a box, like a dance! Play C, E, G.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "f3db5797": {
@@ -5692,6 +5897,11 @@
  "fcad9baa": {
   "text": "You have 264 eggs.",
   "spoken": "You have 264 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "fcd059ee": {
+  "text": "The bass clef is for low notes. Play low F!",
+  "spoken": "The bass clef is for low notes. Play low F!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "fd4a464f": {
