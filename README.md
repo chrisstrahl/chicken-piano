@@ -7,9 +7,9 @@
 No download, no sign-up, no ads. Open it in a browser, prop your tablet on the piano like sheet music, and start playing.
 
 <p align="center">
-  <img src="shots/ipad-home.png" width="32%" alt="Chicken Piano home screen">
-  <img src="shots/ipad-map.png" width="32%" alt="Ten levels to explore">
-  <img src="shots/ipad-step-seq-walk.png" width="32%" alt="Playing a song with notes on the staff and the keyboard">
+  <img src="shots/ipad-home.png" width="32%" alt="Home screen: Learn, Play Songs, Record a Song">
+  <img src="shots/ipad-song.png" width="32%" alt="Playing a song with notes on the staff and the key to press lit up">
+  <img src="shots/ipad-learn.png" width="32%" alt="Learn: Lessons, Echo Game, Egg Rush, Find it, Twinkle Twist">
 </p>
 
 ---
@@ -20,17 +20,29 @@ Chicken Piano started as a dad project. My 8-year-old wanted to learn piano, he 
 
 ## What it does
 
+Three big buttons on the home screen: **🎓 Learn** (lessons and games), **🎵 Play Songs** and **🎙️ Record a Song**.
+
 🎤 **It listens.** Play your real piano or keyboard and Chicken Piano hears each note through the microphone. Right note? The chicken moves on. Wrong note? A gentle nudge to try again.
 
 🎼 **Real music, not just colored blocks.** Every song is shown as proper sheet music on a staff, with an on-screen keyboard right below that lights up the key to press. Kids learn to read notes without even noticing.
 
-🗺️ **10 levels, 40 bite-sized lessons.** Start by finding middle C and work all the way up to finger numbers, note lengths and rests, reading the staff, waltz time, eighth notes, sharps and flats, the bass clef, scales and chords. Each lesson is hands-on: you learn it by playing it.
+🗺️ **10 levels, 40 bite-sized lessons.** Start by finding middle C and work all the way up to finger numbers, note lengths and rests, reading the staff, steps and skips, waltz time, eighth notes, sharps and flats, the bass clef, scales and chords. Each lesson is hands-on: you learn it by playing it.
+
+⏱️ **Rhythm and the left hand, from the start.** Beat counts (1 2 3 4) sit under the lesson music, and "play it in time" steps teach kids to keep a steady beat, not just hit the right keys. The left hand joins in early levels, and the Two Hands level puts both on a grand staff.
 
 🎶 **101 songs to play, easiest first in every level.** Favorites get a chicken makeover: *Scrambled Eggs* (Hot Cross Buns), *Twinkle Little Chick*, *Jingle Clucks*, *Happy Hens* (Ode to Joy), *The Coop Is Falling Down* (London Bridge), *Happy Hatch Day* and lots more. The original name is always shown underneath, so grown-ups know the tune.
 
-🥚 **Eggs and chicks to collect.** Finish a lesson, earn an egg. Play a song well, earn up to three. Complete a whole level and a chick hatches into your coop.
+🎮 **Barnyard games.** Under Learn:
+- 🥚 **Egg Rush**: find ten notes as fast as you can and beat your best time.
+- 👏 **Echo Game**: the chicken claps out a rhythm, you play it back on any key.
+- 👂 **Find it**: the chicken plays a note or a little tune and you find it on the piano by ear, in any octave.
+- ⭐ **Twinkle Twist**: Twinkle Twinkle with a new rhythm in every nest.
 
-🔥 **An egg a day.** Finish two songs or lessons in a day to lay that day's egg. Tap the coop to see four weeks of nests and how many days in a row you've played.
+🐔 **Stuck? Ask the chicken.** Tap the 🐔 button in any song or lesson and the chicken plays the next note, hops onto the right key and says its name. If a kid is stuck for a while, the button bounces to offer help.
+
+🥚 **Eggs and chicks to collect.** Finish a lesson, earn an egg. Play a song or a game well, earn up to three. Complete a whole level and a chick hatches into your coop.
+
+🔥 **An egg a day.** Finish two songs or lessons in a day to lay that day's egg. Tap the 🏡 coop to see four weeks of nests and your 🔥 streak of days in a row.
 
 🗣️ **A warm, friendly voice.** The chicken talks kids through every step, so there's almost nothing to read. Big buttons, bright pictures and sounds make it work for pre-readers too.
 
@@ -40,15 +52,25 @@ Chicken Piano started as a dad project. My 8-year-old wanted to learn piano, he 
 
 🐇 🐢 🐌 **Slow it down.** Play songs at full, three-quarter or half speed: Listen, play-with-the-beat and echo all follow it.
 
-🎹 **Free Play.** Just want to noodle around? Free Play shows the name and the spot on the staff of anything you play, and how long you held it. Tap 🥁 for a metronome.
+🎹 **Free Play.** Just want to noodle around? Open 🎙️ **Record a Song** and tap 🎹🔴: it shows the name and the spot on the staff of anything you play, and how long you held it. Tap 🥁 for a metronome.
 
-🎙️ **Record and share.** Tap the big 🔴 in Free Play or a song, then find it under 🎙️ Mine. Play it back with the keys lighting up, or tap 📤 to send it to Grandma as a sound file played on the app's own piano (🎬 makes a video of the keyboard instead).
+🎙️ **Record and share.** Tap the big 🔴 in Free Play or a song, then find it under 🎙️ Record a Song. Play it back with the keys lighting up, or tap 📤 to send it to Grandma as a sound file played on the app's own piano (🎬 makes a video of the keyboard instead).
 
 🐔 **A chicken for every kid.** Each child picks their own colored chicken (and a name, if they like) and keeps their own eggs, chicks and open songs. Tap the chicken at the top left of the home screen to switch players.
 
 📲 **Works like an app, even offline.** On an iPad, open the site in Safari, tap Share, then **Add to Home Screen**. It opens full screen, and after the first visit on wifi it works without internet. New versions load automatically the next time it opens online.
 
 👆 **Practice at your own pace.** Any level can be picked at any time, and tapping a note in the music jumps right back to it for another try.
+
+<p align="center">
+  <img src="shots/ipad-map.png" width="32%" alt="Ten levels of lessons">
+  <img src="shots/ipad-egg-rush.png" width="32%" alt="Egg Rush">
+  <img src="shots/ipad-find-it.png" width="32%" alt="Find it, the ear game">
+</p>
+<p align="center">
+  <img src="shots/ipad-coop.png" width="32%" alt="The coop: four weeks of eggs and a streak">
+  <img src="shots/ipad-free-play.png" width="32%" alt="Free Play shows what you played on the staff">
+</p>
 
 ## 🎹 Got a keyboard with USB? Plug it in!
 
@@ -60,7 +82,7 @@ When a keyboard is connected, the **🎹 button turns green** and Chicken Piano 
 | --- | --- |
 | **Laptop or desktop** (Windows, Mac, Linux) | Plug the keyboard in with a USB cable and open the site in **Chrome, Edge or Firefox**. |
 | **Android tablet or phone, Chromebook** | Use a USB cable (or USB-C adapter) and open the site in **Chrome**. |
-| **iPad or iPhone** | Safari doesn't support MIDI keyboards yet. Install the free **[MIDIWeb Browser](https://apps.apple.com/app/id6757226617)** app, open **chicken-piano.vercel.app** inside it, and connect the keyboard with a USB-C cable (or Apple's Lightning to USB Camera Adapter on older iPads). |
+| **iPad or iPhone** | Safari doesn't support MIDI keyboards yet. Install the free **[MIDIWeb Browser](https://apps.apple.com/app/midiweb-browser/id6757226617)** app (the newer one from 5of12; skip the older "Web MIDI Browser", which hasn't been updated since 2016), open **chicken-piano.vercel.app** inside it, and connect the keyboard with a USB-C cable (or Apple's Lightning to USB Camera Adapter on older iPads). Tested with a Casio CT-S200. |
 
 No USB port on your keyboard? No problem: the microphone works with any piano, acoustic or electric.
 
@@ -81,6 +103,7 @@ Chicken Piano is open source under the [MIT license](LICENSE). Suggestions, song
 ```
 npm install
 node build.mjs     # writes dist/index.html (one self-contained file) plus voice clips in dist/voice
+npm run typecheck  # the app is TypeScript (src/*.ts), checked on every pull request
 ```
 
 The microphone needs HTTPS. The live site is hosted on Vercel, which publishes the committed `dist/` folder as-is (see `vercel.json`; no build step runs there), so run `node build.mjs` and commit `dist/` after changes. On a laptop, the keys A through ; play notes too.
@@ -92,7 +115,7 @@ Spoken lines are pre-recorded with [Kokoro-82M](https://github.com/hexgrad/kokor
 `af_heart`, runs locally with no API key) into small mp3 clips in `dist/voice/`, named by a hash of the sentence.
 The app plays the clip for a sentence when it has one and falls back to the device's built-in speech otherwise.
 
-After changing anything the chicken says (lesson `say`/`hint` text, songs, or the templates in `src/lines.js`):
+After changing anything the chicken says (lesson `say`/`hint` text, songs, or the templates in `src/lines.ts`):
 
 ```
 mkdir -p build && pip install -r tools/voice/requirements.txt   # once; needs ffmpeg too
@@ -111,9 +134,13 @@ add a regex spelling fix to `tools/voice/pronounce.json` (it changes what the vo
 
 ## Home-screen icons
 
-`node tools/icons.cjs` redraws `dist/icons` from the chicken in `src/chicken.js` (needs Playwright's Chromium).
+`node tools/icons.cjs` redraws `dist/icons` from the chicken in `src/chicken.ts` (needs Playwright's Chromium).
 `node build.mjs` writes `dist/manifest.webmanifest` and `dist/sw.js` (stamped with the build time).
 `test/profiles.cjs` and `test/offline.cjs` check players and the offline cache.
+
+## Screenshots
+
+`node tools/readme-shots.cjs` retakes the pictures in `shots/` from the built app at iPad size (after `node build.mjs`).
 
 <details>
 <summary><b>Testing note detection</b></summary>
@@ -129,7 +156,7 @@ OVERLAP=0.25 node test/sequence.mjs /tmp/pcm
 node test/metronome.mjs /tmp/pcm   # the metronome's peck must not change what is heard
 ```
 
-The metronome tick is a "peck": a 30 ms burst of hiss above 5 kHz (`src/beat.js`), well above every piano note
+The metronome tick is a "peck": a 30 ms burst of hiss above 5 kHz (`src/beat.ts`), well above every piano note
 the songs use. The app tells the listener when each peck plays; while one is in the listener's window it ignores
 loudness jumps and the hiss and only looks for a key strike below 2.5 kHz, so keys played on the beat still count.
 `test/metronome.mjs` plays the test tunes on the beat with a peck on every beat (as loud as the piano and 3x
