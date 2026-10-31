@@ -1,4 +1,4 @@
-import { SONGS, LEVELS, PRAISE, COLORS, BEATS, letterOf, nameOf, isBlack, parse, songById, songsForLevel } from './music.js';
+import { SONGS, LEVELS, PRAISE, COLORS, BEATS, letterOf, nameOf, isBlack, parse, songById, songsForLevel, setUserSongs, userSongs } from './music.js';
 import { coop, openSongsAsk, letsPlay, oopsFind, songDone, lessonDone, noteWords, whoPlays, pickChicken, hello, removeAsk, originalName, dayEgg, dayTalk, SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN, RHYTHM_TURN, RHYTHM_AGAIN, RHYTHM_GOOD, RHYTHM_OK, RHYTHM_HOLD, RHYTHM_SHH, LEARN_CATS, SPOT_START, SPOT_FASTER, SPOT_AGAIN, SPOT_FIXED } from './lines.js';
 import { startAudio, playNote, noteDown, noteUp, playSequence, cluck, peck, bawk, silly, say, stopTalking, preloadVoice, startBeat } from './audio.js';
 import { BeatJudge, phrases, SPEEDS, barBeats, peckEvery, timeline } from './beat.js';
@@ -15,6 +15,8 @@ import { setupJam } from './jam.js';
 import { setupQuizzes } from './quizgames.js';
 import { setupFreshTunes } from './freshtunes.js';
 import { setupParent } from './parent.js';
+import { setupWrite } from './write.js';
+import { listMySongs, deletePlayerSongs } from './mysongs.js';
 import { players, playerId, AVATARS, MAX_PLAYERS, avatarOf } from './profiles.js';
 import { deletePlayerRecordings, listRecordings, makeRecorder, toTokens, guessTempo } from './recorder.js';
 import { CHICKEN, lookOf, avatarChicken } from './chicken.js';
@@ -73,7 +75,7 @@ const currentLevel = () => (LEVELS.find((lv) => !levelDone(lv)) || LEVELS[9]).n;
 const nextLesson = (lv: Level) => lv.lessons.findIndex((l) => !progress.lessons[l.id]);
 // progress.open[n]: a grown-up (or kid) chose to open every song in level n without doing its lessons
 const songsOpenIn = (lv: Level) => (progress.all || (progress.open || {})[lv.n] ? Infinity : [0, 1, 2, 3, Infinity][lessonsDone(lv)]);
-const songOpen = (s: Song) => songsForLevel(s.level).indexOf(s) < songsOpenIn(LEVELS[s.level - 1]);
+const songOpen = (s: Song) => s.level === 0 || songsForLevel(s.level).indexOf(s) < songsOpenIn(LEVELS[s.level - 1]);
 
 /* ---------- chicken mascot ---------- */
 $$('[data-chicken]').forEach((el) => { el.outerHTML = CHICKEN.replace('class="chicken"', `class="chicken"${el.id ? ` id="${el.id}"` : ''}`); });
@@ -132,6 +134,7 @@ function show(id: string) {
   games.leave();
   jam.leave();
   quizzes.leave();
+  write.leave();
   fresh.leave();
   leaveHooks.forEach((f) => f());
   leaveHooks = [];
@@ -142,7 +145,7 @@ function show(id: string) {
   onNote = null;
   onRelease = null;
   expectNote(null);
-  ({ home: renderHome, learn: renderLearn, who: renderWho, songs: renderSongs, map: renderMap, level: renderLevel, free: openFree, nest: renderNest, ...recs.screens, ...ears.screens, ...games.screens, ...jam.screens, ...quizzes.screens, ...fresh.screens, ...parent.screens } as Record<string, () => void>)[id]?.();
+  ({ home: renderHome, learn: renderLearn, who: renderWho, songs: renderSongs, map: renderMap, level: renderLevel, free: openFree, nest: renderNest, ...recs.screens, ...ears.screens, ...games.screens, ...jam.screens, ...quizzes.screens, ...fresh.screens, ...parent.screens, ...write.screens } as Record<string, () => void>)[id]?.();
 }
 document.addEventListener('click', (e) => {
   const b = (e.target as Element).closest<HTMLElement>('[data-go]');
@@ -314,6 +317,7 @@ function usePlayer(id: string) {
   progress = loadProgress();
   window.__cp.progress = progress;
   lookLikePlayer();
+  loadMySongs();
 }
 $('#btnWho').addEventListener('click', () => { show('who'); say(whoPlays); });
 function renderWho() {
@@ -463,6 +467,8 @@ $('#levelLessons').addEventListener('click', (e) => {
   openLesson(lv.n, lv.lessons.findIndex((l) => l.id === c.dataset.lesson));
 });
 function songTap(e: Event) {
+  const ed = (e.target as Element).closest<HTMLElement>('[data-editsong]');
+  if (ed) { e.stopPropagation(); return write.open(ed.dataset.editsong!); }
   const c = (e.target as Element).closest<HTMLElement>('[data-song]');
   if (!c) return;
   const s = songById(c.dataset.song!)!;
@@ -480,8 +486,11 @@ function songTap(e: Event) {
 $('#levelSongs').addEventListener('click', songTap);
 
 /* ---------- ALL SONGS ---------- */
+// the kid's own songs (Write a Song) come first, with a ➕ to write another
+const mySongCard = (s: Song) => `<button class="card song mine" data-song="${s.id}"><div class="em">${s.emoji}</div><div class="t">${s.title}</div><span class="editsong" data-editsong="${s.id}" aria-label="Change">✏️</span></button>`;
 function renderSongs() {
-  $('#songCards').innerHTML = LEVELS.map((lv) => `<div class="lvrow" style="--lc:${lv.color}"><div class="lvtag">${lv.n}<small>${lv.emoji}</small></div>
+  $('#songCards').innerHTML = `<div class="lvrow mine" style="--lc:#9b6bff"><div class="lvtag">✏️</div><div class="mycards">
+    ${userSongs().map(mySongCard).join('')}<button class="card addsong" data-write aria-label="Write a song"><div class="em">➕</div></button></div></div>` + LEVELS.map((lv) => `<div class="lvrow" style="--lc:${lv.color}"><div class="lvtag">${lv.n}<small>${lv.emoji}</small></div>
     ${songsForLevel(lv.n).map(songCard).join('')}</div>`).join('');
   requestAnimationFrame(moreSongs);
 }
@@ -622,7 +631,7 @@ function openSong(id: string, back = 'songs') {
   // bass-clef songs have the melody in the left hand: start there unless both hands were picked
   const pref = progress.hands || 'rh';
   P.hands = !twoHands() ? 'rh' : P.song.melodyHand === 'lh' && pref === 'rh' ? 'lh' : pref;
-  levelN = P.song.level;
+  if (P.song.level) levelN = P.song.level;
   $('#playTitle').innerHTML = `${P.song.emoji} ${P.song.title}${originalName(P.song) ? `<small>${originalName(P.song)}</small>` : ''}`;
   drawSong();
   restartSong(true);
@@ -723,14 +732,15 @@ function finishSong(eggs: number = P.mistakes === 0 ? 3 : P.mistakes <= 3 ? 2 : 
   playKb.setTarget(null);
   playKb.setFingers({});
   $('#playProg').style.width = '100%';
-  progress.songs[P.song.id] = Math.max(progress.songs[P.song.id] || 0, eggs);
+  // a kid's own song is practice (it counts for today) but its eggs don't go in the coop
+  if (P.song.level) progress.songs[P.song.id] = Math.max(progress.songs[P.song.id] || 0, eggs);
   save();
   const rec = recs.finish({ open: false });
   const list = songsForLevel(P.song.level);
   const nxt = list[list.indexOf(P.song) + 1];
   party(eggs, {
     again: () => { openSong(P.song.id, P.back); if (mode === 'beat') startBeatMode(); if (mode === 'echo') startEcho(); },
-    next: () => (nxt && songOpen(nxt) ? openSong(nxt.id, P.back) : show('level')),
+    next: () => (nxt && songOpen(nxt) ? openSong(nxt.id, P.back) : show(P.song.level ? 'level' : 'songs')),
     words: songDone(eggs),
     rec,
     day: dayWin(),
@@ -1192,6 +1202,7 @@ $('#btnLessonHint').addEventListener('click', () => {
 // Recordings are kept per player; a removed player's recordings go with them
 const recs = setupRecordings({ show, toast, ask: (...a) => ask(...a), bubble, bigLetter, player: playerId });
 players.onRemove(deletePlayerRecordings);
+players.onRemove(deletePlayerSongs);
 recs.button($('#playRec'), () => ({ title: P.song.title, emoji: P.song.emoji, song: P.song.id }));
 recs.button($('#freeRec'), () => ({ title: 'My song', emoji: '🎹', song: null }));
 
@@ -1203,6 +1214,15 @@ const games = setupGames({ show, bubble, bigLetter, act, party: (...a) => party(
 
 /* ---------- Fresh Tunes sight reading (src/freshtunes.ts) ---------- */
 const fresh = setupFreshTunes({ missed: (m) => missedNote(nameOf(m)), show, bubble, bigLetter, act, party: (...a) => party(...a), progress: () => progress, save, setInput: (f) => { onNote = f; }, noteIn, keyUp });
+
+/* ---------- Write a Song (src/write.ts) ---------- */
+function loadMySongs() { setUserSongs(listMySongs(playerId())); }
+loadMySongs();
+const write = setupWrite({
+  show, bubble, bigLetter, act, ask: (...a) => ask(...a), toast, player: () => players.current(),
+  setInput: (f) => { onNote = f; }, noteIn, keyUp, changed: loadMySongs,
+});
+document.addEventListener('click', (e) => { if ((e.target as Element).closest('[data-write]')) write.open(); });
 
 /* ---------- grown-ups' page (src/parent.ts) ---------- */
 const parent = setupParent({
@@ -1915,7 +1935,7 @@ document.addEventListener('keydown', (e) => {
 });
 document.addEventListener('keyup', (e) => { if (typing(e)) return; const m = KEYMAP[e.key.toLowerCase()]; if (m) keyUp(m); });
 
-window.__cp = { recs, players, usePlayer, say, show, openSong, openLesson, noteIn, jumpToBeat, P, L, progress, LEVELS, SONGS, startBeatMode, startEcho, spot: () => spot, lessonStep: (i: number) => { L.step = i; renderStep(); }, ears, games, jam, quizzes, fresh };
+window.__cp = { recs, players, usePlayer, say, show, openSong, openLesson, noteIn, jumpToBeat, P, L, progress, LEVELS, SONGS, startBeatMode, startEcho, spot: () => spot, lessonStep: (i: number) => { L.step = i; renderStep(); }, ears, games, jam, quizzes, fresh, write };
 window.__cpMs = ms;
 window.__cpHeard = () => heardCount;
 window.__cpFree = () => F.notes;
