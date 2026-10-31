@@ -28,7 +28,7 @@
     return false;
   };
   const label = (el) => (el.getAttribute('aria-label') || el.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 40);
-  const nameOf = (el) => el.id ? '#' + el.id : el.dataset.go ? `[data-go=${el.dataset.go}]` : el.dataset.pick ? `[data-pick=${el.dataset.pick}]`
+  const nameOf = (el) => el.id ? '#' + el.id : el.dataset.go ? `[data-go=${el.dataset.go}]` : el.dataset.pick ? `[data-pick=${el.dataset.pick}]` : el.dataset.quiz ? `[data-quiz=${el.dataset.quiz}]`
     : Object.keys(el.dataset).length ? `[data-${Object.keys(el.dataset)[0]}]` : el.className ? '.' + String(el.className).split(' ')[0] : el.tagName.toLowerCase();
 
   K.look = () => {

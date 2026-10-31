@@ -41,7 +41,9 @@ const FLAT = { 'D♭': 'C#', 'E♭': 'D#', 'G♭': 'F#', 'A♭': 'G#', 'B♭': '
 const pcName = (name) => { const n = name.replace(/\d/g, '').trim(); return FLAT[n] || n.replace('♯', '#'); };
 const noteName = (m) => NAMES[((m % 12) + 12) % 12] + (Math.floor(m / 12) - 1);
 const BACK = /^(#btnPlayBack|#btnLessonBack|#partyHome|\[data-go=(home|learn|map|recs|games|ears|songs)\]|#askNo|#edNo|#filmClose)$/;
-const ACTIVITY = ['lesson', 'play', 'rush', 'beat', 'ear', 'free'];
+// a way back: the known back buttons, or any button labelled Back or Home
+const isBack = (t) => BACK.test(t.sel) || /^(Back|Home)$/.test(t.label);
+const ACTIVITY = ['lesson', 'play', 'rush', 'beat', 'ear', 'free', 'fresh', 'quiz', 'jam', 'write'];
 
 function serve() {
   const types = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.mp3': 'audio/mpeg', '.png': 'image/png', '.webmanifest': 'application/manifest+json' };
@@ -131,7 +133,7 @@ async function play(browser, url, id, kid, seed) {
   let lineSeen = 0;
   async function inspect(v) {
     if (v.turn) await note('turn', 'trouble', 'turn', 'The "turn me sideways" cover is showing');
-    if (!v.overlay && v.screen !== 'home' && !v.taps.some((t) => (BACK.test(t.sel) || (v.screen === 'who' && t.sel === '[data-player]')) && t.reach === 'ok')) await note('deadend', 'trouble', `${v.screen}`, `No way back from ${v.screen}: no 🏠 or ⬅️ a kid can reach`);
+    if (!v.overlay && v.screen !== 'home' && !v.taps.some((t) => (isBack(t) || (v.screen === 'who' && t.sel === '[data-player]')) && t.reach === 'ok')) await note('deadend', 'trouble', `${v.screen}`, `No way back from ${v.screen}: no 🏠 or ⬅️ a kid can reach`);
     if (v.overlay && v.overlay !== '#start' && !v.taps.some((t) => t.reach === 'ok')) await note('deadend', 'bug', v.overlay, `${v.overlay} is showing with nothing to tap`);
     for (const t of v.taps) {
       if (t.reach !== 'ok' && !t.canScroll) await note('reach', 'trouble', `${v.screen} ${t.sel}`, `${t.label || t.sel} on ${v.screen} is ${t.reach} and can't be scrolled to`);
@@ -202,12 +204,18 @@ async function play(browser, url, id, kid, seed) {
     { goal: 'Find it', route: ['[data-go=learn]', '[data-go=ears]', '[data-ear]'], screen: 'ear' },
     { goal: 'Lesson 1', route: ['[data-go=learn]', '[data-go=map]', '[data-level]', '[data-lesson]'], screen: 'lesson', next: 1 },
     { goal: 'Look at the coop', route: ['#coop'], screen: 'nest' },
+    // newer screens the kid has no answer key for: poke around, play what glows (or anything)
+    { goal: 'Fresh Tunes', route: ['[data-go=learn]', '[data-go=freshes]', '[data-fi]'], screen: 'fresh', explore: true },
+    { goal: 'Mystery Melodies', route: ['[data-go=learn]', '[data-quiz=mystery]', '[data-qi]'], screen: 'quiz', explore: true },
+    { goal: 'Happy or Sad', route: ['[data-go=learn]', '[data-quiz=mood]', '[data-qi]'], screen: 'quiz', explore: true },
+    { goal: 'Black-key Jam', route: ['[data-go=learn]', '[data-go=jam]'], screen: 'jam', explore: true },
+    { goal: 'Write a Song', route: ['[data-go=learn]', '[data-write]'], screen: 'write', explore: true },
   ];
   async function goHome() {
     for (let i = 0; i < 6; i++) {
       const v = await look();
       if (v.screen === 'home' && !v.overlay) return true;
-      const b = v.taps.find((t) => /partyHome|data-go=home/.test(t.sel) && t.reach === 'ok') || v.taps.find((t) => BACK.test(t.sel) && t.reach === 'ok');
+      const b = v.taps.find((t) => /partyHome|data-go=home/.test(t.sel) && t.reach === 'ok') || v.taps.find((t) => isBack(t) && t.reach === 'ok');
       if (!b) { await note('lost', 'trouble', v.screen + v.overlay, `Careful kid couldn't find the way home from ${v.overlay || v.screen}`); await page.evaluate(() => window.__cp.show('home')); return false; }
       await tap(b, 'going home');
     }
@@ -357,6 +365,28 @@ async function play(browser, url, id, kid, seed) {
     if (playBtn) { await tap(playBtn, 'listen'); await page.waitForTimeout(3000); }
   }
 
+  async function explore(step, until) {
+    while (Date.now() < until) {
+      const v = await look();
+      await inspect(v);
+      await checkMic();
+      if (v.overlay === '#party.show') { stats.eggs++; diary.push(`${clock()} ${v.screen}: 🎉 party`); return; }
+      if (v.overlay) { const b = v.taps.find((t) => /Yes|edYes|filmClose|partyHome/.test(t.sel)) || v.taps[0]; if (b) await tap(b); continue; }
+      if (v.screen !== step.screen && !step.moved) { step.moved = true; diary.push(`${clock()} ${step.goal}: now on ${v.screen}`); }
+      await page.waitForTimeout(between(kid.hesitate));
+      const glow = v.keys.filter((k) => k.glow);
+      if (v.keys.length && R() < 0.75) {
+        const m = glow.length && R() < kid.accuracy ? glow[0].m : pick(v.keys).m;
+        diary.push(`${clock()} ${v.screen}: plays ${noteName(m)}${glow.length ? '' : ' (guessing)'}`);
+        await key(v, m, 150 + R() * 300);
+        continue;
+      }
+      // try a button that isn't the way out
+      const b = pick(v.taps.filter((t) => t.reach === 'ok' && !t.disabled && !isBack(t) && !/#mic|#midi/.test(t.sel)));
+      if (b) await tap(b, 'what is this?');
+    }
+  }
+
   async function careful(until) {
     const only = process.env.KID_GOALS ? new RegExp(process.env.KID_GOALS, 'i') : null;
     for (const step of PLAN.filter((s) => !only || only.test(s.goal))) {
@@ -370,6 +400,7 @@ async function play(browser, url, id, kid, seed) {
       if (v.screen !== step.screen) { await note('lost', 'trouble', step.goal, `Followed the buttons to ${step.goal} but landed on ${v.overlay || v.screen}`); continue; }
       const stepEnd = Math.min(until, Date.now() + 150000);
       if (step.free) await freePlay(stepEnd);
+      else if (step.explore) await explore(step, Math.min(until, Date.now() + 45000));
       else if (step.screen === 'nest') { await inspect(v); await page.waitForTimeout(2500); }
       else await playActivity(step, stepEnd);
       await inspect(await look());
@@ -398,7 +429,7 @@ async function play(browser, url, id, kid, seed) {
       }
       // bored: leave whatever this is
       const bored = ACTIVITY.includes(v.screen) && Date.now() - onScreenSince > between([15000, 50000]);
-      if (bored) { const b = okTaps.find((t) => BACK.test(t.sel)); if (b) { await tap(b, 'bored'); continue; } }
+      if (bored) { const b = okTaps.find((t) => isBack(t)); if (b) { await tap(b, 'bored'); continue; } }
       if (v.keys.length && !v.overlay && r < 0.55) {
         const a = v.answer;
         const viaMic = usingMic();
