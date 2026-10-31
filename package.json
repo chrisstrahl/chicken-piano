@@ -7,7 +7,8 @@
     "build": "node build.mjs",
     "typecheck": "tsc -p .",
     "voice": "node --no-warnings tools/voice-lines.mjs > build/voice-lines.json && python3 tools/voice/render.py build/voice-lines.json dist/voice",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "kid": "node test/kidbot/kid.cjs"
   },
   "keywords": [],
   "author": "",

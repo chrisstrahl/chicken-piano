@@ -4,3 +4,4 @@ test/shots/
 src/samples.generated.js
 src/voice.generated.js
 __pycache__/
+test/kidbot/out/
