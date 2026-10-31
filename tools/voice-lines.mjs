@@ -9,7 +9,7 @@ const walk = (o) => {
   if (Array.isArray(o)) return o.forEach(walk);
   if (o && typeof o === 'object') {
     for (const [k, v] of Object.entries(o)) {
-      if ((k === 'say' || k === 'hint') && typeof v === 'string') texts.add(v);
+      if ((k === 'say' || k === 'more' || k === 'hint') && typeof v === 'string') texts.add(v);
       else walk(v);
     }
   }

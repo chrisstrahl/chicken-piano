@@ -88,24 +88,24 @@ export const LEVELS: Level[] = [
     n: 1, emoji: '🐣', title: 'Hello, Keys', color: '#ff8a1f',
     lessons: [
       L('findc', '🏠', 'Find C', [
-        { type: 'show', text: '⚫⚫ ⚫⚫⚫', say: 'Look at the black keys. They come in groups of two, and groups of three, like little chicken families! Tap a black key in a group of two.', keys: { groups: true, letters: 'none' }, goal: 'C# D#', times: 2 },
-        { type: 'show', text: '🏠 = C', say: 'C lives just to the left of the two black keys. It is the chicken coop door! Tap the glowing C.', keys: { hl: 'C C5', letters: 'hl' }, goal: 'C', times: 2 },
+        { type: 'show', text: '⚫⚫ ⚫⚫⚫', say: 'Black keys come in twos and threes. Tap a two!', more: 'Look at the black keys. They come in groups of two, and groups of three, like little chicken families! Tap a black key in a group of two.', keys: { groups: true, letters: 'none' }, goal: 'C# D#', times: 2 },
+        { type: 'show', text: '🏠 = C', say: 'C is left of the two black keys. Tap C!', more: 'C lives just to the left of the two black keys. It is the chicken coop door! Tap the glowing C.', keys: { hl: 'C C5', letters: 'hl' }, goal: 'C', times: 2 },
         { type: 'key', targets: 'C C5 C', letters: 'none', say: 'Now find C all by yourself!', hint: 'Find the two black keys. C is right next to them, on the left.' },
       ]),
       L('de', '🦶', 'Meet D and E', [
-        { type: 'show', text: 'D = middle', say: 'D lives right in the middle of the two black keys, like a chick snuggled between two hens. Tap D.', keys: { hl: 'D D5', letters: 'hl' }, goal: 'D', times: 2 },
+        { type: 'show', text: 'D = middle', say: 'D is between the two black keys. Tap D.', more: 'D lives right in the middle of the two black keys, like a chick snuggled between two hens. Tap D.', keys: { hl: 'D D5', letters: 'hl' }, goal: 'D', times: 2 },
         { type: 'show', text: 'E ➡️', say: 'E lives just to the right of the two black keys. Tap E.', keys: { hl: 'E E5', letters: 'hl' }, goal: 'E', times: 2 },
         { type: 'key', targets: 'D E D E', letters: 'none', say: 'Find D and E!', hint: 'Look for the two black keys. D is in the middle, E is on the right.' },
       ]),
       L('highlow', '🎈', 'High and Low', [
-        { type: 'show', text: '🐓 ⬅️  ➡️ 🐥', say: 'Keys on the left sound low, like a big rooster. Keys on the right sound high, like a tiny chick! Tap a low key and a high key.', keys: { hl: 'C D C5 D5 E5', letters: 'none' }, goal: 'C D E', times: 2 },
+        { type: 'show', text: '🐓 ⬅️  ➡️ 🐥', say: 'Left is low, right is high. Tap one of each!', more: 'Keys on the left sound low, like a big rooster. Keys on the right sound high, like a tiny chick! Tap a low key and a high key.', keys: { hl: 'C D C5 D5 E5', letters: 'none' }, goal: 'C D E', times: 2 },
         { type: 'choice', say: 'Listen! Is the second note higher or lower?', rounds: [
           { hear: 'C:h G:h', options: ['⬆️', '⬇️'], answer: '⬆️' },
           { hear: 'C5:h D:h', options: ['⬆️', '⬇️'], answer: '⬇️' },
           { hear: 'E:h F:h', options: ['⬆️', '⬇️'], answer: '⬆️' },
           { hear: 'G:h C:h', options: ['⬆️', '⬇️'], answer: '⬇️' },
         ] },
-        { type: 'show', text: '🫲 = 🐓', say: 'Your left hand plays the low keys, like a big rooster! Put your left pinky on low C and play it.', keys: { hl: 'C3', letters: 'hl', range: 'C3 G4' }, goal: 'C3', times: 2 },
+        { type: 'show', text: '🫲 = 🐓', say: 'Left pinky on low C. Play it!', more: 'Your left hand plays the low keys, like a big rooster! Put your left pinky on low C and play it.', keys: { hl: 'C3', letters: 'hl', range: 'C3 G4' }, goal: 'C3', times: 2 },
         { type: 'rhythm', say: 'Left hand! Play low C and hold it for four pecks. Then play it again.', staff: 'C3:w C3:w', clef: 'bass', range: 'C3 G4', tempo: 80 },
       ]),
       L('walk', '🐾', 'Chicken Walk', [
@@ -118,7 +118,7 @@ export const LEVELS: Level[] = [
     n: 2, emoji: '✋', title: 'Five Finger Friends', color: '#2fa2ff',
     lessons: [
       L('abc', '🔤', 'A B C D E F G', [
-        { type: 'show', text: 'A B C D E F G', say: 'Music only uses seven letters. A, B, C, D, E, F, G. Then they start over again! Tap any keys and listen to their names.', keys: { letters: 'all' }, goal: 'C D E F G A B', times: 4 },
+        { type: 'show', text: 'A B C D E F G', say: 'Music uses seven letters, A to G. Tap some keys!', more: 'Music only uses seven letters. A, B, C, D, E, F, G. Then they start over again! Tap any keys and listen to their names.', keys: { letters: 'all' }, goal: 'C D E F G A B', times: 4 },
         { type: 'show', text: 'C D E F G ➡️', say: 'Start on C and walk up. C, D, E, F, G. Tap them all.', keys: { hl: C_POS, letters: 'hl' }, hear: C_POS, goal: C_POS, times: 5 },
         { type: 'key', targets: 'D E G F', letters: 'all', say: 'Your turn! Find each letter.' },
       ]),
@@ -128,14 +128,14 @@ export const LEVELS: Level[] = [
         { type: 'key', targets: 'F G F G C', letters: 'none', say: 'Find each key!', hint: 'F is next to the three black keys, on the left. G is right after F.' },
       ]),
       L('fingers', '🖐️', 'Chicken Fingers', [
-        { type: 'show', text: '👍 1  2  3  4  5', say: 'Your fingers have numbers! Thumb is one, then two, three, four, and your pinky is five. Put your right thumb on C and play C, D, E, F, G with fingers one to five.', keys: { hl: C_POS, letters: 'hl', fingers: true }, goal: C_POS, times: 5 },
+        { type: 'show', text: '👍 1  2  3  4  5', say: 'Thumb is one, pinky is five. Play C to G!', more: 'Your fingers have numbers! Thumb is one, then two, three, four, and your pinky is five. Put your right thumb on C and play C, D, E, F, G with fingers one to five.', keys: { hl: C_POS, letters: 'hl', fingers: true }, goal: C_POS, times: 5 },
         { type: 'choice', say: 'Thumb on C. Which finger plays this key?', rounds: [
           { hl: 'E', options: ['1', '2', '3', '4', '5'], answer: '3' },
           { hl: 'G', options: ['1', '2', '3', '4', '5'], answer: '5' },
           { hl: 'D', options: ['1', '2', '3', '4', '5'], answer: '2' },
           { hl: 'F', options: ['1', '2', '3', '4', '5'], answer: '4' },
         ] },
-        { type: 'show', text: '🫲 5 4 3 2 1', say: 'Your left hand has numbers too! Thumb is one, pinky is five. Put your left pinky on low C and play C, D, E, F, G with fingers five, four, three, two, one.', keys: { hl: 'C3 D3 E3 F3 G3', letters: 'hl', fingers: 'lh', range: 'C3 G4' }, goal: C_POS, times: 5 },
+        { type: 'show', text: '🫲 5 4 3 2 1', say: 'Left pinky on low C. Play up to G!', more: 'Your left hand has numbers too! Thumb is one, pinky is five. Put your left pinky on low C and play C, D, E, F, G with fingers five, four, three, two, one.', keys: { hl: 'C3 D3 E3 F3 G3', letters: 'hl', fingers: 'lh', range: 'C3 G4' }, goal: C_POS, times: 5 },
         { type: 'choice', say: 'Left pinky on low C. Which finger plays this key?', rounds: [
           { hl: 'G3', options: ['1', '2', '3', '4', '5'], answer: '1' },
           { hl: 'E3', options: ['1', '2', '3', '4', '5'], answer: '3' },
@@ -143,7 +143,7 @@ export const LEVELS: Level[] = [
         ] },
       ]),
       L('steps', '👣', 'Steps and Skips', [
-        { type: 'show', text: 'step = next door', say: 'Going from a key to the very next key is called a step. One little chicken step! Step up from C to G.', staff: C_POS, keys: { hl: C_POS, letters: 'hl' }, goal: C_POS, times: 5 },
+        { type: 'show', text: 'step = next door', say: 'The next key over is a step. Step from C to G!', more: 'Going from a key to the very next key is called a step. One little chicken step! Step up from C to G.', staff: C_POS, keys: { hl: C_POS, letters: 'hl' }, goal: C_POS, times: 5 },
         { type: 'seq', say: 'Step up, then step down!', seqs: ['C D E F G', 'G F E D C'] },
         { type: 'show', text: 'skip = 🦘 over one', say: 'Jumping over one key is called a skip. Hop like a kangaroo! Play C, E, G. Skip, skip!', staff: 'C E G', hear: 'C E G', keys: { hl: 'C E G', letters: 'hl' }, goal: 'C E G', times: 3 },
         { type: 'choice', say: 'Look and listen. Is it a step, a skip, or the same note?', rounds: [
@@ -163,13 +163,13 @@ export const LEVELS: Level[] = [
       L('beats', '⏱️', 'How Long?', [
         { type: 'show', text: '♩ = 1 👏', say: 'A filled in note with a stick is a quarter note. It gets one beat. Cluck! Play G four times.', staff: 'G G G G', hear: 'G G G G', clap: true, count: true, keys: { hl: 'G', letters: 'hl' }, goal: 'G', times: 4 },
         { type: 'show', text: '𝅗𝅥 = 2 👏👏', say: 'A hollow note with a stick is a half note. Two beats. Clu, uck! Play G and hold it.', staff: 'G:h G:h', hear: 'G:h G:h', clap: true, count: true, keys: { hl: 'G', letters: 'hl' }, goal: 'G', times: 2 },
-        { type: 'show', text: '𝅝 = 4 👏👏👏👏', say: 'A hollow egg with no stick is a whole note. Four beats! Cluuuuuck! Play G and hold it a long time.', staff: 'G:w', hear: 'G:w', clap: true, count: true, keys: { hl: 'G', letters: 'hl' }, goal: 'G', times: 1 },
-        { type: 'rhythm', say: 'Now play with the pecks! A quarter note gets one peck. The half note gets two, so hold it!', staff: 'G G G:h' },
+        { type: 'show', text: '𝅝 = 4 👏👏👏👏', say: 'A whole note gets four beats. Hold G a long time!', more: 'A hollow egg with no stick is a whole note. Four beats! Cluuuuuck! Play G and hold it a long time.', staff: 'G:w', hear: 'G:w', clap: true, count: true, keys: { hl: 'G', letters: 'hl' }, goal: 'G', times: 1 },
+        { type: 'rhythm', say: 'Play with the pecks. Hold the half note!', more: 'Now play with the pecks! A quarter note gets one peck. The half note gets two, so hold it!', staff: 'G G G:h' },
         { type: 'beats', durs: ['h', 'q', 'w', 'h', 'q'], say: 'How many beats?' },
       ]),
       L('rests', '🤫', 'Shh! Rests', [
-        { type: 'show', text: '𝄽 = 🤫', say: 'A rest means be quiet! This squiggle is a quarter rest. Stay quiet for one beat. Play C, then shh!', staff: 'C R:q C R:q', hear: 'C R:q C R:q', clap: true, count: true, keys: { hl: 'C', letters: 'hl' }, goal: 'C', times: 2 },
-        { type: 'show', text: '🎩 2 · 🕳️ 4', say: 'A half rest sits on the line like a hat. Two quiet beats. A whole rest hangs down like a hole. Four quiet beats! Play C to keep going.', staff: 'R:h R:h R:w', keys: { hl: 'C', letters: 'hl' }, goal: 'C' },
+        { type: 'show', text: '𝄽 = 🤫', say: 'A rest means shh! Play C, then stay quiet.', more: 'A rest means be quiet! This squiggle is a quarter rest. Stay quiet for one beat. Play C, then shh!', staff: 'C R:q C R:q', hear: 'C R:q C R:q', clap: true, count: true, keys: { hl: 'C', letters: 'hl' }, goal: 'C', times: 2 },
+        { type: 'show', text: '🎩 2 · 🕳️ 4', say: 'Half rest, two quiet beats. Whole rest, four. Play C!', more: 'A half rest sits on the line like a hat. Two quiet beats. A whole rest hangs down like a hole. Four quiet beats! Play C to keep going.', staff: 'R:h R:h R:w', keys: { hl: 'C', letters: 'hl' }, goal: 'C' },
         { type: 'choice', say: 'Note or rest? Should you play, or be quiet?', rounds: [
           { staff: 'R:q', options: ['🎹', '🤫'], answer: '🤫' },
           { staff: 'E', options: ['🎹', '🤫'], answer: '🎹' },
@@ -179,8 +179,8 @@ export const LEVELS: Level[] = [
         { type: 'rhythm', say: 'Play on one and three. Be quiet on two and four!', staff: 'C R:q C R:q C:h R:h' },
       ]),
       L('measures', '📦', 'Measures', [
-        { type: 'show', text: '| 1 2 3 4 |', say: 'Bar lines cut music into little boxes called measures. Each box is like a nest that holds four beats. Play the notes in the first box: C, D, E, F.', staff: 'C D E F G:h G:h E:w', time: '4/4', count: true, keys: { hl: 'C D E F', letters: 'hl' }, goal: 'C D E F', times: 4 },
-        { type: 'show', text: '4/4', say: 'The two numbers at the start are the time signature. The top 4 means four beats in every box. Tap C to go on.', staff: 'C C C C', time: '4/4', keys: { hl: 'C', letters: 'hl' }, goal: 'C' },
+        { type: 'show', text: '| 1 2 3 4 |', say: 'Each box holds four beats. Play C, D, E, F.', more: 'Bar lines cut music into little boxes called measures. Each box is like a nest that holds four beats. Play the notes in the first box: C, D, E, F.', staff: 'C D E F G:h G:h E:w', time: '4/4', count: true, keys: { hl: 'C D E F', letters: 'hl' }, goal: 'C D E F', times: 4 },
+        { type: 'show', text: '4/4', say: 'The top 4 means four beats a box. Tap C!', more: 'The two numbers at the start are the time signature. The top 4 means four beats in every box. Tap C to go on.', staff: 'C C C C', time: '4/4', keys: { hl: 'C', letters: 'hl' }, goal: 'C' },
         { type: 'choice', say: 'Count the beats!', rounds: [
           { staff: 'C D', options: ['2', '3', '4'], answer: '2' },
           { staff: 'C:h D', options: ['2', '3', '4'], answer: '3' },
@@ -206,10 +206,10 @@ export const LEVELS: Level[] = [
     n: 4, emoji: '🎼', title: 'Staff Readers', color: '#3cc95a',
     lessons: [
       L('staff', '🎼', 'The Staff', [
-        { type: 'show', text: '5 lines = staff', say: 'Music is written on five lines called a staff. It looks like a fence on the farm! Tap any key to see where it sits on the fence.', staff: '', keys: { letters: 'all' }, goal: 'C D E F G A B', times: 3, echo: true },
-        { type: 'show', text: '⬆️ higher!', say: 'Notes climb up the fence. Higher on the staff means a higher sound! Play C, D, E, F, G and watch them climb.', staff: 'C D E F G', keys: { hl: C_POS, letters: 'hl' }, goal: C_POS, times: 5 },
-        { type: 'show', text: 'Middle C', say: 'This is middle C. It stands on its own tiny line under the fence, like a chicken on a perch! Play middle C.', staff: 'C:w', keys: { hl: 'C', letters: 'hl' }, goal: 'C', times: 2 },
-        { type: 'show', text: '𝄞 = G', say: 'The treble clef curls around one line, like a snail. That line is G! G and middle C are landmarks. Find them first, then count from them. Play G.', staff: 'C:h G:h', keys: { hl: 'C G', letters: 'hl' }, goal: 'C G', times: 2 },
+        { type: 'show', text: '5 lines = staff', say: 'The staff is a five-line fence. Tap any key!', more: 'Music is written on five lines called a staff. It looks like a fence on the farm! Tap any key to see where it sits on the fence.', staff: '', keys: { letters: 'all' }, goal: 'C D E F G A B', times: 3, echo: true },
+        { type: 'show', text: '⬆️ higher!', say: 'Higher on the fence, higher sound. Play C to G!', more: 'Notes climb up the fence. Higher on the staff means a higher sound! Play C, D, E, F, G and watch them climb.', staff: 'C D E F G', keys: { hl: C_POS, letters: 'hl' }, goal: C_POS, times: 5 },
+        { type: 'show', text: 'Middle C', say: 'This is middle C. Play it!', more: 'This is middle C. It stands on its own tiny line under the fence, like a chicken on a perch! Play middle C.', staff: 'C:w', keys: { hl: 'C', letters: 'hl' }, goal: 'C', times: 2 },
+        { type: 'show', text: '𝄞 = G', say: 'The treble clef curls around G. Play G!', more: 'The treble clef curls around one line, like a snail. That line is G! G and middle C are landmarks. Find them first, then count from them. Play G.', staff: 'C:h G:h', keys: { hl: 'C G', letters: 'hl' }, goal: 'C G', times: 2 },
         { type: 'name', notes: 'E G C D F', pool: 'CDEFG', say: 'What note is this?' },
       ]),
       L('lines', '📝', 'Line Notes', [
@@ -221,7 +221,7 @@ export const LEVELS: Level[] = [
         { type: 'name', notes: 'F A C5 E5 A F', pool: 'FACE', say: 'Which space note is this?' },
       ]),
       L('linespace', '🔍', 'Line or Space?', [
-        { type: 'show', text: '➖ line  ⚪ space', say: 'A line note has the line going right through its middle. A space note sits between two lines. Play a line note, E, then a space note, F.', staff: 'E:h F:h', keys: { hl: 'E F', letters: 'hl' }, goal: 'E F', times: 2 },
+        { type: 'show', text: '➖ line  ⚪ space', say: 'A line note, then a space note. Play E, then F.', more: 'A line note has the line going right through its middle. A space note sits between two lines. Play a line note, E, then a space note, F.', staff: 'E:h F:h', keys: { hl: 'E F', letters: 'hl' }, goal: 'E F', times: 2 },
         { type: 'choice', say: 'Is this note on a line or in a space?', rounds: [
           { staff: 'G:w', options: ['➖', '⚪'], answer: '➖' },
           { staff: 'A:w', options: ['➖', '⚪'], answer: '⚪' },
@@ -229,7 +229,7 @@ export const LEVELS: Level[] = [
           { staff: 'D5:w', options: ['➖', '⚪'], answer: '➖' },
           { staff: 'F:w', options: ['➖', '⚪'], answer: '⚪' },
         ] },
-        { type: 'show', text: '➖⚪ step · ➖➖ skip', say: 'On the staff, a step goes from a line to the very next space. A skip goes from a line to the next line, or a space to the next space. Play E, F, then E, G.', staff: 'E:h F:h E:h G:h', keys: { hl: 'E F G', letters: 'hl' }, goal: 'E F G', times: 4 },
+        { type: 'show', text: '➖⚪ step · ➖➖ skip', say: 'A step is next door. A skip jumps one. Play E and F, then E and G.', more: 'On the staff, a step goes from a line to the very next space. A skip goes from a line to the next line, or a space to the next space. Play E, F, then E, G.', staff: 'E:h F:h E:h G:h', keys: { hl: 'E F G', letters: 'hl' }, goal: 'E F G', times: 4 },
         { type: 'choice', say: 'Step, skip, or the same note?', rounds: [
           { staff: 'E:h G:h', options: ['👣', '🦘', '🟰'], answer: '🦘' },
           { staff: 'A:h B:h', options: ['👣', '🦘', '🟰'], answer: '👣' },
@@ -246,11 +246,11 @@ export const LEVELS: Level[] = [
     n: 5, emoji: '🧭', title: 'New Places', color: '#ff6fb0',
     lessons: [
       L('ab', '🍎', 'Meet A and B', [
-        { type: 'show', text: 'G A B', say: 'After G come A and B. They live inside the group of three black keys, near the top. Tap A, then B.', keys: { hl: 'A B', letters: 'hl', groups: true }, goal: 'A B', times: 4 },
+        { type: 'show', text: 'G A B', say: 'A and B come after G. Tap A, then B.', more: 'After G come A and B. They live inside the group of three black keys, near the top. Tap A, then B.', keys: { hl: 'A B', letters: 'hl', groups: true }, goal: 'A B', times: 4 },
         { type: 'key', targets: 'A B A G B', letters: 'none', say: 'Find each key!', hint: 'A and B are near the top of the three black keys.' },
       ]),
       L('octave', '🎈', 'High C', [
-        { type: 'show', text: 'C ... C', say: 'After B, the letters start over at C! Two keys with the same name sound alike, one is just higher. That is called an octave. Play both Cs.', keys: { hl: 'C C5', letters: 'hl' }, hear: 'C:h C5:h', goal: 'C', times: 2 },
+        { type: 'show', text: 'C ... C', say: 'Same name, higher sound: an octave! Play both Cs.', more: 'After B, the letters start over at C! Two keys with the same name sound alike, one is just higher. That is called an octave. Play both Cs.', keys: { hl: 'C C5', letters: 'hl' }, hear: 'C:h C5:h', goal: 'C', times: 2 },
         { type: 'choice', say: 'Listen. Same letter, or different?', rounds: [
           { hear: 'C:h C5:h', options: ['✅', '❌'], answer: '✅' },
           { hear: 'C:h G:h', options: ['✅', '❌'], answer: '❌' },
@@ -259,14 +259,14 @@ export const LEVELS: Level[] = [
         ] },
       ]),
       L('ledger', '🪜', 'Below the Staff', [
-        { type: 'show', text: 'B A G ⬇️', say: 'Notes can climb down below the fence on little extra lines, called ledger lines. Below middle C are B, A and G. Play them going down.', staff: 'C B3 A3 G3', keys: { hl: 'C B3 A3 G3', letters: 'hl', range: 'C3 E5' }, goal: 'C B A G', times: 4 },
+        { type: 'show', text: 'B A G ⬇️', say: 'Little lines go below the fence. Play B, A, G.', more: 'Notes can climb down below the fence on little extra lines, called ledger lines. Below middle C are B, A and G. Play them going down.', staff: 'C B3 A3 G3', keys: { hl: 'C B3 A3 G3', letters: 'hl', range: 'C3 E5' }, goal: 'C B A G', times: 4 },
         { type: 'name', notes: 'B3 G3 A3 C B3', pool: 'GABC', say: 'What note is this?', range: 'C3 E5' },
-        { type: 'seq', say: 'Low notes are easy for your left hand! Put your left thumb on middle C and walk down. Then walk back up.', seqs: ['C B3 A3 G3', 'G3 A3 B3 C'], range: 'C3 E5' },
+        { type: 'seq', say: 'Left thumb on middle C. Walk down, then up!', more: 'Low notes are easy for your left hand! Put your left thumb on middle C and walk down. Then walk back up.', seqs: ['C B3 A3 G3', 'G3 A3 B3 C'], range: 'C3 E5' },
       ]),
       L('gpos', '🤚', 'G Position', [
         { type: 'show', text: '👍 on G', say: 'Move your hand! Put your thumb on G, and your fingers on G, A, B, C, D. Play them all.', keys: { hl: 'G A B C5 D5', letters: 'hl' }, goal: 'G A B C D', times: 5 },
         { type: 'seq', say: 'Play up and down in G position!', seqs: ['G A B C5 D5', 'D5 C5 B A G'] },
-        { type: 'show', text: '2 3 4 5', say: 'Count how far a jump goes. Count both notes! C to D is a second. C to E is a third. C to F is a fourth. C to G is a fifth. Play them.', staff: 'C:h D:h C:h E:h C:h F:h C:h G:h', hear: 'C:h D:h C:h E:h C:h F:h C:h G:h', keys: { hl: 'C D E F G', letters: 'hl' }, goal: 'D E F G', times: 4 },
+        { type: 'show', text: '2 3 4 5', say: 'Count both notes to name a jump. Play them!', more: 'Count how far a jump goes. Count both notes! C to D is a second. C to E is a third. C to F is a fourth. C to G is a fifth. Play them.', staff: 'C:h D:h C:h E:h C:h F:h C:h G:h', hear: 'C:h D:h C:h E:h C:h F:h C:h G:h', keys: { hl: 'C D E F G', letters: 'hl' }, goal: 'D E F G', times: 4 },
         { type: 'choice', say: 'How far is the jump? Count both notes!', rounds: [
           { staff: 'C:h E:h', hear: 'C:h E:h', options: ['2', '3', '4', '5'], answer: '3' },
           { staff: 'G:h D5:h', hear: 'G:h D5:h', options: ['2', '3', '4', '5'], answer: '5' },
@@ -282,7 +282,7 @@ export const LEVELS: Level[] = [
     n: 6, emoji: '💃', title: 'Waltz and Volume', color: '#ffcc00',
     lessons: [
       L('loud', '📢', 'Loud and Soft', [
-        { type: 'show', text: 'f 🐓  p 🐥', say: 'f means forte, play loud like a rooster! p means piano, play soft like a sleepy chick. Listen, then play C loud and soft.', hear: 'C:h C:h', hearVel: [1, 0.25], keys: { hl: 'C', letters: 'hl' }, goal: 'C', times: 2 },
+        { type: 'show', text: 'f 🐓  p 🐥', say: 'f is loud, p is soft. Play C loud, then soft!', more: 'f means forte, play loud like a rooster! p means piano, play soft like a sleepy chick. Listen, then play C loud and soft.', hear: 'C:h C:h', hearVel: [1, 0.25], keys: { hl: 'C', letters: 'hl' }, goal: 'C', times: 2 },
         { type: 'choice', say: 'Loud or soft?', rounds: [
           { hear: 'C E G', vel: 1, options: ['🐓 f', '🐥 p'], answer: '🐓 f' },
           { hear: 'C E G', vel: 0.2, options: ['🐓 f', '🐥 p'], answer: '🐥 p' },
@@ -291,7 +291,7 @@ export const LEVELS: Level[] = [
         ] },
       ]),
       L('three', '3️⃣', '3/4 Time', [
-        { type: 'show', text: '1 2 3 · 1 2 3', say: 'In three four time, every box has three beats. One, two, three! One, two, three! It feels like a dance. Play C, E, G.', staff: 'C E G C E G', time: '3/4', hear: 'C E G C E G', clap: true, count: true, keys: { hl: 'C E G', letters: 'hl' }, goal: 'C E G', times: 3 },
+        { type: 'show', text: '1 2 3 · 1 2 3', say: 'Three beats a box, like a dance! Play C, E, G.', more: 'In three four time, every box has three beats. One, two, three! One, two, three! It feels like a dance. Play C, E, G.', staff: 'C E G C E G', time: '3/4', hear: 'C E G C E G', clap: true, count: true, keys: { hl: 'C E G', letters: 'hl' }, goal: 'C E G', times: 3 },
         { type: 'choice', say: 'Look at the top number. How many beats in each box?', rounds: [
           { staff: 'C E G', time: '3/4', options: ['3', '4'], answer: '3' },
           { staff: 'C E G C', time: '4/4', options: ['3', '4'], answer: '4' },
@@ -300,12 +300,12 @@ export const LEVELS: Level[] = [
         { type: 'rhythm', say: 'Waltz with the pecks! One, two, three. Then hold the last C for all three.', staff: 'C E G C:hd', time: '3/4', tempo: 84 },
       ]),
       L('dotted', '🥚', 'Dotted Half Note', [
-        { type: 'show', text: '𝅗𝅥. = 3', say: 'A dot makes a note longer. A dotted half note gets three beats. Play G and hold it, one, two, three!', staff: 'G:hd', time: '3/4', hear: 'G:hd', clap: true, count: true, keys: { hl: 'G', letters: 'hl' }, goal: 'G', times: 2 },
+        { type: 'show', text: '𝅗𝅥. = 3', say: 'A dot makes it longer: three beats! Hold G.', more: 'A dot makes a note longer. A dotted half note gets three beats. Play G and hold it, one, two, three!', staff: 'G:hd', time: '3/4', hear: 'G:hd', clap: true, count: true, keys: { hl: 'G', letters: 'hl' }, goal: 'G', times: 2 },
         { type: 'rhythm', say: 'Hold G for three pecks. Then E for two, and one more E.', staff: 'G:hd E:h E', time: '3/4', tempo: 84 },
         { type: 'beats', durs: ['hd', 'h', 'q', 'hd', 'w'], say: 'How many beats?' },
       ]),
       L('tempo', '🐇', 'Fast and Slow', [
-        { type: 'show', text: '🐇 fast  🐢 slow', say: 'Tempo means how fast the music goes. Some songs run like a bunny, some walk like a turtle. Play C, D, E fast, then slow.', hear: 'C D E', keys: { hl: 'C D E', letters: 'hl' }, goal: 'C D E', times: 6 },
+        { type: 'show', text: '🐇 fast  🐢 slow', say: 'Tempo is how fast. Play C, D, E fast, then slow!', more: 'Tempo means how fast the music goes. Some songs run like a bunny, some walk like a turtle. Play C, D, E fast, then slow.', hear: 'C D E', keys: { hl: 'C D E', letters: 'hl' }, goal: 'C D E', times: 6 },
         { type: 'choice', say: 'Fast or slow?', rounds: [
           { hear: 'C D E F G', tempo: 180, options: ['🐇', '🐢'], answer: '🐇' },
           { hear: 'C D E F G', tempo: 55, options: ['🐇', '🐢'], answer: '🐢' },
@@ -319,7 +319,7 @@ export const LEVELS: Level[] = [
     n: 7, emoji: '🐤', title: 'Quick Chicks', color: '#46b4ff',
     lessons: [
       L('eighths', '🐤', 'Eighth Notes', [
-        { type: 'show', text: '♫ = 1 beat', say: 'Two eighth notes holding hands make one beat. Say chick-en, chick-en! Play C eight quick times.', staff: 'C:8 C:8 C:8 C:8 C:8 C:8 C:8 C:8', hear: 'C:8 C:8 C:8 C:8 C:8 C:8 C:8 C:8', keys: { hl: 'C', letters: 'hl' }, goal: 'C', times: 8 },
+        { type: 'show', text: '♫ = 1 beat', say: 'Two eighth notes make one beat. Play C eight quick times!', more: 'Two eighth notes holding hands make one beat. Say chick-en, chick-en! Play C eight quick times.', staff: 'C:8 C:8 C:8 C:8 C:8 C:8 C:8 C:8', hear: 'C:8 C:8 C:8 C:8 C:8 C:8 C:8 C:8', keys: { hl: 'C', letters: 'hl' }, goal: 'C', times: 8 },
         { type: 'rhythm', say: 'Two eighth notes fit in one peck. Chick, en! Play C, then chick en, then hold.', staff: 'C C:8 C:8 C:h', tempo: 60 },
         { type: 'beats', durs: ['8', 'q', 'h', '8', 'w'], say: 'How many beats?' },
       ]),
@@ -334,7 +334,7 @@ export const LEVELS: Level[] = [
         { type: 'rhythm', say: 'One and two and, then hold for three and four!', staff: 'C:8 D:8 E:8 F:8 G:h', tempo: 60 },
       ]),
       L('ties', '🎀', 'Ties', [
-        { type: 'show', text: '𝅗𝅥‿𝅗𝅥 = 4', say: 'A tie is a curved line that glues two notes on the same key together. Play it once and hold it for both! Play G and hold.', staff: 'G:h~ G:h', hear: 'G:w', keys: { hl: 'G', letters: 'hl' }, goal: 'G', times: 2 },
+        { type: 'show', text: '𝅗𝅥‿𝅗𝅥 = 4', say: 'A tie glues two notes. Play G once and hold!', more: 'A tie is a curved line that glues two notes on the same key together. Play it once and hold it for both! Play G and hold.', staff: 'G:h~ G:h', hear: 'G:w', keys: { hl: 'G', letters: 'hl' }, goal: 'G', times: 2 },
         { type: 'choice', say: 'How many beats do you hold?', rounds: [
           { staff: 'G:h~ G:h', options: ['2', '3', '4'], answer: '4' },
           { staff: 'G~ G', options: ['2', '3', '4'], answer: '2' },
@@ -342,7 +342,7 @@ export const LEVELS: Level[] = [
         ] },
       ]),
       L('repeat', '🔁', 'Repeat Sign', [
-        { type: 'show', text: ':‖ = again!', say: 'Two dots by a thick bar line is a repeat sign. It means go back and play it again! Play C, D, E, then play it again.', staff: 'C D E:h', repeat: true, keys: { hl: 'C D E', letters: 'hl' }, goal: 'C D E', times: 6 },
+        { type: 'show', text: ':‖ = again!', say: 'Two dots mean play it again! Play C, D, E twice.', more: 'Two dots by a thick bar line is a repeat sign. It means go back and play it again! Play C, D, E, then play it again.', staff: 'C D E:h', repeat: true, keys: { hl: 'C D E', letters: 'hl' }, goal: 'C D E', times: 6 },
         { type: 'choice', say: 'How many times do you play this?', rounds: [
           { staff: 'E D C:h', repeat: true, options: ['1', '2', '3'], answer: '2' },
           { staff: 'E D C:h', options: ['1', '2', '3'], answer: '1' },
@@ -354,15 +354,15 @@ export const LEVELS: Level[] = [
     n: 8, emoji: '⚫', title: 'Black Key Secrets', color: '#555555',
     lessons: [
       L('sharp', '♯', 'Sharps', [
-        { type: 'show', text: '♯ = up ➡️', say: 'A sharp sign means play the very next key up, to the right. C sharp is the black key just right of C! Tap C sharp.', staff: 'C:h C#:h', keys: { hl: 'C#', letters: 'hl' }, goal: 'C#', times: 2 },
+        { type: 'show', text: '♯ = up ➡️', say: 'Sharp means one key up. Tap C sharp!', more: 'A sharp sign means play the very next key up, to the right. C sharp is the black key just right of C! Tap C sharp.', staff: 'C:h C#:h', keys: { hl: 'C#', letters: 'hl' }, goal: 'C#', times: 2 },
         { type: 'key', targets: 'C# F# G# D#', letters: 'none', say: 'Find each sharp!', hint: 'Find the white key with that letter, then go one key to the right.' },
       ]),
       L('flat', '♭', 'Flats', [
-        { type: 'show', text: '♭ = down ⬅️', say: 'A flat sign means play the very next key down, to the left. B flat is the black key just left of B! Tap B flat.', staff: 'B:h Bb:h', keys: { hl: 'Bb', letters: 'hl' }, goal: 'A#', times: 2 },
+        { type: 'show', text: '♭ = down ⬅️', say: 'Flat means one key down. Tap B flat!', more: 'A flat sign means play the very next key down, to the left. B flat is the black key just left of B! Tap B flat.', staff: 'B:h Bb:h', keys: { hl: 'Bb', letters: 'hl' }, goal: 'A#', times: 2 },
         { type: 'key', targets: 'Bb Eb Ab Db', letters: 'none', say: 'Find each flat!', hint: 'Find the white key with that letter, then go one key to the left.' },
       ]),
       L('halfwhole', '👟', 'Half and Whole Steps', [
-        { type: 'show', text: '½ next · 1 skip one', say: 'A half step is the very next key, black or white. A whole step skips one key. E to F is a half step. C to D is a whole step. Play E, F, then C, D.', keys: { hl: 'C D E F', letters: 'hl' }, goal: 'C D E F', times: 4 },
+        { type: 'show', text: '½ next · 1 skip one', say: 'A half step is next door. A whole step skips one. Play E and F, then C and D.', more: 'A half step is the very next key, black or white. A whole step skips one key. E to F is a half step. C to D is a whole step. Play E, F, then C, D.', keys: { hl: 'C D E F', letters: 'hl' }, goal: 'C D E F', times: 4 },
         { type: 'choice', say: 'Half step or whole step?', rounds: [
           { hl: 'E F', hear: 'E F', options: ['½', '1'], answer: '½' },
           { hl: 'C D', hear: 'C D', options: ['½', '1'], answer: '1' },
@@ -372,7 +372,7 @@ export const LEVELS: Level[] = [
         ] },
       ]),
       L('twonames', '🏷️', 'Two Names', [
-        { type: 'show', text: 'C♯ = D♭', say: 'Every black key has two names! The key right of C is C sharp. It is also left of D, so it is D flat too. Tap it.', keys: { hl: 'C#', letters: 'hl' }, goal: 'C#', times: 2 },
+        { type: 'show', text: 'C♯ = D♭', say: 'Black keys have two names! Tap C sharp.', more: 'Every black key has two names! The key right of C is C sharp. It is also left of D, so it is D flat too. Tap it.', keys: { hl: 'C#', letters: 'hl' }, goal: 'C#', times: 2 },
         { type: 'choice', say: 'Which name is the same key?', rounds: [
           { hl: 'C#', ask: 'C♯', options: ['D♭', 'B♭', 'E♭'], answer: 'D♭' },
           { hl: 'F#', ask: 'F♯', options: ['A♭', 'G♭', 'D♭'], answer: 'G♭' },
@@ -386,7 +386,7 @@ export const LEVELS: Level[] = [
     n: 9, emoji: '🐻', title: 'Left Hand Low', color: '#b8322a',
     lessons: [
       L('bass', '🐻', 'Bass Clef', [
-        { type: 'show', text: '𝄢 = low', say: 'This is the bass clef. It is for low notes, usually played by your left hand. Its two dots hug the F line! Play low F.', staff: 'F3:w', clef: 'bass', keys: { hl: 'F3', letters: 'hl', range: 'C3 C5' }, goal: 'F', times: 2 },
+        { type: 'show', text: '𝄢 = low', say: 'The bass clef is for low notes. Play low F!', more: 'This is the bass clef. It is for low notes, usually played by your left hand. Its two dots hug the F line! Play low F.', staff: 'F3:w', clef: 'bass', keys: { hl: 'F3', letters: 'hl', range: 'C3 C5' }, goal: 'F', times: 2 },
         { type: 'show', text: 'C D E F G', say: 'Here are C, D, E, F, G down low, on the bass staff. Play them with your left hand.', staff: 'C3 D3 E3 F3 G3', clef: 'bass', keys: { hl: 'C3 D3 E3 F3 G3', letters: 'hl', fingers: 'lh', range: 'C3 C5' }, goal: C_POS, times: 5 },
         { type: 'rhythm', say: 'Left hand, play with the pecks. C, E, G, then hold C for two.', staff: 'C3 E3 G3 E3 C3:h R:h', clef: 'bass', range: 'C3 C5' },
       ]),
@@ -396,13 +396,13 @@ export const LEVELS: Level[] = [
         { type: 'name', notes: 'C3 E3 G3 D3 F3 A3 B3', pool: 'CDEFGAB', clef: 'bass', say: 'What low note is this?', range: 'C3 C5' },
       ]),
       L('lefthand', '🤚', 'Left Hand C', [
-        { type: 'show', text: '5 on C · 1 on G', say: 'Left hand: your pinky, finger five, goes on low C. Your thumb, finger one, goes on G. Play C, D, E, F, G with your left hand.', keys: { hl: 'C3 D3 E3 F3 G3', letters: 'hl', fingers: 'lh', range: 'C3 C5' }, goal: C_POS, times: 5 },
+        { type: 'show', text: '5 on C · 1 on G', say: 'Left pinky on low C. Play C to G!', more: 'Left hand: your pinky, finger five, goes on low C. Your thumb, finger one, goes on G. Play C, D, E, F, G with your left hand.', keys: { hl: 'C3 D3 E3 F3 G3', letters: 'hl', fingers: 'lh', range: 'C3 C5' }, goal: C_POS, times: 5 },
         { type: 'seq', say: 'Left hand, up and down!', seqs: ['C3 D3 E3 F3 G3', 'G3 F3 E3 D3 C3'], range: 'C3 C5' },
-        { type: 'rhythm', say: 'In songs, the left hand often plays long notes. Hold C for two, G for two, then C for four!', staff: 'C3:h G3:h C3:w', clef: 'bass', range: 'C3 C5' },
+        { type: 'rhythm', say: 'Hold C for two, G for two, then C for four!', more: 'In songs, the left hand often plays long notes. Hold C for two, G for two, then C for four!', staff: 'C3:h G3:h C3:w', clef: 'bass', range: 'C3 C5' },
         { type: 'rhythm', say: 'Now a walking bass. One note on every peck!', staff: 'C3 D3 E3 F3 G3 F3 E3 D3 C3:w', clef: 'bass', range: 'C3 C5', tempo: 80 },
       ]),
       L('whichclef', '🙌', 'Two Hands', [
-        { type: 'show', text: '𝄞 + 𝄢', say: 'Put the two staffs together and you get the grand staff! The top is for your right hand, the bottom is for your left hand. Middle C sits right between them. Play middle C.', staff: 'C:w', lh: 'R:w', keys: { hl: 'C', letters: 'hl', range: 'C3 C5' }, goal: 'C', times: 2 },
+        { type: 'show', text: '𝄞 + 𝄢', say: 'Two staffs make the grand staff. Play middle C!', more: 'Put the two staffs together and you get the grand staff! The top is for your right hand, the bottom is for your left hand. Middle C sits right between them. Play middle C.', staff: 'C:w', lh: 'R:w', keys: { hl: 'C', letters: 'hl', range: 'C3 C5' }, goal: 'C', times: 2 },
         { type: 'choice', say: 'Treble clef or bass clef?', rounds: [
           { staff: 'G', options: ['𝄞', '𝄢'], answer: '𝄞' },
           { staff: 'C3', clef: 'bass', options: ['𝄞', '𝄢'], answer: '𝄢' },
@@ -418,7 +418,7 @@ export const LEVELS: Level[] = [
     n: 10, emoji: '👑', title: 'Piano Champion', color: '#7447d9',
     lessons: [
       L('scale', '🪜', 'C Major Scale', [
-        { type: 'show', text: 'C D E F G A B C', say: 'A scale walks up eight notes, from C to the next C. After E, tuck your thumb under to reach F! Play the whole scale.', staff: 'C D E F G A B C5', hear: 'C D E F G A B C5', keys: { hl: 'C D E F G A B C5', letters: 'hl' }, goal: 'C D E F G A B', times: 8 },
+        { type: 'show', text: 'C D E F G A B C', say: 'Walk up from C to C. Tuck your thumb after E!', more: 'A scale walks up eight notes, from C to the next C. After E, tuck your thumb under to reach F! Play the whole scale.', staff: 'C D E F G A B C5', hear: 'C D E F G A B C5', keys: { hl: 'C D E F G A B C5', letters: 'hl' }, goal: 'C D E F G A B', times: 8 },
         { type: 'seq', say: 'Up the scale and back down!', seqs: ['C D E F G A B C5', 'C5 B A G F E D C'] },
       ]),
       L('chordc', '🎶', 'The C Chord', [

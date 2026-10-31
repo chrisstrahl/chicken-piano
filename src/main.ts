@@ -1309,7 +1309,7 @@ function openLesson(n: number, i: number) {
   onNote = lessonInput;
   onRelease = lessonRelease;
   leaveHooks.push(stopHear, stopHint);
-  preloadVoice(lesson().steps.map((st) => [st.say, (st as Step<'key'>).hint]));
+  preloadVoice(lesson().steps.map((st) => [st.say, st.more, (st as Step<'key'>).hint]));
   renderStep();
 }
 function stopHear() { L.stopHear && L.stopHear(); L.stopHear = null; }
@@ -1363,6 +1363,7 @@ function renderStep() {
   $('#btnNext').style.display = 'none';
   $('#btnLessonHint').style.display = ['key', 'seq', 'show'].includes(s.type) ? '' : 'none';
   stopHint();
+  $('#btnMore').style.display = s.more ? '' : 'none';
   $('#btnHear').style.display = (s as Step<'show'>).hear || s.type === 'rhythm' || (s.type === 'choice' && s.rounds.some((r) => r.hear)) ? '' : 'none';
   lessonCard.style.display = 'none';
   L.seqDrawn = undefined;
@@ -1411,6 +1412,7 @@ function stepDone() {
 }
 $('#btnNext').addEventListener('click', nextStep);
 $('#btnSay').addEventListener('click', () => say(stepObj().say));
+$('#btnMore').addEventListener('click', () => say(stepObj().more));
 $('#btnHear').addEventListener('click', () => {
   const s = stepObj();
   stopTalking();
