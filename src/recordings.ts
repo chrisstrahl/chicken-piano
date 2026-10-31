@@ -41,12 +41,13 @@ export function setupRecordings(app: RecordingsApp) {
       b.querySelector('.tm')!.textContent = on ? clock(recorder.ms) : '';
     });
   }
-  function start(b: HTMLElement, what: RecInfo) {
-    stopTalking();
+  // quiet: starts by itself (Black-key Jam records every jam), so no talking over the music
+  function start(b: HTMLElement, what: RecInfo, quiet = false) {
+    if (!quiet) stopTalking();
     btn = b;
     info = what;
     recorder.start();
-    say('Recording! Play me a song!');
+    if (!quiet) say('Recording! Play me a song!');
     clearInterval(ticker);
     ticker = setInterval(() => { if (recorder.ms > MAX_MS) finish(); else paint(); }, 250);
     paint();
@@ -268,11 +269,12 @@ export function setupRecordings(app: RecordingsApp) {
 
   return {
     button, finish, openRec, R,
+    begin: (b: HTMLElement, what: RecInfo) => { if (!recorder.on) start(b, what, true); },
     get on() { return recorder.on; },
     down: (m: number, source: NoteSource, vel?: number) => { recorder.down(m, source, vel); },
     up: (m: number) => recorder.up(m),
     screens: { recs: renderShelf },
-    leave(to: string) { if (to !== 'rec') stopPlay(); if (recorder.on) { finish({ open: false }); app.toast('🎙️ ✅'); } },
+    leave(to: string) { if (to !== 'rec') stopPlay(); if (recorder.on && finish({ open: false })) app.toast('🎙️ ✅'); },
   };
 }
 

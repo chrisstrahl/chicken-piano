@@ -1,5 +1,5 @@
 import { SONGS, LEVELS, PRAISE, COLORS, BEATS, letterOf, nameOf, isBlack, parse, songById, songsForLevel } from './music.js';
-import { coop, openSongsAsk, letsPlay, oopsFind, songDone, lessonDone, noteWords, whoPlays, pickChicken, hello, removeAsk, originalName, dayEgg, dayTalk, SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN, RHYTHM_TURN, RHYTHM_AGAIN, RHYTHM_GOOD, RHYTHM_OK, RHYTHM_HOLD, RHYTHM_SHH } from './lines.js';
+import { coop, openSongsAsk, letsPlay, oopsFind, songDone, lessonDone, noteWords, whoPlays, pickChicken, hello, removeAsk, originalName, dayEgg, dayTalk, SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN, RHYTHM_TURN, RHYTHM_AGAIN, RHYTHM_GOOD, RHYTHM_OK, RHYTHM_HOLD, RHYTHM_SHH, LEARN_CATS } from './lines.js';
 import { startAudio, playNote, noteDown, noteUp, playSequence, cluck, peck, bawk, silly, say, stopTalking, preloadVoice, startBeat } from './audio.js';
 import { BeatJudge, phrases, SPEEDS, barBeats, peckEvery, MIC_LAG, timeline } from './beat.js';
 import { startMic, stopMic, micOn, micSupported, expectNote, micHealth, lastHeardAt } from './mic.js';
@@ -10,6 +10,7 @@ import type { Keyboard } from './keyboard.ts';
 import { setupRecordings } from './recordings.js';
 import { setupEarTraining, earEggTotal } from './eartraining.js';
 import { setupGames, gameEggTotal } from './games.js';
+import { setupJam } from './jam.js';
 import { players, playerId, AVATARS, MAX_PLAYERS, avatarOf } from './profiles.js';
 import { deletePlayerRecordings } from './recorder.js';
 import { CHICKEN, lookOf, avatarChicken } from './chicken.js';
@@ -122,6 +123,7 @@ function show(id: string) {
   recs.leave(id);
   ears.leave();
   games.leave();
+  jam.leave();
   leaveHooks.forEach((f) => f());
   leaveHooks = [];
   stopTalking();
@@ -131,7 +133,7 @@ function show(id: string) {
   onNote = null;
   onRelease = null;
   expectNote(null);
-  ({ home: renderHome, learn: renderLearn, who: renderWho, songs: renderSongs, map: renderMap, level: renderLevel, free: openFree, nest: renderNest, ...recs.screens, ...ears.screens, ...games.screens } as Record<string, () => void>)[id]?.();
+  ({ home: renderHome, learn: renderLearn, who: renderWho, songs: renderSongs, map: renderMap, level: renderLevel, free: openFree, nest: renderNest, ...recs.screens, ...ears.screens, ...games.screens, ...jam.screens } as Record<string, () => void>)[id]?.();
 }
 document.addEventListener('click', (e) => {
   const b = (e.target as Element).closest<HTMLElement>('[data-go]');
@@ -1068,6 +1070,17 @@ const ears = setupEarTraining({ show, bubble, bigLetter, act, party: (...a) => p
 /* ---------- learn games: Egg Rush, Echo Game, Twinkle Twist (src/games.ts) ---------- */
 const games = setupGames({ show, bubble, bigLetter, act, party: (...a) => party(...a), progress: () => progress, save, setInput: (f) => { onNote = f; }, noteIn, keyUp });
 
+/* ---------- Black-key Jam (src/jam.ts) ---------- */
+const jam = setupJam({
+  setInput: (f) => { onNote = f; }, noteIn, keyUp, bubble, bigLetter, act,
+  micEars: () => micOn() && !midiNames.length,
+  record: (b, what) => recs.begin(b, what),
+  stopRecording: () => !!recs.finish({ open: false }),
+});
+recs.button($('#jamRec'), () => ({ title: 'Black-key Jam', emoji: '⚫', song: null }));
+// Learn: tapping a column's icon says what kind of games it holds
+document.querySelectorAll<HTMLElement>('#learn [data-cat]').forEach((b) => b.addEventListener('click', () => say(LEARN_CATS[+b.dataset.cat!])));
+
 /* ---------- yes / no question ---------- */
 function ask(html: string, words: string, onYes: () => void) {
   $('#askText').innerHTML = html;
@@ -1735,7 +1748,7 @@ document.addEventListener('keydown', (e) => {
 });
 document.addEventListener('keyup', (e) => { if (typing(e)) return; const m = KEYMAP[e.key.toLowerCase()]; if (m) keyUp(m); });
 
-window.__cp = { recs, players, usePlayer, say, show, openSong, openLesson, noteIn, jumpToBeat, P, L, progress, LEVELS, SONGS, startBeatMode, startEcho, lessonStep: (i: number) => { L.step = i; renderStep(); }, ears, games };
+window.__cp = { recs, players, usePlayer, say, show, openSong, openLesson, noteIn, jumpToBeat, P, L, progress, LEVELS, SONGS, startBeatMode, startEcho, lessonStep: (i: number) => { L.step = i; renderStep(); }, ears, games, jam };
 window.__cpMs = ms;
 window.__cpHeard = () => heardCount;
 window.__cpFree = () => F.notes;

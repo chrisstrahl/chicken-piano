@@ -52,6 +52,9 @@ export const GAMES_PICK = 'Pick a nest!';
 export const RUSH_START = 'Egg rush! Play each note as fast as you can. Ready, go!';
 export const RUSH_BEST = 'Your fastest time ever!';
 export const CLUCK_START = 'Echo game! Listen to my rhythm. Then play it back on any key.';
+export const JAM_START = 'Black key jam! Pick a groove, then play any black keys. I will record it!';
+export const JAM_STOP = 'I saved your jam in My Songs!';
+export const LEARN_CATS = ['Lessons', 'Reading games', 'Ear games', 'Rhythm games', 'Make music'];
 export const twinkleStart = (word: string) => `Twinkle twist! Play Twinkle with a new rhythm. ${word}!`;
 // players (profiles.ts): a typed name has no recorded clip, so the device voice says those
 export const whoPlays = 'Who is playing?';
@@ -96,7 +99,7 @@ export function templatedLines(songs: Song[], levels: Level[]): string[] {
     ...SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN,
     RHYTHM_TURN, RHYTHM_AGAIN, RHYTHM_GOOD, RHYTHM_OK, RHYTHM_HOLD, RHYTHM_SHH,
     EAR_PICK, EAR_START(1), EAR_START(2), EAR_HINT,
-    GAMES_PICK, RUSH_START, RUSH_BEST, CLUCK_START, ...TWINKLE_STAGES.map((s) => twinkleStart(s.word)),
+    GAMES_PICK, RUSH_START, RUSH_BEST, CLUCK_START, JAM_START, JAM_STOP, ...LEARN_CATS, ...TWINKLE_STAGES.map((s) => twinkleStart(s.word)),
     whoPlays,
     pickChicken,
     ...AVATARS.map((a) => hello(a.name)),
