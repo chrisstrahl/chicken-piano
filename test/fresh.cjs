@@ -46,7 +46,8 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
   check(await page.locator('#freshStaff .vf-stavenote').count() === f.ms.length, 'the tune is on the staff');
   await note(f.ms[0]);
   const wrong = [60, 62, 64, 65, 67].find((m) => m % 12 !== f.ms[1] % 12 && m % 12 !== f.ms[0] % 12);
-  await note(f.ms[0], 'mic'); // still ringing
+  // the mic still hearing the first note ring: only tellable apart when the second note is a different key
+  if (f.ms[1] % 12 !== f.ms[0] % 12) await note(f.ms[0], 'mic');
   f = await F();
   check(f.pos === 1 && f.misses === 0, 'right note moves on; the mic hearing it ring is not a miss');
   await note(wrong); await note(wrong);
