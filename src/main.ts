@@ -1765,16 +1765,20 @@ function rhythmFinish() {
   lightBeat(-1);
   rhythmMarks(j);
   const c = j.counts();
-  const ok = c.miss === 0 && (L.slips || 0) <= 1 && c.good >= j.items.length / 2;
+  // no need to be perfect: pass when 3 of 4 notes land on or near the beat (and half right on it)
+  const n = j.items.length, hits = c.good + c.early + c.late;
+  const ok = hits >= n * 0.75 && (L.slips || 0) <= 1 && c.good >= n / 2;
+  const score = `🎯 ${hits}/${n} · 🙈 ${c.miss}`;
   L.tries = (L.tries || 0) + 1;
   if (ok || L.tries >= 3) {
     stepDone();
+    bubble($('#lessonBubble'), `✅ ${score}`);
     say(ok ? (L.short ? RHYTHM_HOLD : RHYTHM_GOOD) : RHYTHM_OK);
     return;
   }
   const g = gen;
   act(lessonChicken(), 'oops');
-  bubble($('#lessonBubble'), `🎯 ${c.good} · 👍 ${c.early + c.late} · 🙈 ${c.miss} 🔁`);
+  bubble($('#lessonBubble'), `${score} 🔁`);
   setTimeout(() => g === gen && say(RHYTHM_AGAIN, () => g === gen && rhythmDemo()), 900);
 }
 function rhythmInput(m: number, source: NoteSource) {
