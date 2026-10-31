@@ -288,9 +288,9 @@ body.midi #mic:not(.on){opacity:.6}
 .bubble.pop{animation:bpop .3s}
 @keyframes bpop{50%{transform:scale(1.08)}}
 .coach .spacer{flex:1}
-.coach .tools{display:flex;gap:min(10px,1vw);align-items:center}
-/* the song screen has many tools: they shrink on narrow screens so all of them fit */
-.coach .tools .btn.round{width:min(clamp(44px,7vh,60px),5.4vw);height:min(clamp(44px,7vh,60px),5.4vw);font-size:min(clamp(20px,3.6vh,30px),2.8vw)}
+.coach .tools{display:flex;gap:min(10px,1vw);align-items:center;min-width:0;flex:0 1 auto}
+/* the song screen has many tools: they shrink on narrow screens, and next to a wide bubble, so all of them fit */
+.coach .tools .btn.round{width:min(clamp(44px,7vh,60px),5.4vw);height:auto;aspect-ratio:1;flex:0 1 auto;min-width:34px;font-size:min(clamp(20px,3.6vh,30px),2.8vw)}
 .progress{height:14px;border-radius:7px;background:rgba(255,255,255,.6);overflow:hidden;width:min(24vw,240px)}
 .progress i{display:block;height:100%;width:0;background:var(--good);transition:width .3s}
 
@@ -542,7 +542,7 @@ body.midi #mic:not(.on){opacity:.6}
     <button class="btn red tile" data-go="recs"><span class="em">🎙️</span>Record a Song</button>
   </div>
   <div class="coop" id="coop"></div>
-  <div class="ver">v 2026-10-31 05:42 UTC</div>
+  <div class="ver">v 2026-10-31 06:07 UTC</div>
   <button id="btnWho" aria-label="Who is playing?"></button>
 </section>
 
