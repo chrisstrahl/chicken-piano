@@ -451,6 +451,15 @@ body.midi #mic:not(.on){opacity:.6}
 .cat .tile .em{font-size:min(8vh,5.6vw);line-height:1}
 .cat .tile.big{flex:1;height:auto;font-size:min(4vh,2.8vw)}
 .cat .tile.big .em{font-size:min(14vh,9vw)}
+/* Ear quizzes: Mystery Melodies, Happy or Sad */
+.quizchoices{flex:1}
+.quizchoices .choice{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6vh;line-height:1.1}
+.quizchoices .choice small{font-size:min(2.6vh,1.8vw);font-weight:700;color:var(--ink);padding:0 6px;text-align:center}
+.quizchoices.mood .choice{width:min(24vw,30vh);height:min(26vw,32vh);font-size:min(13vh,9vw)}
+.quizchoices.mood .choice small{font-size:min(3.4vh,2.4vw)}
+.quizchoices .choice.right small{color:#fff}
+.quizchoices .choice.hint{animation:glow 1s ease-in-out infinite;box-shadow:0 0 0 6px var(--yolk)}
+.kbwrap.quizkb{flex:0 0 24%}
 /* Black-key Jam */
 .grooves{display:flex;gap:10px;margin-left:auto}
 .grooves .btn.on{background:var(--good);box-shadow:0 5px 0 #239a50}
@@ -516,7 +525,9 @@ body.midi #mic:not(.on){opacity:.6}
     <div class="cat c1"><button class="cath" data-cat="1">👀</button>
       <button class="btn orange tile" data-pick="rush"><span class="em">🥚</span>Egg Rush</button></div>
     <div class="cat c2"><button class="cath" data-cat="2">👂</button>
-      <button class="btn green tile" data-go="ears"><span class="em">👂</span>Find it</button></div>
+      <button class="btn green tile" data-go="ears"><span class="em">👂</span>Find it</button>
+      <button class="btn violet tile" data-quiz="mystery"><span class="em">🎁</span>Mystery Melodies</button>
+      <button class="btn blue tile" data-quiz="mood"><span class="em">😊😢</span>Happy or Sad</button></div>
     <div class="cat c3"><button class="cath" data-cat="3">🥁</button>
       <button class="btn violet tile" data-pick="cluck"><span class="em">👏</span>Echo Game</button>
       <button class="btn pink tile" data-pick="twinkle"><span class="em">⭐</span>Twinkle Twist</button></div>
@@ -691,6 +702,25 @@ body.midi #mic:not(.on){opacity:.6}
       <div class="tools"><button class="btn round big green" id="beatHear" aria-label="Hear it again">👂</button></div>
     </div>
     <div class="kbwrap"><div id="beatKb"></div></div>
+  </div>
+</section>
+
+<section id="quizzes" class="screen">
+  <div class="topbar"><button class="btn round" data-go="learn" aria-label="Back">⬅️</button><h2 id="quizzesTitle">🎁</h2></div>
+  <div class="reclist" id="quizCards"></div>
+</section>
+
+<section id="quiz" class="screen">
+  <div class="topbar"><button class="btn round" data-go="quizzes" aria-label="Back">⬅️</button><h2 id="quizTitle">🎁</h2><div class="stepdots" id="quizDots"></div></div>
+  <div class="stage">
+    <div class="coach">
+      <div data-chicken id="quizChicken"></div>
+      <div class="bubble" id="quizBubble"></div>
+      <div class="spacer"></div>
+      <div class="tools"><button class="btn round big green" id="quizHear" aria-label="Hear it again">👂</button></div>
+    </div>
+    <div class="choices quizchoices" id="quizChoices"></div>
+    <div class="kbwrap quizkb"><div id="quizKb"></div></div>
   </div>
 </section>
 

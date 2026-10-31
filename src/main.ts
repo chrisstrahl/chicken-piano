@@ -11,6 +11,7 @@ import { setupRecordings } from './recordings.js';
 import { setupEarTraining, earEggTotal } from './eartraining.js';
 import { setupGames, gameEggTotal } from './games.js';
 import { setupJam } from './jam.js';
+import { setupQuizzes } from './quizgames.js';
 import { players, playerId, AVATARS, MAX_PLAYERS, avatarOf } from './profiles.js';
 import { deletePlayerRecordings } from './recorder.js';
 import { CHICKEN, lookOf, avatarChicken } from './chicken.js';
@@ -124,6 +125,7 @@ function show(id: string) {
   ears.leave();
   games.leave();
   jam.leave();
+  quizzes.leave();
   leaveHooks.forEach((f) => f());
   leaveHooks = [];
   stopTalking();
@@ -133,7 +135,7 @@ function show(id: string) {
   onNote = null;
   onRelease = null;
   expectNote(null);
-  ({ home: renderHome, learn: renderLearn, who: renderWho, songs: renderSongs, map: renderMap, level: renderLevel, free: openFree, nest: renderNest, ...recs.screens, ...ears.screens, ...games.screens, ...jam.screens } as Record<string, () => void>)[id]?.();
+  ({ home: renderHome, learn: renderLearn, who: renderWho, songs: renderSongs, map: renderMap, level: renderLevel, free: openFree, nest: renderNest, ...recs.screens, ...ears.screens, ...games.screens, ...jam.screens, ...quizzes.screens } as Record<string, () => void>)[id]?.();
 }
 document.addEventListener('click', (e) => {
   const b = (e.target as Element).closest<HTMLElement>('[data-go]');
@@ -1070,6 +1072,9 @@ const ears = setupEarTraining({ show, bubble, bigLetter, act, party: (...a) => p
 /* ---------- learn games: Egg Rush, Echo Game, Twinkle Twist (src/games.ts) ---------- */
 const games = setupGames({ show, bubble, bigLetter, act, party: (...a) => party(...a), progress: () => progress, save, setInput: (f) => { onNote = f; }, noteIn, keyUp });
 
+/* ---------- ear quizzes: Mystery Melodies, Happy or Sad (src/quizgames.ts) ---------- */
+const quizzes = setupQuizzes({ show, bubble, act, party: (...a) => party(...a), progress: () => progress, save });
+
 /* ---------- Black-key Jam (src/jam.ts) ---------- */
 const jam = setupJam({
   setInput: (f) => { onNote = f; }, noteIn, keyUp, bubble, bigLetter, act,
@@ -1748,7 +1753,7 @@ document.addEventListener('keydown', (e) => {
 });
 document.addEventListener('keyup', (e) => { if (typing(e)) return; const m = KEYMAP[e.key.toLowerCase()]; if (m) keyUp(m); });
 
-window.__cp = { recs, players, usePlayer, say, show, openSong, openLesson, noteIn, jumpToBeat, P, L, progress, LEVELS, SONGS, startBeatMode, startEcho, lessonStep: (i: number) => { L.step = i; renderStep(); }, ears, games, jam };
+window.__cp = { recs, players, usePlayer, say, show, openSong, openLesson, noteIn, jumpToBeat, P, L, progress, LEVELS, SONGS, startBeatMode, startEcho, lessonStep: (i: number) => { L.step = i; renderStep(); }, ears, games, jam, quizzes };
 window.__cpMs = ms;
 window.__cpHeard = () => heardCount;
 window.__cpFree = () => F.notes;
