@@ -1984,6 +1984,11 @@
   "spoken": "You finished level 8! A baby chick hatched! Next is level 9.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "5bbcaa21": {
+  "text": "Once more at this speed.",
+  "spoken": "Once more at this speed.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "5bcde15a": {
   "text": "Music only uses seven letters. A, B, C, D, E, F, G. Then they start over again! Tap any keys and listen to their names.",
   "spoken": "Music only uses seven letters. A, B, C, D, E, F, G. Then they start over again! Tap any keys and listen to their names.",
@@ -2242,6 +2247,11 @@
  "693a943a": {
   "text": "You have 116 eggs.",
   "spoken": "You have 116 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "69763735": {
+  "text": "Tricky spot! Listen, then play it with the pecks. Slow first.",
+  "spoken": "Tricky spot! Listen, then play it with the pecks. Slow first.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "6987c2c9": {
@@ -3382,6 +3392,11 @@
  "9a195323": {
   "text": "You have 29 eggs.",
   "spoken": "You have 29 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "9a68cced": {
+  "text": "Nice! Now a little faster.",
+  "spoken": "Nice! Now a little faster.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "9acf23df": {
@@ -4617,6 +4632,11 @@
  "d0127f16": {
   "text": "Open all the songs in level 10?",
   "spoken": "Open all the songs in level 10?",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "d032608e": {
+  "text": "You fixed the tricky spot!",
+  "spoken": "You fixed the tricky spot!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "d0383721": {

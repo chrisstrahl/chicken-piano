@@ -1,5 +1,5 @@
 import { SONGS, LEVELS, PRAISE, COLORS, BEATS, letterOf, nameOf, isBlack, parse, songById, songsForLevel } from './music.js';
-import { coop, openSongsAsk, letsPlay, oopsFind, songDone, lessonDone, noteWords, whoPlays, pickChicken, hello, removeAsk, originalName, dayEgg, dayTalk, SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN, RHYTHM_TURN, RHYTHM_AGAIN, RHYTHM_GOOD, RHYTHM_OK, RHYTHM_HOLD, RHYTHM_SHH, LEARN_CATS } from './lines.js';
+import { coop, openSongsAsk, letsPlay, oopsFind, songDone, lessonDone, noteWords, whoPlays, pickChicken, hello, removeAsk, originalName, dayEgg, dayTalk, SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN, RHYTHM_TURN, RHYTHM_AGAIN, RHYTHM_GOOD, RHYTHM_OK, RHYTHM_HOLD, RHYTHM_SHH, LEARN_CATS, SPOT_START, SPOT_FASTER, SPOT_AGAIN, SPOT_FIXED } from './lines.js';
 import { startAudio, playNote, noteDown, noteUp, playSequence, cluck, peck, bawk, silly, say, stopTalking, preloadVoice, startBeat } from './audio.js';
 import { BeatJudge, phrases, SPEEDS, barBeats, peckEvery, MIC_LAG, timeline } from './beat.js';
 import { startMic, stopMic, micOn, micSupported, expectNote, micHealth, lastHeardAt } from './mic.js';
@@ -494,7 +494,7 @@ const playCard = $('#playStaff');
 type PlayState = {
   song: Song; e: number; events: SongEvent[]; hands: Hands; mistakes: number; missed: boolean; wrongRow: number;
   drawn: Drawn | null; stopDemo: (() => void) | null; back: string;
-  i: number; mode: 'beat' | 'echo' | null; tok: object | null; beat: ReturnType<typeof startBeat> | null;
+  i: number; mode: 'beat' | 'echo' | 'spot' | null; tok: object | null; beat: ReturnType<typeof startBeat> | null;
   loop: ReturnType<typeof setInterval> | null; judge: BeatJudge | null; stopEcho: (() => void) | null;
   phrases: [number, number][]; ph: number; turn: boolean; echoWrong: number;
   solo?: Part | null; soloNotes?: Note[] | null; shown?: number; grade?: string;
@@ -684,6 +684,7 @@ function jumpToBeat(beat: number) {
 function playInput(m: number, source: NoteSource) {
   if (P.mode === 'beat') return beatInput(m, source);
   if (P.mode === 'echo') return echoInput(m);
+  if (P.mode === 'spot') return spotInput(m, source);
   if (P.stopDemo) return;
   const ev = evNow();
   if (!ev) return;
@@ -813,6 +814,8 @@ function stopMode() {
   P.mode = null; P.judge = null; P.turn = false;
   $('#btnBeat').classList.remove('on');
   $('#btnEcho').classList.remove('on');
+  $('#btnSpot').classList.remove('on');
+  spot = null;
   playChicken()?.classList.remove('dance');
   [P.drawn, P.drawn && P.drawn.lh].forEach((d) => d && [d.noteEls, d.letterEls, d.lyricEls].forEach((list) => list.forEach((e) => e && e.classList.remove('miss', 'later'))));
 }
@@ -1002,6 +1005,125 @@ $('#btnEcho').addEventListener('click', () => {
   stopDemo();
   startEcho();
 });
+/* ---------- TRICKY SPOT: loop one phrase, slow then faster ---------- */
+// 🔁 loops the phrase you're on (tap the music first to pick another spot). The chicken plays it, then you play
+// it with the pecks at snail speed; a clean pass goes up to turtle, then bunny. A clean bunny pass fixes it,
+// and the song carries on from there.
+const SPOT_SPEEDS = [0.5, 0.75, 1];
+const SPOT_ICON = ['🐌', '🐢', '🐇'];
+type Spot = { a: number; b: number; lvl: number; tries: number };
+let spot: Spot | null = null;
+function startSpot() {
+  stopDemo();
+  stopTalking();
+  const notes = notesP();
+  const tl = timeline(notes);
+  const beat = evNow() ? evNow().beat : 0;
+  const phs = phrases(notes, P.song);
+  const ph = phs.find(([, b]) => tl[b - 1].at + tl[b - 1].len > beat + 1e-6) || phs[phs.length - 1];
+  P.mode = 'spot';
+  P.tok = {};
+  spot = { a: ph[0], b: ph[1], lvl: 0, tries: 0 };
+  $('#btnSpot').classList.add('on');
+  const tok = P.tok;
+  say(SPOT_START, () => tok === P.tok && spotRound());
+}
+// one go round the loop: listen at this speed, then play it with the pecks
+function spotRound() {
+  const tok = P.tok, sp = spot!;
+  const d = melDrawn();
+  const part = notesP().slice(sp.a, sp.b);
+  const tempo = P.song.tempo * SPOT_SPEEDS[sp.lvl];
+  markUpTo(d.beats[sp.a]);
+  [d.noteEls, d.letterEls, d.lyricEls].forEach((list) => list.forEach((e, j) => e && (e.classList.toggle('later', j >= sp.b), e.classList.remove('miss'))));
+  playKb.setTarget(null);
+  expectNote(null);
+  focusMel(sp.a);
+  playChicken().classList.add('dance');
+  bubble($('#playBubble'), `🔁 ${SPOT_ICON[sp.lvl]} 👂`);
+  P.stopEcho = playSequence(part, tempo, (j) => {
+    focusMel(sp.a + j);
+    part[j].r || part[j].keys.forEach((k) => playKb.flash(k.m, 'hl', 350));
+  }, () => {
+    P.stopEcho = null;
+    if (tok !== P.tok) return;
+    playChicken().classList.remove('dance');
+    markUpTo(d.beats[sp.a]);
+    const beatMs = 60000 / tempo, per = barBeats(P.song.time);
+    P.beat = startBeat({
+      bpm: tempo, accent: (k) => k % per === 0,
+      onBeat: (k) => {
+        if (tok !== P.tok) return;
+        act(playChicken(), 'peck', Math.min(280, beatMs * 0.6));
+        if (k < per) bubble($('#playBubble'), `<span class="count">${Array.from({ length: per }, (_, j) => `<i class="${j === k ? 'on' : ''}">${j + 1}</i>`).join('')}</span>`);
+      },
+    });
+    P.judge = new BeatJudge(part, beatMs, P.beat.t0 + per * beatMs);
+    P.shown = -1;
+    P.loop = setInterval(spotLoop, 40);
+  });
+}
+function spotLoop() {
+  const j = P.judge, sp = spot;
+  if (!j || !sp) return;
+  const now = performance.now();
+  j.tick(now).forEach((k) => melDrawn().noteEls[sp.a + j.items[k].i]?.classList.add('miss'));
+  if (j.done) return spotPassDone();
+  const k = j.current(now);
+  if (k === null || k === P.shown) return;
+  const it = j.items[k];
+  if (it.t - now > Math.max(600, j.beatMs)) return;
+  P.shown = k;
+  const n = j.notes[it.i] as Sounding;
+  focusMel(sp.a + it.i);
+  playKb.setTarget(n.m);
+  expectNote(n.m);
+}
+function spotInput(m: number, source: NoteSource) {
+  const j = P.judge, sp = spot;
+  if (!j || !sp) return;
+  const r = j.input(m, performance.now() - (source === 'mic' ? MIC_LAG : 0));
+  if (!r) return;
+  if (r.grade === 'wrong') { playKb.flash(m, 'bad', 400); act(playChicken(), 'oops'); return; }
+  markDone(sp.a + j.items[r.k].i);
+  playKb.flash(m, 'good', 300);
+  bubble($('#playBubble'), `${GRADE[r.grade]} ${SPOT_ICON[sp.lvl]}`);
+  if (j.done) setTimeout(() => P.judge === j && spotPassDone(), 400);
+}
+function spotPassDone() {
+  const j = P.judge!, sp = spot!;
+  if (P.beat) { P.beat.stop(); P.beat = null; }
+  clearInterval(P.loop!);
+  P.loop = null;
+  P.judge = null;
+  playKb.setTarget(null);
+  expectNote(null);
+  const c = j.counts();
+  const clean = c.miss === 0 && c.good >= j.items.length / 2;
+  const tok = P.tok;
+  sp.tries++;
+  if (clean && sp.lvl === SPOT_SPEEDS.length - 1) {
+    // fixed: back to normal playing, from the start of the spot
+    cluck(2); confetti(20); act(playChicken(), 'happy', 900);
+    bubble($('#playBubble'), '✅ 🔁 🎉');
+    say(SPOT_FIXED);
+    const beat = melDrawn().beats[sp.a];
+    stopMode();
+    jumpToBeat(beat);
+    return;
+  }
+  // after three tries at one speed it goes up anyway (practice still counts)
+  if (clean || sp.tries >= 3) { sp.lvl++; sp.tries = 0; cluck(2); act(playChicken(), 'happy', 700); }
+  else act(playChicken(), 'oops');
+  bubble($('#playBubble'), `🎯 ${c.good} · 👍 ${c.early + c.late} · 🙈 ${c.miss} → ${SPOT_ICON[sp.lvl]}`);
+  say(sp.tries === 0 ? SPOT_FASTER : SPOT_AGAIN, () => tok === P.tok && spotRound());
+}
+$('#btnSpot').addEventListener('click', () => {
+  if (P.mode === 'spot') { stopMode(); setCurrent(); return; }
+  if (P.mode) stopMode();
+  startSpot();
+});
+
 window.addEventListener('resize', () => {
   if (current !== 'play' || !P.drawn) return;
   if (P.mode) return focusMel(P.i);
@@ -1026,7 +1148,7 @@ function showHint(kb: Keyboard, keys: number[], label: string, chicken: Element 
 const pulse = (el: Element | null | undefined) => { if (!el) return; el.classList.remove('pulse'); void el.getBoundingClientRect(); el.classList.add('pulse'); };
 $('#btnHint').addEventListener('click', () => {
   stopHint();
-  if (P.stopDemo || P.mode === 'beat') return;
+  if (P.stopDemo || P.mode === 'beat' || P.mode === 'spot') return;
   if (P.mode === 'echo') {
     if (!P.turn) return;
     const n = notesP()[P.i];
@@ -1758,7 +1880,7 @@ document.addEventListener('keydown', (e) => {
 });
 document.addEventListener('keyup', (e) => { if (typing(e)) return; const m = KEYMAP[e.key.toLowerCase()]; if (m) keyUp(m); });
 
-window.__cp = { recs, players, usePlayer, say, show, openSong, openLesson, noteIn, jumpToBeat, P, L, progress, LEVELS, SONGS, startBeatMode, startEcho, lessonStep: (i: number) => { L.step = i; renderStep(); }, ears, games, jam, quizzes, fresh };
+window.__cp = { recs, players, usePlayer, say, show, openSong, openLesson, noteIn, jumpToBeat, P, L, progress, LEVELS, SONGS, startBeatMode, startEcho, spot: () => spot, lessonStep: (i: number) => { L.step = i; renderStep(); }, ears, games, jam, quizzes, fresh };
 window.__cpMs = ms;
 window.__cpHeard = () => heardCount;
 window.__cpFree = () => F.notes;

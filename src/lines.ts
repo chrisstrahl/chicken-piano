@@ -62,6 +62,10 @@ export const MOOD_RIGHT: Record<'happy' | 'sad', string> = { happy: 'Yes! That s
 export const mysteryWas = (title: string) => `Yes! It was ${title}!`;
 export const FRESH_START = 'Fresh tune! Nobody has played it before. Read the notes and play them!';
 export const FRESH_HEAR = 'You played a brand new tune! Listen.';
+export const SPOT_START = 'Tricky spot! Listen, then play it with the pecks. Slow first.';
+export const SPOT_FASTER = 'Nice! Now a little faster.';
+export const SPOT_AGAIN = 'Once more at this speed.';
+export const SPOT_FIXED = 'You fixed the tricky spot!';
 export const LEARN_CATS = ['Lessons', 'Reading games', 'Ear games', 'Rhythm games', 'Make music'];
 export const twinkleStart = (word: string) => `Twinkle twist! Play Twinkle with a new rhythm. ${word}!`;
 // players (profiles.ts): a typed name has no recorded clip, so the device voice says those
@@ -107,7 +111,7 @@ export function templatedLines(songs: Song[], levels: Level[]): string[] {
     ...SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN,
     RHYTHM_TURN, RHYTHM_AGAIN, RHYTHM_GOOD, RHYTHM_OK, RHYTHM_HOLD, RHYTHM_SHH,
     EAR_PICK, EAR_START(1), EAR_START(2), EAR_HINT,
-    GAMES_PICK, RUSH_START, RUSH_BEST, CLUCK_START, JAM_START, JAM_STOP, ...LEARN_CATS, MYSTERY_START, MOOD_START, FRESH_START, FRESH_HEAR, ...Object.values(MOOD_RIGHT), ...knownSongs(songs).map((s) => mysteryWas(s.title)), ...TWINKLE_STAGES.map((s) => twinkleStart(s.word)),
+    GAMES_PICK, RUSH_START, RUSH_BEST, CLUCK_START, JAM_START, JAM_STOP, ...LEARN_CATS, MYSTERY_START, MOOD_START, FRESH_START, FRESH_HEAR, SPOT_START, SPOT_FASTER, SPOT_AGAIN, SPOT_FIXED, ...Object.values(MOOD_RIGHT), ...knownSongs(songs).map((s) => mysteryWas(s.title)), ...TWINKLE_STAGES.map((s) => twinkleStart(s.word)),
     whoPlays,
     pickChicken,
     ...AVATARS.map((a) => hello(a.name)),
