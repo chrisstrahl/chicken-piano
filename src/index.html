@@ -451,6 +451,17 @@ body.midi #mic:not(.on){opacity:.6}
 .cat .tile .em{font-size:min(8vh,5.6vw);line-height:1}
 .cat .tile.big{flex:1;height:auto;font-size:min(4vh,2.8vw)}
 .cat .tile.big .em{font-size:min(14vh,9vw)}
+/* Write a Song */
+.wtools{display:flex;gap:10px;margin-left:auto}
+.wcount{font-size:.6em;opacity:.8}
+.lens .btn[data-len]{display:flex;flex-direction:column;line-height:1;font-size:clamp(24px,4.4vh,36px)}
+.lens .btn[data-len] small{font-size:12px;opacity:.7}
+.lens .btn[data-len].on{background:var(--good);box-shadow:0 5px 0 #239a50;color:#fff}
+.lvrow.mine{grid-template-columns:min(9vh,6vw) 1fr}
+.lvrow.mine .mycards{display:grid;grid-template-columns:repeat(5,1fr);gap:1.2vw}
+.card.song .editsong{position:absolute;top:4px;right:4px;font-size:min(3.4vh,2.4vw);background:#fff;border-radius:50%;padding:4px;box-shadow:0 2px 0 rgba(0,0,0,.15)}
+.card.song{position:relative}
+.card.addsong{border:3px dashed var(--muted);background:rgba(255,255,255,.6)}
 /* Grown-ups' page */
 .parentbtn{margin-left:auto;opacity:.75}
 .parentbtn.holding{background:var(--good);transition:background 1.5s}
@@ -551,7 +562,8 @@ body.midi #mic:not(.on){opacity:.6}
       <button class="btn violet tile" data-pick="cluck"><span class="em">👏</span>Echo Game</button>
       <button class="btn pink tile" data-pick="twinkle"><span class="em">⭐</span>Twinkle Twist</button></div>
     <div class="cat c4"><button class="cath" data-cat="4">🎨</button>
-      <button class="btn red tile" data-go="jam"><span class="em">⚫</span>Black-key Jam</button></div>
+      <button class="btn red tile" data-go="jam"><span class="em">⚫</span>Black-key Jam</button>
+      <button class="btn orange tile" data-write><span class="em">✏️</span>Write a Song</button></div>
   </div>
 </section>
 
@@ -728,6 +740,33 @@ body.midi #mic:not(.on){opacity:.6}
       <div class="tools"><button class="btn round big green" id="beatHear" aria-label="Hear it again">👂</button></div>
     </div>
     <div class="kbwrap"><div id="beatKb"></div></div>
+  </div>
+</section>
+
+<section id="write" class="screen">
+  <div class="topbar"><button class="btn round" data-go="learn" aria-label="Back">⬅️</button><h2>✏️ 🎵 <span class="wcount" id="writeCount"></span></h2>
+    <div class="wtools">
+      <button class="btn round" id="writePic" aria-label="Change the picture">🎵</button>
+      <button class="btn round blue" id="writePlay" aria-label="Play it">▶️</button>
+      <button class="btn round" id="writeDel" aria-label="Throw away">🗑️</button>
+      <button class="btn round green" id="writeSave" aria-label="Save">💾</button>
+    </div></div>
+  <div class="stage">
+    <div class="staffcard" id="writeStaff"><div class="scroller"><div class="strip"></div></div></div>
+    <div class="coach">
+      <div data-chicken id="writeChicken"></div>
+      <div class="bubble" id="writeBubble"></div>
+      <div class="spacer"></div>
+      <div class="tools lens">
+        <button class="btn round" data-len="8" aria-label="Eighth note">♪<small>½</small></button>
+        <button class="btn round" data-len="q" aria-label="Quarter note">♩<small>1</small></button>
+        <button class="btn round" data-len="h" aria-label="Half note">𝅗𝅥<small>2</small></button>
+        <button class="btn round" data-len="w" aria-label="Whole note">𝅝<small>4</small></button>
+        <button class="btn round" id="writeRest" aria-label="Rest">🤫</button>
+        <button class="btn round" id="writeUndo" aria-label="Take back the last note">⌫</button>
+      </div>
+    </div>
+    <div class="kbwrap"><div id="writeKb"></div></div>
   </div>
 </section>
 

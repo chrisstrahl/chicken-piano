@@ -66,6 +66,10 @@ export const SPOT_START = 'Tricky spot! Listen, then play it with the pecks. Slo
 export const SPOT_FASTER = 'Nice! Now a little faster.';
 export const SPOT_AGAIN = 'Once more at this speed.';
 export const SPOT_FIXED = 'You fixed the tricky spot!';
+export const WRITE_START = 'Write a song! Pick how long each note is, then play the keys. Tap the green button to save it.';
+export const WRITE_SAVED = 'I saved your song! Find it in Play Songs.';
+export const WRITE_EMPTY = 'Play some keys first!';
+export const WRITE_FULL = 'Your song is full! Save it, or take some notes away.';
 export const LEARN_CATS = ['Lessons', 'Reading games', 'Ear games', 'Rhythm games', 'Make music'];
 export const twinkleStart = (word: string) => `Twinkle twist! Play Twinkle with a new rhythm. ${word}!`;
 // players (profiles.ts): a typed name has no recorded clip, so the device voice says those
@@ -111,7 +115,7 @@ export function templatedLines(songs: Song[], levels: Level[]): string[] {
     ...SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN,
     RHYTHM_TURN, RHYTHM_AGAIN, RHYTHM_GOOD, RHYTHM_OK, RHYTHM_HOLD, RHYTHM_SHH,
     EAR_PICK, EAR_START(1), EAR_START(2), EAR_HINT,
-    GAMES_PICK, RUSH_START, RUSH_BEST, CLUCK_START, JAM_START, JAM_STOP, ...LEARN_CATS, MYSTERY_START, MOOD_START, FRESH_START, FRESH_HEAR, SPOT_START, SPOT_FASTER, SPOT_AGAIN, SPOT_FIXED, ...Object.values(MOOD_RIGHT), ...knownSongs(songs).map((s) => mysteryWas(s.title)), ...TWINKLE_STAGES.map((s) => twinkleStart(s.word)),
+    GAMES_PICK, RUSH_START, RUSH_BEST, CLUCK_START, JAM_START, JAM_STOP, ...LEARN_CATS, MYSTERY_START, MOOD_START, FRESH_START, FRESH_HEAR, SPOT_START, SPOT_FASTER, SPOT_AGAIN, SPOT_FIXED, WRITE_START, WRITE_SAVED, WRITE_EMPTY, WRITE_FULL, ...Object.values(MOOD_RIGHT), ...knownSongs(songs).map((s) => mysteryWas(s.title)), ...TWINKLE_STAGES.map((s) => twinkleStart(s.word)),
     whoPlays,
     pickChicken,
     ...AVATARS.map((a) => hello(a.name)),

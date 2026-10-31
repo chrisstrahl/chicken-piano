@@ -629,6 +629,11 @@
   "spoken": "You have 188 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "1858c290": {
+  "text": "Play some keys first!",
+  "spoken": "Play some keys first!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "18610996": {
   "text": "Let's play Old Friends in the Coop!",
   "spoken": "Let's play Old Friends in the Coop!",
@@ -777,6 +782,11 @@
  "1f208dc9": {
   "text": "That's 87 days in a row!",
   "spoken": "That's 87 days in a row!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "1f2ad85b": {
+  "text": "I saved your song! Find it in Play Songs.",
+  "spoken": "I saved your song! Find it in Play Songs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "1f97a9de": {
@@ -1407,6 +1417,11 @@
  "3fb39ba5": {
   "text": "Let's play Hens in a Row!",
   "spoken": "Let's play Hens in a Row!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "3fecf112": {
+  "text": "Your song is full! Save it, or take some notes away.",
+  "spoken": "Your song is full! Save it, or take some notes away.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "40100ee3": {
@@ -3272,6 +3287,11 @@
  "9400a9a3": {
   "text": "New song: Chicken Walk!",
   "spoken": "New song: Chicken Walk!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "9423490f": {
+  "text": "Write a song! Pick how long each note is, then play the keys. Tap the green button to save it.",
+  "spoken": "Write a song! Pick how long each note is, then play the keys. Tap the green button to save it.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "9432d88e": {
