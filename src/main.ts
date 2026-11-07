@@ -8,6 +8,8 @@ import { startMic, stopMic, micOn, micSupported, expectNote, micHealth } from '.
 import { startMidi, midiSupported, midiAllowed } from './midi.js';
 import { drawStaff, focusX } from './staff.js';
 import { makeKeyboard, LOW, HIGH } from './keyboard.js';
+import { makeLane } from './highway.js';
+import type { LaneResult } from './highway.ts';
 import type { Keyboard } from './keyboard.ts';
 import { setupRecordings } from './recordings.js';
 import { setupEarTraining, earEggTotal } from './eartraining.js';
@@ -506,6 +508,20 @@ const P: PlayState = { song: null as unknown as Song, e: 0, events: [], hands: '
   // play-with-the-beat and echo follow the melody note by note (P.i)
   i: 0, mode: null, tok: null, beat: null, loop: null, judge: null, stopEcho: null, phrases: [], ph: 0, turn: false, echoWrong: 0 };
 const playCard = $('#playStaff');
+// the note lane: notes fall onto their keys in 🥁 and 🔁 (src/highway.ts)
+const playLane = makeLane($('#playLane') as HTMLCanvasElement, playKb, $('#playKb'));
+// how note i went, from a BeatJudge (its items only list the notes that are played)
+const judged = (j: BeatJudge) => {
+  const by = new Map<number, (typeof j.items)[number]>();
+  j.items.forEach((it) => by.set(it.i, it));
+  return (i: number): LaneResult => by.get(i)?.result;
+};
+// While the lane runs, the staff slides along with it: the music under the yellow mark is what is due now.
+// beat0: the song beat (as drawn) of the lane's first note
+function flowStaff(start: number, beatMs: number, beat0: number) {
+  playCard.classList.add('flow');
+  return (now: number) => { if (P.drawn) focusX(playCard, P.drawn, P.drawn.countAt(Math.max(beat0, beat0 + (now - start) / beatMs))); };
+}
 type PlayState = {
   song: Song; e: number; events: SongEvent[]; hands: Hands; mistakes: number; missed: boolean; wrongRow: number;
   drawn: Drawn | null; stopDemo: (() => void) | null; back: string;
@@ -823,6 +839,8 @@ $('#btnSpeed').addEventListener('click', () => {
 // Leaves play-with-the-beat or echo and goes back to plain "find the next note" playing.
 function stopMode() {
   P.tok = null;
+  playLane.stop();
+  playCard.classList.remove('flow');
   if (P.beat) { P.beat.stop(); P.beat = null; }
   clearInterval(P.loop!);
   P.loop = null;
@@ -872,7 +890,9 @@ function startBeatMode() {
         }
       },
     });
-    P.judge = new BeatJudge(notesP(), beatMs, P.beat.t0 + lead * beatMs);
+    const start = P.beat.t0 + lead * beatMs;
+    P.judge = new BeatJudge(notesP(), beatMs, start);
+    playLane.start({ notes: notesP(), start, beatMs, per, every, barAt: P.beat.t0, result: judged(P.judge), letters: () => !!progress.letters, onFrame: flowStaff(start, beatMs, 0) });
     P.shown = -1;
     P.loop = setInterval(beatLoop, 40);
   });
@@ -898,7 +918,7 @@ function beatLoop() {
   P.shown = k;
   P.i = it.i;
   const n = notesP()[it.i];
-  focusMel(it.i);
+  if (!playLane.on) focusMel(it.i);
   playKb.setTarget(n.m);
   expectNote(n.m);
   $('#playProg').style.width = (it.i / notesP().length) * 100 + '%';
@@ -1074,7 +1094,9 @@ function spotRound() {
         if (k < per) bubble($('#playBubble'), `<span class="count">${Array.from({ length: per }, (_, j) => `<i class="${j === k ? 'on' : ''}">${j + 1}</i>`).join('')}</span>`);
       },
     });
-    P.judge = new BeatJudge(part, beatMs, P.beat.t0 + per * beatMs);
+    const start = P.beat.t0 + per * beatMs;
+    P.judge = new BeatJudge(part, beatMs, start);
+    playLane.start({ notes: part, start, beatMs, per, barAt: P.beat.t0, result: judged(P.judge), letters: () => !!progress.letters, onFrame: flowStaff(start, beatMs, d.beats[sp.a]) });
     P.shown = -1;
     P.loop = setInterval(spotLoop, 40);
   });
@@ -1091,7 +1113,7 @@ function spotLoop() {
   if (it.t - now > Math.max(600, j.beatMs)) return;
   P.shown = k;
   const n = j.notes[it.i] as Sounding;
-  focusMel(sp.a + it.i);
+  if (!playLane.on) focusMel(sp.a + it.i);
   playKb.setTarget(n.m);
   expectNote(n.m);
 }
@@ -1109,6 +1131,8 @@ function spotInput(m: number, source: NoteSource) {
 function spotPassDone() {
   const j = P.judge!, sp = spot!;
   if (P.beat) { P.beat.stop(); P.beat = null; }
+  playLane.stop();
+  playCard.classList.remove('flow');
   clearInterval(P.loop!);
   P.loop = null;
   P.judge = null;
@@ -1142,6 +1166,7 @@ $('#btnSpot').addEventListener('click', () => {
 
 window.addEventListener('resize', () => {
   if (current !== 'play' || !P.drawn) return;
+  if (playLane.on) return;
   if (P.mode) return focusMel(P.i);
   const ev = evNow();
   focusX(playCard, P.drawn, ev ? P.drawn.beatX(ev.beat) : null);
@@ -1290,6 +1315,7 @@ function party(eggs: number, { again, next, words, chick = false, rec = null, da
 
 /* ---------- LESSON PLAYER ---------- */
 const lessonKb = makeKeyboard($('#lessonKb'), (m) => noteIn(m, 'tap'), keyUp);
+const lessonLane = makeLane($('#lessonLane') as HTMLCanvasElement, lessonKb, $('#lessonKb'));
 // lv is set by openLesson before anything reads it
 const L: LessonState = { lv: null as unknown as Level, li: 0, step: 0, sub: 0, stopHear: null, locked: false, hits: 0, got: new Set(), done: false, echo: [], seqPos: 0 };
 const lessonCard = $('#lessonStaff');
@@ -1725,10 +1751,21 @@ function rhythmRun(demo: boolean, onEnd?: () => void) {
     },
   });
   const loop = setInterval(rhythmLoop, 40);
-  const stop = () => { beat.stop(); timers.forEach(clearTimeout); clearInterval(loop); if (L.stopHear === stop) L.stopHear = null; };
+  const stop = () => { beat.stop(); timers.forEach(clearTimeout); clearInterval(loop); if (L.stopHear === stop) { L.stopHear = null; lessonLane.stop(); } };
   stopHear();
   L.stopHear = stop;
-  return beat.t0 + per * beatMs;
+  // the notes fall onto their keys: in the chicken's go they sink in as it plays them, in the child's go
+  // they light up or turn grey as the judge scores them
+  const start = beat.t0 + per * beatMs;
+  const at = new Map(tl.map((t) => [t.i, t.at]));
+  lessonLane.start({
+    notes, start, beatMs, per, barAt: beat.t0, letters: () => true,
+    result: demo ? (i) => (performance.now() >= start + (at.get(i) || 0) * beatMs ? 'good' : null) : (i) => {
+      const it = L.judge && L.judge.items.find((x) => x.i === i);
+      return it ? it.result : null;
+    },
+  });
+  return start;
 }
 function rhythmDemo() {
   const g = gen;
