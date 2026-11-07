@@ -29,6 +29,8 @@ const QUARTER_TICKS = 16384 / 4;
 const SVGNS = 'http://www.w3.org/2000/svg';
 const H1 = 165; // one staff
 const H2 = 280; // grand staff
+const BEAM_INK = '#3b2716'; // a beam joining notes of different colors
+const NOTE_INK = new WeakMap<StaveNote, string>(); // each drawn note's color, so its beam can match
 
 function svgEl(tag: string, attrs: Record<string, string | number>, parent?: Element | null): SVGElement {
   const e = document.createElementNS(SVGNS, tag);
@@ -62,7 +64,7 @@ function widthOf(parts: Note[][], perBeat: number, min: number) {
 
 // Build the VexFlow notes for one hand. sig = the key signature ({ B: 'b' }): accidentals are drawn only where a
 // note differs from the key (or from an earlier accidental in the same bar), naturals included.
-function buildPart(notes: Note[], { clef, sig = {}, perBar, pickup, bars }: { clef: string; sig?: KeySig; perBar: number; pickup: number; bars: boolean }): Part {
+function buildPart(notes: Note[], { clef, sig = {}, perBar, pickup, bars, unit = 1 }: { clef: string; sig?: KeySig; perBar: number; pickup: number; bars: boolean; unit?: number }): Part {
   const restKey = clef === 'bass' ? 'd/3' : 'b/4';
   const vnotes: StaveNote[] = [];
   const ticks: (StaveNote | BarNote)[] = [];
@@ -71,6 +73,8 @@ function buildPart(notes: Note[], { clef, sig = {}, perBar, pickup, bars }: { cl
   const beats: number[] = [];
   let beat = 0;
   let barAcc: Record<string, string> = {};
+  let group: { beat: number; notes: StaveNote[] } | null = null;
+  const flush = () => { if (group && group.notes.length > 1) beams.push(group.notes); group = null; };
   notes.forEach((n, i) => {
     let sn: StaveNote;
     beats.push(beat);
@@ -88,12 +92,18 @@ function buildPart(notes: Note[], { clef, sig = {}, perBar, pickup, bars }: { cl
         sn.setKeyStyle(ki, { fillStyle: inkOf(k), strokeStyle: inkOf(k) });
       });
       sn.setStemStyle({ fillStyle: inkOf(n.keys[0]), strokeStyle: inkOf(n.keys[0]) });
+      NOTE_INK.set(sn, inkOf(n.keys[0]));
       sn.setFlagStyle({ fillStyle: inkOf(n.keys[0]), strokeStyle: inkOf(n.keys[0]) });
     }
     if (n.d.endsWith('d')) Dot.buildAndAttach([sn], { all: true });
-    // two eighths that share a beat hold hands
+    // eighths and sixteenths that share a beat hold hands (one beam, with a second beam for the sixteenths)
     const prev = notes[i - 1];
-    if (n.d === '8' && !n.r && prev && prev.d === '8' && !prev.r && beat % 1 === 0.5) beams.push([vnotes[i - 1], sn]);
+    // (a beat is a quarter, or three eighths in 6/8)
+    const at = Math.floor((beat - pickup) / unit + 1e-6), endAt = Math.floor((beat - pickup + BEATS[n.d]) / unit - 1e-6);
+    if (!n.r && (n.d === '8' || n.d === '16') && at === endAt) {
+      if (group && group.beat === at) group.notes.push(sn);
+      else { flush(); group = { beat: at, notes: [sn] }; }
+    } else flush();
     if (prev && !prev.r && prev.tie && !n.r) ties.push([vnotes[i - 1], sn]);
     vnotes.push(sn);
     ticks.push(sn);
@@ -103,6 +113,7 @@ function buildPart(notes: Note[], { clef, sig = {}, perBar, pickup, bars }: { cl
       if (bars && i < notes.length - 1) ticks.push(new BarNote());
     }
   });
+  flush();
   const voice = new Voice({ num_beats: Math.max(1, Math.ceil(beat)), beat_value: 4 }).setStrict(false);
   voice.addTickables(ticks);
   return { voice, vnotes, beams, ties, beats };
@@ -176,7 +187,7 @@ export function drawStaff(card: HTMLElement, notes: Note[], opts: StaffOpts = {}
   strip.innerHTML = '';
   const grand = !!lh;
   const perBar = perBarOf(time);
-  const common = { sig, perBar, pickup, bars };
+  const common = { sig, perBar, pickup, bars, unit: time && time.endsWith('/8') ? 1.5 : 1 };
   const rh = notes.length ? buildPart(notes, { ...common, clef: grand ? 'treble' : clef }) : null;
   const lp = lh && lh.length ? buildPart(lh, { ...common, clef: 'bass' }) : null;
   // Notes far below a staff push its letter bubbles (and everything under them) down, so bubbles never hide notes.
@@ -252,7 +263,15 @@ export function drawStaff(card: HTMLElement, notes: Note[], opts: StaffOpts = {}
     }
     const parts: [Part, Stave][] = [[rh, top]];
     if (lp && bot) parts.push([lp, bot]);
-    parts.forEach(([p]) => { p.beamObjs = p.beams.map((b) => new Beam(b, true)); });
+    parts.forEach(([p]) => {
+      p.beamObjs = p.beams.map((b) => {
+        const beam = new Beam(b, true);
+        const inks = new Set(b.map((sn) => NOTE_INK.get(sn) ?? ''));
+        const ink = inks.size === 1 ? [...inks][0] : BEAM_INK;
+        if (ink) beam.setStyle({ fillStyle: ink, strokeStyle: ink });
+        return beam;
+      });
+    });
     parts.forEach(([p, st]) => {
       p.voice.draw(ctx, st);
       p.beamObjs!.forEach((b) => b.setContext(ctx).draw());
