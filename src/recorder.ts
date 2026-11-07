@@ -1,6 +1,7 @@
 // Recording a performance: every played note (screen keys, microphone or a MIDI keyboard) with its timing,
 // so it can be played back, drawn as music, saved per player and turned into an audio file to share.
 // No DOM in here except renderAudio (needs Web Audio), so the logic can be tested in node.
+import { KEYS, readJSON, writeJSON, onFull, browserStore, type Store } from './storage.ts';
 import { BEATS, letterOf, isBlack } from './music.ts';
 import type { RecNote, Recording, NoteSource } from './types.ts';
 
@@ -130,15 +131,24 @@ export function toTokens(notes: RecNote[], tempo = 90): { tokens: string; index:
 }
 
 /* ---------- saved recordings, per player ---------- */
-export const STORE_KEY = 'chicken-piano-recordings-v1';
+export const STORE_KEY = KEYS.recordings;
 export const MAX_SAVED = 30; // per player; the oldest goes when a new one comes
-type Store = Pick<Storage, 'getItem' | 'setItem'>;
 type All = Record<string, Recording[]>;
-function readAll(storage: Store): All { try { return JSON.parse(storage.getItem(STORE_KEY) || '{}') || {}; } catch (e) { return {}; } }
-function writeAll(storage: Store, all: All) { try { storage.setItem(STORE_KEY, JSON.stringify(all)); return true; } catch (e) { return false; } }
-export function listRecordings(pid: string, storage: Store = localStorage): Recording[] { return readAll(storage)[pid] || []; }
+const readAll = (storage: Store): All => readJSON<All>(storage, STORE_KEY, {});
+const writeAll = (storage: Store, all: All) => writeJSON(storage, STORE_KEY, all, false);
+// When the device is full, recordings make room for progress: the oldest one (anyone's) goes.
+export function dropOldestRecording(storage: Store): boolean {
+  const all = readAll(storage);
+  let pid = '';
+  for (const [id, list] of Object.entries(all)) if (list.length && (!pid || list[list.length - 1].at < all[pid][all[pid].length - 1].at)) pid = id;
+  if (!pid) return false;
+  all[pid].pop();
+  return writeAll(storage, all);
+}
+onFull(dropOldestRecording);
+export function listRecordings(pid: string, storage: Store = browserStore()): Recording[] { return readAll(storage)[pid] || []; }
 // Newest first. Returns false if the device is out of room.
-export function saveRecording(pid: string, rec: Recording, storage: Store = localStorage): boolean {
+export function saveRecording(pid: string, rec: Recording, storage: Store = browserStore()): boolean {
   const all = readAll(storage);
   const mine = [rec, ...(all[pid] || []).filter((r) => r.id !== rec.id)];
   all[pid] = mine.slice(0, MAX_SAVED);
@@ -148,13 +158,13 @@ export function saveRecording(pid: string, rec: Recording, storage: Store = loca
   }
   return true;
 }
-export function deleteRecording(pid: string, id: string, storage: Store = localStorage) {
+export function deleteRecording(pid: string, id: string, storage: Store = browserStore()) {
   const all = readAll(storage);
   all[pid] = (all[pid] || []).filter((r) => r.id !== id);
   writeAll(storage, all);
 }
 // A grown-up removed a player: their recordings go too
-export function deletePlayerRecordings(pid: string, storage: Store = localStorage) {
+export function deletePlayerRecordings(pid: string, storage: Store = browserStore()) {
   const all = readAll(storage);
   delete all[pid];
   writeAll(storage, all);

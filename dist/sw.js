@@ -1,5 +1,5 @@
 // Chicken Piano offline cache (see src/offline.js). build.mjs fills in the build stamp.
-const BUILD = '2026-11-01 06:31 UTC';
+const BUILD = '2026-11-07 17:56 UTC';
 const SHELL = `shell-${BUILD}`; // the page, manifest and icons of this build
 const VOICE = 'voice-v1'; // clips are named by a hash of their sentence, so a clip never changes
 const FONTS = 'fonts-v1';

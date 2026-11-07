@@ -23,6 +23,8 @@ jobs:
         run: node test/songlib.mjs
       - name: Recorder check
         run: node test/recorder.mjs
+      - name: Saved data check
+        run: node test/storage.mjs
 
   # Robot kids play the built app (test/kidbot). Not a required check: it reports, and fails only on real bugs
   # (page errors, stuck screens). The report and screenshots are attached to the run as "kid-report".

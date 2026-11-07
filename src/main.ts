@@ -2,7 +2,8 @@ import { SONGS, LEVELS, PRAISE, COLORS, BEATS, letterOf, nameOf, isBlack, parse,
 import { coop, openSongsAsk, letsPlay, oopsFind, songDone, lessonDone, noteWords, whoPlays, pickChicken, hello, removeAsk, originalName, dayEgg, dayTalk, SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN, RHYTHM_TURN, RHYTHM_AGAIN, RHYTHM_GOOD, RHYTHM_OK, RHYTHM_HOLD, RHYTHM_SHH, LEARN_CATS, SPOT_START, SPOT_FASTER, SPOT_AGAIN, SPOT_FIXED } from './lines.js';
 import { startAudio, playNote, noteDown, noteUp, playSequence, cluck, peck, bawk, silly, say, stopTalking, preloadVoice, startBeat } from './audio.js';
 import { BeatJudge, phrases, SPEEDS, barBeats, peckEvery, timeline } from './beat.js';
-import { struckAt, markTap, setLag } from './timing.js';
+import { struckAt, markTap, setLag, reloadLags } from './timing.js';
+import { browserStore } from './storage.js';
 import { startMic, stopMic, micOn, micSupported, expectNote, micHealth } from './mic.js';
 import { startMidi, midiSupported, midiAllowed } from './midi.js';
 import { drawStaff, focusX } from './staff.js';
@@ -16,9 +17,9 @@ import { setupQuizzes } from './quizgames.js';
 import { setupFreshTunes } from './freshtunes.js';
 import { setupParent } from './parent.js';
 import { setupWrite } from './write.js';
-import { listMySongs, deletePlayerSongs } from './mysongs.js';
+import { listMySongs, deletePlayerSongs, MAX_MYSONGS } from './mysongs.js';
 import { players, playerId, AVATARS, MAX_PLAYERS, avatarOf } from './profiles.js';
-import { deletePlayerRecordings, listRecordings, makeRecorder, toTokens, guessTempo } from './recorder.js';
+import { deletePlayerRecordings, listRecordings, makeRecorder, toTokens, guessTempo, MAX_SAVED } from './recorder.js';
 import { CHICKEN, lookOf, avatarChicken } from './chicken.js';
 import { startOffline } from './offline.js';
 import { addWin, streak, todayWins, calendar, DAILY_GOAL } from './streaks.js';
@@ -1230,6 +1231,8 @@ const parent = setupParent({
   progressOf: (id) => (id === playerId() ? progress : players.progress(id)),
   recordingsOf: (id) => listRecordings(id).length,
   avatar: (p) => `<span class="av">${avatarChicken(p.avatar)}</span>`,
+  store: browserStore(), maxPlayers: MAX_PLAYERS, limits: { recordings: MAX_SAVED, mysongs: MAX_MYSONGS },
+  reload: () => { players.reload(); reloadLags(); usePlayer(players.current().id); },
 });
 
 /* ---------- ear quizzes: Mystery Melodies, Happy or Sad (src/quizgames.ts) ---------- */
@@ -1941,7 +1944,7 @@ document.addEventListener('keydown', (e) => {
 });
 document.addEventListener('keyup', (e) => { if (typing(e)) return; const m = KEYMAP[e.key.toLowerCase()]; if (m) keyUp(m); });
 
-window.__cp = { recs, players, usePlayer, say, show, openSong, openLesson, noteIn, jumpToBeat, P, L, progress, LEVELS, SONGS, startBeatMode, startEcho, spot: () => spot, lessonStep: (i: number) => { L.step = i; renderStep(); }, ears, games, jam, quizzes, fresh, write };
+window.__cp = { recs, players, usePlayer, say, show, openSong, openLesson, noteIn, jumpToBeat, P, L, progress, LEVELS, SONGS, startBeatMode, startEcho, spot: () => spot, lessonStep: (i: number) => { L.step = i; renderStep(); }, ears, games, jam, quizzes, fresh, write, parent };
 window.__cpMs = ms;
 window.__cpHeard = () => heardCount;
 window.__cpFree = () => F.notes;
