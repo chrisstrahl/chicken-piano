@@ -1,9 +1,10 @@
 // Players: each kid picks a chicken and gets their own eggs, chicks and unlocked songs.
 // Progress for player <id> lives in localStorage under 'chicken-piano-v1:<id>'; the list of players under
-// 'chicken-piano-players'. Progress saved before players existed ('chicken-piano-v1') becomes player 'p1'.
+// 'chicken-piano-players'. storage.ts reads and writes them safely and upgrades older layouts (migrate()).
 
 // The chickens a kid can be. body/edge recolor the mascot (see chicken.ts).
 import type { Avatar, Player } from './types.ts';
+import { KEYS, progressKey, readJSON, writeJSON, remove, migrate, browserStore, type Store } from './storage.ts';
 
 export const AVATARS: Avatar[] = [
   { id: 'clucky', name: 'Clucky', body: '#ffffff', edge: '#eadcc6' },
@@ -16,31 +17,21 @@ export const AVATARS: Avatar[] = [
 export const MAX_PLAYERS = 6;
 export const avatarOf = (p: Pick<Player, 'avatar'> | null | undefined): Avatar => AVATARS.find((a) => a.id === (p && p.avatar)) || AVATARS[0];
 
-const OLD = 'chicken-piano-v1';
-const LIST = 'chicken-piano-players';
-const progressKey = (id: string) => `${OLD}:${id}`;
-
-// storage: anything with getItem/setItem/removeItem (localStorage, or a stand-in in tests)
-type Store = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
 // a player's saved progress: a plain object, the app adds its own defaults
 type Progress = Record<string, any>;
 
+// storage: localStorage, or a stand-in in tests
 export function makePlayers(storage: Store) {
-  const get = (k: string) => { try { return storage.getItem(k); } catch (e) { return null; } };
-  const set = (k: string, v: string) => { try { storage.setItem(k, v); } catch (e) {} };
-  const del = (k: string) => { try { storage.removeItem(k); } catch (e) {} };
+  migrate(storage);
   const removed: ((id: string) => void)[] = [];
 
-  let state: { current: string; list: Player[] } | null = null;
-  try { state = JSON.parse(get(LIST) || 'null'); } catch (e) {}
-  if (!state || !Array.isArray(state.list) || !state.list.length) {
-    // first launch, or the first launch since players were added: whatever progress exists belongs to player 1
-    state = { current: 'p1', list: [{ id: 'p1', avatar: AVATARS[0].id, name: AVATARS[0].name }] };
-    const old = get(OLD);
-    if (old && !get(progressKey('p1'))) set(progressKey('p1'), old);
-  }
+  type State = { current: string; list: Player[] };
+  const saved = readJSON<State | null>(storage, KEYS.players, null);
+  // first launch: player 1 (any progress from before players existed was moved to p1 by migrate())
+  let state: State = saved && Array.isArray(saved.list) && saved.list.length ? saved
+    : { current: 'p1', list: [{ id: 'p1', avatar: AVATARS[0].id, name: AVATARS[0].name }] };
   if (!state.list.some((p) => p.id === state.current)) state.current = state.list[0].id;
-  const store = () => set(LIST, JSON.stringify(state));
+  const store = () => writeJSON(storage, KEYS.players, state);
   store();
 
   const find = (id: string) => state.list.find((p) => p.id === id);
@@ -48,6 +39,11 @@ export function makePlayers(storage: Store) {
     list: () => state.list.slice(),
     // always someone: current points at a listed player and the last one can't be removed
     current: (): Player => find(state.current)!,
+    // re-reads the list (after a backup was loaded)
+    reload() {
+      const s = readJSON<State | null>(storage, KEYS.players, null);
+      if (s && Array.isArray(s.list) && s.list.length) { state = s; if (!find(state.current)) state.current = state.list[0].id; }
+    },
     use(id: string) { if (find(id)) { state.current = id; store(); } return this.current(); },
     add(avatar: string, name?: string): Player | null {
       if (state.list.length >= MAX_PLAYERS) return null;
@@ -68,15 +64,16 @@ export function makePlayers(storage: Store) {
       if (state.list.length < 2 || !find(id)) return false;
       state.list = state.list.filter((p) => p.id !== id);
       if (state.current === id) state.current = state.list[0].id;
-      del(progressKey(id));
+      remove(storage, progressKey(id));
       store();
       removed.forEach((f) => f(id));
       return true;
     },
     onRemove(fn: (id: string) => void) { removed.push(fn); },
     // a player's saved progress (a plain object; the app adds its own defaults)
-    progress(id = state.current): Progress { try { return JSON.parse(get(progressKey(id)) || '{}') || {}; } catch (e) { return {}; } },
-    save(progress: Progress, id = state.current) { set(progressKey(id), JSON.stringify(progress)); },
+    progress(id = state.current): Progress { return readJSON<Progress>(storage, progressKey(id), {}); },
+    // false if the device had no room for it, even after dropping old recordings
+    save(progress: Progress, id = state.current): boolean { return writeJSON(storage, progressKey(id), progress); },
   };
 }
 // a short name, or the chicken's own name when none was typed
@@ -85,8 +82,6 @@ function cleanName(name: string | undefined, avatar: string) {
   return n || AVATARS.find((a) => a.id === avatar)?.name || AVATARS[0].name;
 }
 
-const memory = (): Store => { const m = new Map<string, string>(); return { getItem: (k) => (m.has(k) ? m.get(k)! : null), setItem: (k, v) => { m.set(k, String(v)); }, removeItem: (k) => { m.delete(k); } }; };
-const browserStorage = (): Store => { try { if (typeof localStorage !== 'undefined') return localStorage; } catch (e) {} return memory(); };
-export const players = makePlayers(browserStorage());
+export const players = makePlayers(browserStore());
 // for other modules that keep per-player data (recordings)
 export const playerId = () => players.current().id;

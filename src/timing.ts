@@ -9,16 +9,17 @@ import type { NoteSource } from './types.ts';
 import { lastHeardAt } from './mic.js';
 import { MIC_LAG } from './beat.js';
 
-const KEY = 'chicken-piano-lag';
+import { KEYS, readJSON, writeJSON, browserStore } from './storage.ts';
+
 type Lags = Partial<Record<NoteSource, number>>;
-function load(): Lags {
-  try { const v = JSON.parse(localStorage.getItem(KEY) || '{}'); return v && typeof v === 'object' ? v : {}; } catch (e) { return {}; }
-}
+const load = (): Lags => readJSON<Lags>(browserStore(), KEYS.lag, {});
 let lags: Lags = load();
+// after a backup was loaded
+export const reloadLags = () => { lags = load(); };
 export const lagOf = (source: NoteSource) => lags[source] || 0;
 export function setLag(source: NoteSource, ms: number) {
   lags = { ...lags, [source]: Math.round(ms) };
-  try { localStorage.setItem(KEY, JSON.stringify(lags)); } catch (e) {}
+  writeJSON(browserStore(), KEYS.lag, lags);
 }
 
 // strike times stamped by the inputs themselves (event timestamps)

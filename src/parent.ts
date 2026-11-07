@@ -6,6 +6,7 @@ import { EAR_STAGES } from './ear.js';
 import { MYSTERY_STAGES, MOOD_STAGES } from './quiz.js';
 import { FRESH_STAGES } from './sightread.js';
 import { streak, dayKey } from './streaks.js';
+import { KEYS, readRaw, keysOf, makeBackup, backupName, parseBackup, mergeBackup, lastFailedSave, writeJSON, type Store } from './storage.js';
 import type { Level, Song, Player } from './types';
 
 type Saved = {
@@ -53,6 +54,17 @@ export interface ParentApp {
   avatar: (p: Player) => string;
   levels: Level[];
   songs: Song[];
+  store: Store;
+  maxPlayers: number;
+  limits: { recordings: number; mysongs: number };
+  // a backup was loaded: re-read players, progress, songs
+  reload: () => void;
+}
+
+// "today", "3 days ago"
+export function ago(at: number, now = Date.now()) {
+  const d = Math.floor((now - at) / 86400000);
+  return d <= 0 ? 'today' : d === 1 ? 'yesterday' : `${d} days ago`;
 }
 
 const $ = <T extends HTMLElement = HTMLElement>(s: string): T => document.querySelector<T>(s)!;
@@ -69,6 +81,69 @@ export function setupParent(app: ParentApp) {
     t = setTimeout(() => { b.classList.remove('holding'); app.show('parent'); }, 1500);
   });
   ['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) => b.addEventListener(ev, cancel));
+
+  /* ---------- backup card: save everything to a file, load one back (merging, never replacing) ---------- */
+  const standalone = () => { try { return matchMedia('(display-mode: standalone)').matches || !!(navigator as any).standalone; } catch (e) { return false; } };
+  let note = '';
+  function backupCard() {
+    const at = Number(readRaw(app.store, KEYS.backupAt)) || 0;
+    const kb = Math.ceil(keysOf(app.store).reduce((a, k) => a + k.length + (readRaw(app.store, k) || '').length, 0) * 2 / 1024);
+    const full = lastFailedSave();
+    return `<div class="pcard" id="backupCard">
+      <div class="phead">💾 <b>Backup</b></div>
+      <div class="prow"><span>Last backup</span><b>${at ? ago(at) : 'never'}</b></div>
+      <div class="prow"><span>Saved on this ${standalone() ? 'home-screen app' : 'browser tab'}</span><b>${kb} KB</b></div>
+      ${full ? '<div class="pwarn">⚠️ This device ran out of room, so the oldest recordings were removed to keep progress safe.</div>' : ''}
+      <div class="pbtns"><button class="btn" id="btnBackup">💾 Save backup file</button><button class="btn blue" id="btnRestore">📂 Load backup</button></div>
+      ${note ? `<div class="pnote">${note}</div>` : ''}
+      <p class="ptip">Safari can erase saved progress if the app isn't opened for a while, and on an iPad the Safari tab and the home-screen app each keep their own progress. Save a backup to Files now and then. Loading a backup adds its eggs, lessons, songs and recordings to what's here; nothing is lost.</p>
+    </div>`;
+  }
+  function saveBackup() {
+    const b = makeBackup(app.store);
+    const file = new File([JSON.stringify(b)], backupName(b.at), { type: 'application/json' });
+    const done = () => { writeJSON(app.store, KEYS.backupAt, b.at); note = '✅ Backup saved.'; render(); };
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({ files: [file], title: 'Chicken Piano backup' }).then(done).catch((e) => { if (e.name !== 'AbortError') { download(file); done(); } });
+    } else { download(file); done(); }
+  }
+  function download(file: File) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(file);
+    a.download = file.name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+  }
+  const picker = document.createElement('input');
+  picker.type = 'file';
+  picker.accept = '.json,application/json';
+  picker.style.display = 'none';
+  document.body.appendChild(picker);
+  picker.addEventListener('change', () => {
+    const f = picker.files && picker.files[0];
+    picker.value = '';
+    if (f) f.text().then(loadBackup, () => { note = '❌ Couldn\'t read that file.'; render(); });
+  });
+  // exposed for tests: load a backup's text
+  function loadBackup(text: string) {
+    const b = parseBackup(text);
+    if (!b) { note = '❌ That isn\'t a Chicken Piano backup (or it\'s from a newer version).'; render(); return null; }
+    const r = mergeBackup(app.store, b, app.maxPlayers, app.limits);
+    app.reload();
+    const names = (l: string[]) => l.join(', ');
+    note = `✅ Loaded the backup from ${new Date(b.at).toLocaleDateString()}.`
+      + (r.merged.length ? ` Added to: ${names(r.merged)}.` : '') + (r.added.length ? ` New: ${names(r.added)}.` : '')
+      + (r.skipped.length ? ` No room for: ${names(r.skipped)} (${app.maxPlayers} players max).` : '');
+    render();
+    return r;
+  }
+  document.addEventListener('click', (e) => {
+    const t = (e.target as Element).closest('#btnBackup, #btnRestore');
+    if (!t) return;
+    if (t.id === 'btnBackup') saveBackup(); else picker.click();
+  });
 
   function render() {
     $('#parentCards').innerHTML = app.players().map((pl) => {
@@ -88,7 +163,7 @@ export function setupParent(app: ParentApp) {
         <div class="psec">Notes missed most <small>(songs and Fresh Tunes)</small></div>
         <div class="pmiss">${s.missed.length ? s.missed.map(([n, c]) => `<span><b>${n}</b> ${c}×</span>`).join('') : '<i>Nothing yet</i>'}</div>
       </div>`;
-    }).join('');
+    }).join('') + backupCard();
   }
-  return { screens: { parent: render } };
+  return { screens: { parent: () => { note = ''; render(); } }, loadBackup };
 }
