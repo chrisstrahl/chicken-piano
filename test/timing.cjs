@@ -1,6 +1,6 @@
 // Beat timing: the tap-along check measures this device's delay and every game played in time takes it off;
 // key presses are timed from their own event stamps; the sustain pedal keeps USB-keyboard notes held.
-const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+const { chromium } = require('playwright');
 
 const FAKE = () => {
   const input = { name: 'CASIO USB-MIDI', state: 'connected', onmidimessage: null };

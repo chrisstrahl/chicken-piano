@@ -1,7 +1,7 @@
 // Grown-ups' page: holding 📊 in the coop opens it (a tap doesn't), one card per kid with lessons, songs,
 // game eggs and the notes missed most; wrong keys in a song are counted once per note.
 // usage: node test/parent.cjs [shotsDir]
-const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+const { chromium } = require('playwright');
 (async () => {
   const out = process.argv[2] || 'shots';
   require('fs').mkdirSync(out, { recursive: true });

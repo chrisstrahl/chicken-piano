@@ -152,8 +152,9 @@ export function setupGames(app: GamesApp) {
     win(s.id, eggs);
     app.save();
     cluck(2);
-    const i = R.si;
-    setTimeout(() => app.party(eggs, {
+    const i = R.si, t = R.tok;
+    // (not if the kid already left the screen)
+    setTimeout(() => t === R.tok && app.party(eggs, {
       again: () => openRush(i),
       next: () => (i + 1 < RUSH_STAGES.length ? openRush(i + 1) : app.show('games')),
       words: newBest && best ? [songDone(eggs), RUSH_BEST] : songDone(eggs),

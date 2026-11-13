@@ -2,7 +2,7 @@
 // chicken plays, a right pick moves on, a wrong pick replays and the second lights the answer, five rounds
 // give eggs that reach the coop. Also checks the puzzle makers in Node.
 // usage: node test/quizzes.cjs [shotsDir]
-const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+const { chromium } = require('playwright');
 (async () => {
   const out = process.argv[2] || 'shots';
   require('fs').mkdirSync(out, { recursive: true });

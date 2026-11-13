@@ -2,7 +2,7 @@
 // wrong keys light the right key, the mic's ringing last note isn't a wrong key; Copy Cluck takes any key
 // in time and shows the notes after; Twinkle Twist needs the right keys; eggs reach the coop.
 // usage: node test/games.cjs [shotsDir]
-const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+const { chromium } = require('playwright');
 (async () => {
   const out = process.argv[2] || 'shots';
   require('fs').mkdirSync(out, { recursive: true });

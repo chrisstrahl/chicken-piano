@@ -1,6 +1,6 @@
 // Mic on in free play, then open a song, a lesson, another song and free play again:
 // notes must keep registering on every screen.
-const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+const { chromium } = require('playwright');
 (async () => {
   const browser = await chromium.launch({ args: ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream', '--use-file-for-fake-audio-capture=' + __dirname + '/edc.wav', '--autoplay-policy=no-user-gesture-required'] });
   const page = await browser.newPage({ viewport: { width: 1024, height: 768 }, permissions: ['microphone'] });

@@ -1,6 +1,6 @@
 // Checks the chicken talks with the recorded clips (not device speech), over a local web server:
 //   (cd dist && python3 -m http.server 8765 &) ; node test/voice.cjs
-const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+const { chromium } = require('playwright');
 (async () => {
   const browser = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] });
   const page = await browser.newPage({ viewport: { width: 1024, height: 768 } });

@@ -1,7 +1,7 @@
 // Record and share, in a real browser: record free play and a song (screen keys, mic and MIDI-style input),
 // play it back, render the sound file, share it (and the download fallback), make a video, delete.
 // Usage: node test/record.cjs [shotsDir]
-const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+const { chromium } = require('playwright');
 (async () => {
   const out = process.argv[2] || 'shots';
   const browser = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] });

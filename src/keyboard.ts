@@ -30,6 +30,7 @@ export function makeKeyboard(root: HTMLElement, onPress: (m: number) => void, on
   function build() {
     root.innerHTML = '';
     keys = {};
+    timers.clear();
     const whites: number[] = [];
     for (let m = lo; m <= hi; m++) if (!isBlack(m)) whites.push(m);
     root.style.setProperty('--bw', (100 / whites.length) * 0.6 + '%');
@@ -83,13 +84,18 @@ export function makeKeyboard(root: HTMLElement, onPress: (m: number) => void, on
   (['pointerup', 'pointercancel'] as const).forEach((ev) => root.addEventListener(ev, up));
   window.addEventListener('pointerup', up);
 
+  // key -> class -> timer, so a key flashed again keeps its color for the full time of the newest flash
+  const timers = new Map<HTMLElement, Record<string, ReturnType<typeof setTimeout>>>();
   function flash(m: number, cls: string, ms = 400) {
     const k = keys[m];
     if (!k) return;
     k.classList.remove(cls);
     void k.offsetWidth;
     k.classList.add(cls);
-    setTimeout(() => k.classList.remove(cls), ms);
+    const t = timers.get(k) || {};
+    clearTimeout(t[cls]);
+    t[cls] = setTimeout(() => k.classList.remove(cls), ms);
+    timers.set(k, t);
   }
   // Find the on-screen key for a heard note: same note in our range, else the nearest key with that name.
   function keyFor(m: number): number | null {

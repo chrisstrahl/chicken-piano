@@ -1,5 +1,5 @@
 // USB keyboard (Web MIDI) with a fake MIDI device: auto-connect, exact notes, held lengths, mic fallback.
-const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+const { chromium } = require('playwright');
 
 // A fake navigator.requestMIDIAccess with one keyboard that the test can play, unplug and plug back in.
 const FAKE = ({ perm, native = true }) => {

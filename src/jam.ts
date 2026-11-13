@@ -36,6 +36,7 @@ export interface JamApp {
 
 // Drums made on the spot: a thump that slides down (no steady pitch, so the mic doesn't take it for a key)
 // and a short hiss.
+let hiss: AudioBuffer | null = null; // the snare's noise, made once
 function drum(kind: 'kick' | 'snare', vel: number) {
   const ctx = audioContext().rawContext as AudioContext;
   const t = ctx.currentTime + 0.01;
@@ -51,12 +52,14 @@ function drum(kind: 'kick' | 'snare', vel: number) {
     o.start(t);
     o.stop(t + 0.2);
   } else {
-    const n = Math.round(ctx.sampleRate * 0.12);
-    const buf = ctx.createBuffer(1, n, ctx.sampleRate);
-    const d = buf.getChannelData(0);
-    for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.03));
+    if (!hiss || hiss.sampleRate !== ctx.sampleRate) {
+      const n = Math.round(ctx.sampleRate * 0.12);
+      hiss = ctx.createBuffer(1, n, ctx.sampleRate);
+      const d = hiss.getChannelData(0);
+      for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.03));
+    }
     const src = ctx.createBufferSource();
-    src.buffer = buf;
+    src.buffer = hiss;
     const bp = ctx.createBiquadFilter();
     bp.type = 'bandpass';
     bp.frequency.value = 1800;

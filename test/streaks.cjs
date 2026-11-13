@@ -1,6 +1,6 @@
 // Practice days: two finished songs/lessons lay today's egg, days in a row make a streak, the coop shows the calendar.
 // Run: node test/streaks.cjs [screenshot dir]
-const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+const { chromium } = require('playwright');
 (async () => {
   const browser = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] });
   const ctx = await browser.newContext({ viewport: { width: 1024, height: 768 }, hasTouch: true });

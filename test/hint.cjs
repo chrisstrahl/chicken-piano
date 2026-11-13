@@ -1,6 +1,6 @@
 // The 🐔 hint: plays and lights the next note without moving on, and bounces when the child is stuck.
 // Usage: node test/hint.cjs
-const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+const { chromium } = require('playwright');
 (async () => {
   const browser = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] });
   const page = await browser.newPage({ viewport: { width: 1024, height: 768 } });

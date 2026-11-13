@@ -368,16 +368,37 @@ export function drawStaff(card: HTMLElement, notes: Note[], opts: StaffOpts = {}
 }
 
 // Move the highlight to x and scroll so it sits about 30% from the left.
-export function focusX(card: HTMLElement, drawn: Drawn, x: number | null | undefined) {
+// A staff card's size, kept up to date by a ResizeObserver: focusX runs on every frame while the note lane
+// plays, and asking the card for its size there would make the browser lay out the page each time.
+// (Only the lane uses the kept size: right after a screen opens the card may not have been laid out yet.)
+const sizes = new WeakMap<HTMLElement, { w: number; h: number }>();
+const watcher = typeof ResizeObserver === 'undefined' ? null
+  : new ResizeObserver((list) => list.forEach((e) => { const el = e.target as HTMLElement; sizes.set(el, { w: el.clientWidth, h: el.clientHeight }); }));
+function cardSize(card: HTMLElement, cached: boolean) {
+  let s = cached && watcher ? sizes.get(card) : undefined;
+  if (!s) {
+    s = { w: card.clientWidth, h: card.clientHeight };
+    if (watcher) { sizes.set(card, s); watcher.observe(card); }
+  }
+  return s;
+}
+// cached: use the size the card last had (for every-frame callers; others measure it fresh)
+export function focusX(card: HTMLElement, drawn: Drawn, x: number | null | undefined, cached = false) {
   if (x === undefined || x === null) { drawn.cur.setAttribute('x', '-10000'); return; }
-  drawn.cur.setAttribute('x', String(x - 22));
+  // read the card's size before changing anything, and only change what moved: the note lane calls this
+  // on every frame, and a size read after a write makes the browser lay the page out again (slow on iPad)
+  const { w: cw, h: ch } = cardSize(card, cached);
   const strip = card.querySelector<HTMLElement>('.strip')!;
-  const scale = card.clientHeight / drawn.H;
-  drawn.svg.style.width = drawn.width * scale + 'px';
-  drawn.svg.style.height = card.clientHeight + 'px';
-  const visible = card.clientWidth / scale;
+  const scale = ch / drawn.H;
+  const sx = String(x - 22);
+  if (drawn.cur.getAttribute('x') !== sx) drawn.cur.setAttribute('x', sx);
+  const w = drawn.width * scale + 'px', h = ch + 'px';
+  if (drawn.svg.style.width !== w) drawn.svg.style.width = w;
+  if (drawn.svg.style.height !== h) drawn.svg.style.height = h;
+  const visible = cw / scale;
   const target = Math.max(0, Math.min(x - visible * 0.32, drawn.width - visible));
-  strip.style.transform = `translateX(${-target * scale}px)`;
+  const tf = `translateX(${-target * scale}px)`;
+  if (strip.style.transform !== tf) strip.style.transform = tf;
 }
 // ...or to note i of the (right-hand) part
 export const focusNote = (card: HTMLElement, drawn: Drawn, i: number) => focusX(card, drawn, drawn.xs[i]);

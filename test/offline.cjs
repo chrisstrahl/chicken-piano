@@ -1,6 +1,6 @@
 // Home-screen app: serves dist/ on localhost, lets the service worker save the app and voice clips,
 // then reloads with the network off. Also checks a new build reaches the page on the next online launch.
-const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+const { chromium } = require('playwright');
 const http = require('http');
 const fs = require('fs');
 const path = require('path');

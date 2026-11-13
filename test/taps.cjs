@@ -1,5 +1,5 @@
 // One tap on an on-screen key must count as exactly one press (touch and mouse).
-const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+const { chromium } = require('playwright');
 (async () => {
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1024, height: 768 }, hasTouch: true });

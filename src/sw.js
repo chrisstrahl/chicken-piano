@@ -54,7 +54,7 @@ self.addEventListener('fetch', (e) => {
   if (url.origin === location.origin) e.respondWith(networkFirst(SHELL, req));
 });
 
-// Download every voice clip (about 12 MB) so the chicken can talk offline, and drop clips no longer used.
+// Download every voice clip (about 18 MB) so the chicken can talk offline, and drop clips no longer used.
 let filling = null;
 async function fillVoice() {
   const list = await fetch(new URL('voice/manifest.json', self.registration.scope), { cache: 'no-cache' }).then((r) => r.json());

@@ -1,5 +1,5 @@
 // Tapping a locked song asks to open the level's songs; yes opens them and starts the song.
-const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+const { chromium } = require('playwright');
 (async () => {
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1024, height: 768 } });
