@@ -207,6 +207,7 @@ body.midi #mic:not(.on){opacity:.6}
 .card.lesson.done{background:#eefbe9}
 .keybtn{margin-left:auto;opacity:.5;transition:background .2s}
 .keybtn.on{opacity:1}
+.namesbtn.on{background:#fff3c4;box-shadow:0 0 0 3px var(--accent,#ffb703) inset}
 .keybtn.holding{background:var(--good);transition:background 2s}
 
 /* one level */
@@ -620,7 +621,8 @@ body.midi #mic:not(.on){opacity:.6}
 </section>
 
 <section id="songs" class="screen">
-  <div class="topbar"><button class="btn round" data-go="home" aria-label="Home">🏠</button><h2>🎵 Songs</h2></div>
+  <div class="topbar"><button class="btn round" data-go="home" aria-label="Home">🏠</button><h2>🎵 Songs</h2>
+    <button class="btn round namesbtn" aria-label="Chicken names or real song names">🐔</button></div>
   <div class="songlist" id="songCards"></div>
 </section>
 
@@ -633,6 +635,7 @@ body.midi #mic:not(.on){opacity:.6}
 
 <section id="level" class="screen">
   <div class="topbar"><button class="btn round" data-go="map" aria-label="Back">⬅️</button><h2 id="levelTitle">Level</h2>
+    <button class="btn round namesbtn" aria-label="Chicken names or real song names">🐔</button>
     <button class="btn round" id="levelPrev" aria-label="Easier level">◀️</button><button class="btn round orange" id="levelNext" aria-label="Next level">▶️</button></div>
   <div class="lvbody">
     <div class="lvsec"><span class="lvlbl">🥚</span><div class="lvrowc" id="levelLessons"></div></div>

@@ -159,6 +159,11 @@
   "spoken": "You have 57 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "04f9b550": {
+  "text": "Yes! It was Deck the Halls!",
+  "spoken": "Yes! It was Deck the Halls!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "050436b2": {
   "text": "G sharp",
   "spoken": "G sharp",
@@ -189,6 +194,11 @@
   "spoken": "You have 323 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "062417bf": {
+  "text": "Yes! It was Auld Lang Syne!",
+  "spoken": "Yes! It was Auld Lang Syne!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "0635e8bd": {
   "text": "Play the C chord notes, one at a time.",
   "spoken": "Play the C chord notes, one at a time.",
@@ -207,6 +217,11 @@
  "0678c9e6": {
   "text": "New song: Spooky Barn Organ!",
   "spoken": "New song: Spooky Barn Organ!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "068ba80b": {
+  "text": "Yes! It was Oh! Susanna!",
+  "spoken": "Yes! It was Oh! Susanna!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "06a49fb4": {
@@ -334,6 +349,11 @@
   "spoken": "You have 340 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "0a7f50f0": {
+  "text": "Yes! It was Twinkle Twinkle Little Star!",
+  "spoken": "Yes! It was Twinkle Twinkle Little Star!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "0a902d7e": {
   "text": "You have 181 eggs.",
   "spoken": "You have 181 eggs.",
@@ -347,6 +367,11 @@
  "0b36ffe2": {
   "text": "Turtle speed.",
   "spoken": "Turtle speed.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "0c1a32f4": {
+  "text": "Let's play Toccata and Fugue in D minor by Bach!",
+  "spoken": "Let's play Toccata and Fugue in D minor by Bach!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "0c38f8f0": {
@@ -419,6 +444,11 @@
   "spoken": "You have 155 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "0e32c42b": {
+  "text": "New song: Joy to the World!",
+  "spoken": "New song: Joy to the World!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "0e37d4b4": {
   "text": "You have 73 eggs.",
   "spoken": "You have 73 eggs.",
@@ -469,6 +499,11 @@
   "spoken": "You have 138 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "0f78b4e3": {
+  "text": "Let's play Can-Can by Offenbach!",
+  "spoken": "Let's play Can-Can by Offenbach!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "0f8b3da9": {
   "text": "That's Joy to the World!",
   "spoken": "That's Joy to the World!",
@@ -477,6 +512,11 @@
  "0fa17f40": {
   "text": "You have 64 eggs.",
   "spoken": "You have 64 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "0fb52776": {
+  "text": "New song: When the Saints Go Marching In!",
+  "spoken": "New song: When the Saints Go Marching In!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "106addc0": {
@@ -492,6 +532,11 @@
  "10af97be": {
   "text": "You have 123 eggs.",
   "spoken": "You have 123 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "10f30ad3": {
+  "text": "Yes! It was Silent Night!",
+  "spoken": "Yes! It was Silent Night!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "10f683d2": {
@@ -589,6 +634,11 @@
   "spoken": "New song: Chicken Waltz!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "14e57be4": {
+  "text": "Let's play Jingle Bells!",
+  "spoken": "Let's play Jingle Bells!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "151cf93c": {
   "text": "Let's play Cluck Cluck Hen!",
   "spoken": "Let's play Cluck Cluck Hen!",
@@ -619,6 +669,11 @@
   "spoken": "Keys on the left sound low, like a big rooster. Keys on the right sound high, like a tiny chick! Tap a low key and a high key.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "15dbb610": {
+  "text": "Yes! It was Symphony No. 5 by Beethoven!",
+  "spoken": "Yes! It was Symphony No. 5 by Beethoven!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "15feedf8": {
   "text": "That's 37 days in a row!",
   "spoken": "That's 37 days in a row!",
@@ -639,9 +694,19 @@
   "spoken": "You have 352 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "167f7212": {
+  "text": "Let's play Fr\u00e8re Jacques!",
+  "spoken": "Let's play Fr\u00e8re Jacques!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "16ac9b78": {
   "text": "Take Rosie out of the coop? Their eggs go too.",
   "spoken": "Take Rosie out of the coop? Their eggs go too.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "16d2fd48": {
+  "text": "Yes! It was Oh My Darling, Clementine!",
+  "spoken": "Yes! It was Oh My Darling, Clementine!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "16d386be": {
@@ -652,6 +717,11 @@
  "17370245": {
   "text": "You have 306 eggs.",
   "spoken": "You have 306 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "17876d9d": {
+  "text": "Let's play The Entertainer by Scott Joplin!",
+  "spoken": "Let's play The Entertainer by Scott Joplin!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "17b32438": {
@@ -709,6 +779,16 @@
   "spoken": "You have 285 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "19ce971c": {
+  "text": "New song: Surprise Symphony by Haydn!",
+  "spoken": "New song: Surprise Symphony by Haydn!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "19fb1b53": {
+  "text": "Yes! It was Morning Mood!",
+  "spoken": "Yes! It was Morning Mood!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "1a2a2df8": {
   "text": "New song: Owl at the Coop!",
   "spoken": "New song: Owl at the Coop!",
@@ -749,6 +829,11 @@
   "spoken": "You have 349 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "1c6a8c2a": {
+  "text": "Yes! It was Canon by Pachelbel!",
+  "spoken": "Yes! It was Canon by Pachelbel!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "1cb40111": {
   "text": "That's America!",
   "spoken": "That's America!",
@@ -782,6 +867,11 @@
  "1d4cfe96": {
   "text": "Lessons",
   "spoken": "Lessons",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "1d9ee1ed": {
+  "text": "Let's play Yankee Doodle!",
+  "spoken": "Let's play Yankee Doodle!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "1dd71338": {
@@ -819,6 +909,16 @@
   "spoken": "You have 132 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "1e93f640": {
+  "text": "Yes! It was Skip to My Lou!",
+  "spoken": "Yes! It was Skip to My Lou!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "1eb91990": {
+  "text": "New song: Good King Wenceslas!",
+  "spoken": "New song: Good King Wenceslas!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "1ec3a526": {
   "text": "Oops! Find G flat.",
   "spoken": "Oops! Find G flat.",
@@ -844,14 +944,14 @@
   "spoken": "Yes! It was Jingle Clucks!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "1f9d99a3": {
-  "text": "That's Old rhyme, new tune!",
-  "spoken": "That's Old rhyme, new tune!",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "1feb1783": {
   "text": "You have 407 eggs.",
   "spoken": "You have 407 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "1ff0a55f": {
+  "text": "Yes! It was Good King Wenceslas!",
+  "spoken": "Yes! It was Good King Wenceslas!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "2036e81d": {
@@ -862,6 +962,11 @@
  "205c926f": {
   "text": "Yes! It was Easy Peasy Hen Sonata!",
   "spoken": "Yes! It was Easy Peasy Hen Sonata!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "2073cd7f": {
+  "text": "Yes! It was Camptown Races!",
+  "spoken": "Yes! It was Camptown Races!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "20810cfd": {
@@ -919,6 +1024,11 @@
   "spoken": "Play again tomorrow for two in a row!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "225ed863": {
+  "text": "Yes! It was Toccata and Fugue in D minor by Bach!",
+  "spoken": "Yes! It was Toccata and Fugue in D minor by Bach!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "227c3ab7": {
   "text": "You have 414 eggs.",
   "spoken": "You have 414 eggs.",
@@ -937,6 +1047,16 @@
  "231d5af6": {
   "text": "New song: Oh Henrietta!",
   "spoken": "New song: Oh Henrietta!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "235939f7": {
+  "text": "Let's play We Wish You a Merry Christmas!",
+  "spoken": "Let's play We Wish You a Merry Christmas!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "238dabf5": {
+  "text": "Let's play Oh My Darling, Clementine!",
+  "spoken": "Let's play Oh My Darling, Clementine!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "23f5d42f": {
@@ -972,6 +1092,16 @@
  "256778f6": {
   "text": "D flat",
   "spoken": "D flat",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "25729bb9": {
+  "text": "Yes! It was In the Hall of the Mountain King!",
+  "spoken": "Yes! It was In the Hall of the Mountain King!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "25a5312f": {
+  "text": "New song: America!",
+  "spoken": "New song: America!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "25d22701": {
@@ -1014,6 +1144,11 @@
   "spoken": "C flat",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "286784fd": {
+  "text": "New song: La Cucaracha!",
+  "spoken": "New song: La Cucaracha!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "28b49bc4": {
   "text": "You have 459 eggs.",
   "spoken": "You have 459 eggs.",
@@ -1042,6 +1177,11 @@
  "29dea44c": {
   "text": "Walk up the keys: C, D, E. Each step sounds a little higher. Tap the three glowing keys.",
   "spoken": "Walk up the keys: C, D, E. Each step sounds a little higher. Tap the three glowing keys.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "29eadb7b": {
+  "text": "Yes! It was Hot Cross Buns!",
+  "spoken": "Yes! It was Hot Cross Buns!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "2a1179d1": {
@@ -1134,6 +1274,11 @@
   "spoken": "New song: Roll, Roll, Roll Your Egg!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "2dbb2bf7": {
+  "text": "Let's play Michael, Row the Boat Ashore!",
+  "spoken": "Let's play Michael, Row the Boat Ashore!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "2dc4e4bf": {
   "text": "Yes! It was Chicken Races!",
   "spoken": "Yes! It was Chicken Races!",
@@ -1142,6 +1287,11 @@
  "2dd4a538": {
   "text": "You have 389 eggs.",
   "spoken": "You have 389 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "2dff7ef6": {
+  "text": "New song: Hot Cross Buns!",
+  "spoken": "New song: Hot Cross Buns!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "2e067f82": {
@@ -1157,6 +1307,11 @@
  "2ea506e8": {
   "text": "Reading games",
   "spoken": "Reading games",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "2ea83adc": {
+  "text": "Yes! It was Minuet in G!",
+  "spoken": "Yes! It was Minuet in G!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "2ec7ced6": {
@@ -1182,6 +1337,16 @@
  "2f6bb500": {
   "text": "That's 73 days in a row!",
   "spoken": "That's 73 days in a row!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "2f7af955": {
+  "text": "New song: Korobeiniki!",
+  "spoken": "New song: Korobeiniki!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "2f890f36": {
+  "text": "New song: Silent Night!",
+  "spoken": "New song: Silent Night!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "2fa04825": {
@@ -1224,6 +1389,11 @@
   "spoken": "Yes! It was Quiet Night!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "3115021b": {
+  "text": "New song: Greensleeves!",
+  "spoken": "New song: Greensleeves!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "31165123": {
   "text": "New song: Hens in a Row!",
   "spoken": "New song: Hens in a Row!",
@@ -1262,6 +1432,11 @@
  "332f624e": {
   "text": "Oops! Find D sharp.",
   "spoken": "Oops! Find D sharp.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "334702f0": {
+  "text": "Yes! It was F\u00fcr Elise!",
+  "spoken": "Yes! It was F\u00fcr Elise!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "33520422": {
@@ -1332,6 +1507,11 @@
  "3646eff9": {
   "text": "You have 412 eggs.",
   "spoken": "You have 412 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "368b55c8": {
+  "text": "Yes! It was Yankee Doodle!",
+  "spoken": "Yes! It was Yankee Doodle!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "36b53df3": {
@@ -1434,6 +1614,11 @@
   "spoken": "Let's play Chick Steps!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "3bbfbbeb": {
+  "text": "Yes! It was Jingle Bells!",
+  "spoken": "Yes! It was Jingle Bells!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "3bd83606": {
   "text": "You have 376 eggs.",
   "spoken": "You have 376 eggs.",
@@ -1484,6 +1669,11 @@
   "spoken": "The staff is a five-line fence. Tap any key!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "3e8fe24e": {
+  "text": "New song: Row, Row, Row Your Boat!",
+  "spoken": "New song: Row, Row, Row Your Boat!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "3ec14dff": {
   "text": "Black keys have two names! Tap C sharp.",
   "spoken": "Black keys have two names! Tap C sharp.",
@@ -1499,6 +1689,16 @@
   "spoken": "You have 110 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "3f144199": {
+  "text": "Let's play America!",
+  "spoken": "Let's play America!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "3f52c53c": {
+  "text": "Let's play Lightly Row!",
+  "spoken": "Let's play Lightly Row!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "3f63f913": {
   "text": "That's 78 days in a row!",
   "spoken": "That's 78 days in a row!",
@@ -1507,6 +1707,11 @@
  "3fb39ba5": {
   "text": "Let's play Hens in a Row!",
   "spoken": "Let's play Hens in a Row!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "3fbd655a": {
+  "text": "New song: Daisy Bell!",
+  "spoken": "New song: Daisy Bell!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "3fecf112": {
@@ -1699,6 +1904,11 @@
   "spoken": "You have 90 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "47770042": {
+  "text": "New song: Lightly Row!",
+  "spoken": "New song: Lightly Row!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "47c9c40c": {
   "text": "You have 114 eggs.",
   "spoken": "You have 114 eggs.",
@@ -1707,6 +1917,11 @@
  "47f2c2e3": {
   "text": "The next key over is a step. Step from C to G!",
   "spoken": "The next key over is a step. Step from C to G!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "47f8eac9": {
+  "text": "New song: Can-Can by Offenbach!",
+  "spoken": "New song: Can-Can by Offenbach!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "4826acc7": {
@@ -1789,9 +2004,19 @@
   "spoken": "Start on G sharp.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "4bc24be8": {
+  "text": "Let's play Three Blind Mice!",
+  "spoken": "Let's play Three Blind Mice!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "4c4ffc12": {
   "text": "That's Oh! Susanna!",
   "spoken": "That's Oh! Susanna!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "4c5a3f7a": {
+  "text": "New song: Go Tell Aunt Rhody!",
+  "spoken": "New song: Go Tell Aunt Rhody!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "4dc20ad8": {
@@ -1844,6 +2069,11 @@
   "spoken": "And 4 baby chicks.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "5011539d": {
+  "text": "Yes! It was Amazing Grace!",
+  "spoken": "Yes! It was Amazing Grace!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "502b59ce": {
   "text": "C sharp",
   "spoken": "C sharp",
@@ -1857,6 +2087,11 @@
  "50a76997": {
   "text": "Find D and E!",
   "spoken": "Find D and E!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "50d185eb": {
+  "text": "Yes! It was Spring by Vivaldi!",
+  "spoken": "Yes! It was Spring by Vivaldi!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "515fd3bb": {
@@ -1914,6 +2149,11 @@
   "spoken": "Yes! It was Dancing Hens!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "53410715": {
+  "text": "Yes! It was London Bridge!",
+  "spoken": "Yes! It was London Bridge!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "537f2174": {
   "text": "How far is the jump? Count both notes!",
   "spoken": "How far is the jump? Count both notes!",
@@ -1927,6 +2167,11 @@
  "53d59ba4": {
   "text": "Yes! It was When the Chicks Go Marching In!",
   "spoken": "Yes! It was When the Chicks Go Marching In!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "54108c77": {
+  "text": "New song: Oh My Darling, Clementine!",
+  "spoken": "New song: Oh My Darling, Clementine!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "547499f1": {
@@ -1947,6 +2192,11 @@
  "54b98305": {
   "text": "That's Yankee Doodle!",
   "spoken": "That's Yankee Doodle!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "54c6e374": {
+  "text": "Yes! It was Can-Can by Offenbach!",
+  "spoken": "Yes! It was Can-Can by Offenbach!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "54d6ea5c": {
@@ -1999,9 +2249,19 @@
   "spoken": "That's 95 days in a row!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "5658f746": {
+  "text": "New song: London Bridge!",
+  "spoken": "New song: London Bridge!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "566f74b3": {
   "text": "That's 45 days in a row!",
   "spoken": "That's 45 days in a row!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "567e3646": {
+  "text": "New song: Amazing Grace!",
+  "spoken": "New song: Amazing Grace!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "568e8a13": {
@@ -2017,6 +2277,11 @@
  "573887b6": {
   "text": "You have 282 eggs.",
   "spoken": "You have 282 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "574e3ce6": {
+  "text": "Let's play Ode to Joy!",
+  "spoken": "Let's play Ode to Joy!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "574e9680": {
@@ -2037,6 +2302,16 @@
  "578cab21": {
   "text": "That's 3 days in a row!",
   "spoken": "That's 3 days in a row!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "5794a41d": {
+  "text": "Let's play Old MacDonald Had a Farm!",
+  "spoken": "Let's play Old MacDonald Had a Farm!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "57a62f59": {
+  "text": "New song: Deck the Halls!",
+  "spoken": "New song: Deck the Halls!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "57b3ce5b": {
@@ -2062,6 +2337,11 @@
  "58e3509c": {
   "text": "Let's play La Cluckaracha!",
   "spoken": "Let's play La Cluckaracha!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "58f41d53": {
+  "text": "Yes! It was Fr\u00e8re Jacques!",
+  "spoken": "Yes! It was Fr\u00e8re Jacques!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "590ad9ea": {
@@ -2114,9 +2394,19 @@
   "spoken": "You have 35 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "5b106b20": {
+  "text": "Yes! It was Westminster Chimes!",
+  "spoken": "Yes! It was Westminster Chimes!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "5b2aa307": {
   "text": "Let's play Quiet Night!",
   "spoken": "Let's play Quiet Night!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "5b803494": {
+  "text": "Yes! It was Eine kleine Nachtmusik by Mozart!",
+  "spoken": "Yes! It was Eine kleine Nachtmusik by Mozart!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "5b8b5826": {
@@ -2152,6 +2442,11 @@
  "5cd1004a": {
   "text": "That's 93 days in a row!",
   "spoken": "That's 93 days in a row!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "5cdb1572": {
+  "text": "Let's play Pop Goes the Weasel!",
+  "spoken": "Let's play Pop Goes the Weasel!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "5cf2ca34": {
@@ -2224,6 +2519,11 @@
   "spoken": "You have 397 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "5fb47517": {
+  "text": "New song: Minuet in G!",
+  "spoken": "New song: Minuet in G!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "5fcd2185": {
   "text": "You have 409 eggs.",
   "spoken": "You have 409 eggs.",
@@ -2279,6 +2579,16 @@
   "spoken": "Flat means one key down. Tap B flat!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "6291f623": {
+  "text": "New song: The Itsy Bitsy Spider!",
+  "spoken": "New song: The Itsy Bitsy Spider!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "6319cf7c": {
+  "text": "Let's play Row, Row, Row Your Boat!",
+  "spoken": "Let's play Row, Row, Row Your Boat!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "632b40b7": {
   "text": "That's 9 days in a row!",
   "spoken": "That's 9 days in a row!",
@@ -2314,14 +2624,29 @@
   "spoken": "You have 452 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "641abfe5": {
+  "text": "New song: Michael, Row the Boat Ashore!",
+  "spoken": "New song: Michael, Row the Boat Ashore!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "648bdc8e": {
   "text": "You have 277 eggs.",
   "spoken": "You have 277 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "64a242d0": {
+  "text": "Let's play Morning Mood!",
+  "spoken": "Let's play Morning Mood!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "64d61a49": {
   "text": "You have 395 eggs.",
   "spoken": "You have 395 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "64fa1906": {
+  "text": "Let's play This Old Man!",
+  "spoken": "Let's play This Old Man!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "65153446": {
@@ -2337,6 +2662,11 @@
  "657ca932": {
   "text": "You have 462 eggs.",
   "spoken": "You have 462 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "65961e20": {
+  "text": "Yes! It was New World Symphony by Dvo\u0159\u00e1k!",
+  "spoken": "Yes! It was New World Symphony by Dvo\u0159\u00e1k!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "661162f3": {
@@ -2397,6 +2727,11 @@
  "68407e2b": {
   "text": "Let's play Chicken Scale March!",
   "spoken": "Let's play Chicken Scale March!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "68af6f6c": {
+  "text": "New song: Oh! Susanna!",
+  "spoken": "New song: Oh! Susanna!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "68bdda9f": {
@@ -2489,9 +2824,19 @@
   "spoken": "You have 249 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "6c88f948": {
+  "text": "Yes! It was Michael, Row the Boat Ashore!",
+  "spoken": "Yes! It was Michael, Row the Boat Ashore!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "6c914e94": {
   "text": "You have 378 eggs.",
   "spoken": "You have 378 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "6cad8073": {
+  "text": "New song: Yankee Doodle!",
+  "spoken": "New song: Yankee Doodle!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "6caf1aa0": {
@@ -2522,6 +2867,11 @@
  "6db4da6c": {
   "text": "You have 24 eggs.",
   "spoken": "You have 24 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "6db7a547": {
+  "text": "Let's play Sonata facile by Mozart!",
+  "spoken": "Let's play Sonata facile by Mozart!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "6dfac256": {
@@ -2589,6 +2939,11 @@
   "spoken": "You have 256 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "711b5ace": {
+  "text": "Let's play Surprise Symphony by Haydn!",
+  "spoken": "Let's play Surprise Symphony by Haydn!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "71721ead": {
   "text": "Start on C.",
   "spoken": "Start on C.",
@@ -2602,6 +2957,11 @@
  "717a844a": {
   "text": "You have 310 eggs.",
   "spoken": "You have 310 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "71b6845a": {
+  "text": "Let's play Oh! Susanna!",
+  "spoken": "Let's play Oh! Susanna!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "71bbc0f4": {
@@ -2627,6 +2987,11 @@
  "72ff8c24": {
   "text": "You have 204 eggs.",
   "spoken": "You have 204 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "731c6b74": {
+  "text": "Let's play When the Saints Go Marching In!",
+  "spoken": "Let's play When the Saints Go Marching In!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "735bcb39": {
@@ -2719,6 +3084,11 @@
   "spoken": "That's 84 days in a row!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "77099fc6": {
+  "text": "Yes! It was Joy to the World!",
+  "spoken": "Yes! It was Joy to the World!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "77599d6d": {
   "text": "You have 337 eggs.",
   "spoken": "You have 337 eggs.",
@@ -2762,6 +3132,11 @@
  "7844cdd0": {
   "text": "You have 118 eggs.",
   "spoken": "You have 118 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "7871b925": {
+  "text": "Yes! It was Lightly Row!",
+  "spoken": "Yes! It was Lightly Row!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "78bc60c5": {
@@ -2824,6 +3199,16 @@
   "spoken": "That's 94 days in a row!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "7a7c6c76": {
+  "text": "Yes! It was Old MacDonald Had a Farm!",
+  "spoken": "Yes! It was Old MacDonald Had a Farm!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "7a7fda81": {
+  "text": "Yes! It was This Old Man!",
+  "spoken": "Yes! It was This Old Man!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "7aad77f2": {
   "text": "That's 75 days in a row!",
   "spoken": "That's 75 days in a row!",
@@ -2879,6 +3264,11 @@
   "spoken": "Left is low, right is high. Tap one of each!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "7bd6451b": {
+  "text": "Let's play Skip to My Lou!",
+  "spoken": "Let's play Skip to My Lou!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "7c0857a8": {
   "text": "Recording! Play me a song!",
   "spoken": "Recording! Play me a song!",
@@ -2929,9 +3319,19 @@
   "spoken": "That's 89 days in a row!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "7d2f9414": {
+  "text": "New song: This Old Man!",
+  "spoken": "New song: This Old Man!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "7d42f7c4": {
   "text": "You have 15 eggs.",
   "spoken": "You have 15 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "7dc0d2ce": {
+  "text": "Yes! It was Korobeiniki!",
+  "spoken": "Yes! It was Korobeiniki!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "7dcf039c": {
@@ -2947,6 +3347,11 @@
  "7de80afc": {
   "text": "Yes! It was Henny Henny!",
   "spoken": "Yes! It was Henny Henny!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "7df2f400": {
+  "text": "Let's play Daisy Bell!",
+  "spoken": "Let's play Daisy Bell!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "7e043468": {
@@ -3009,6 +3414,11 @@
   "spoken": "You have 271 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "803c2195": {
+  "text": "New song: We Wish You a Merry Christmas!",
+  "spoken": "New song: We Wish You a Merry Christmas!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "808d439b": {
   "text": "That's 81 days in a row!",
   "spoken": "That's 81 days in a row!",
@@ -3017,6 +3427,16 @@
  "80d987df": {
   "text": "Yes! It was Going Home to Roost!",
   "spoken": "Yes! It was Going Home to Roost!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "80e590b1": {
+  "text": "Let's play Joy to the World!",
+  "spoken": "Let's play Joy to the World!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "81154b41": {
+  "text": "Yes! It was Surprise Symphony by Haydn!",
+  "spoken": "Yes! It was Surprise Symphony by Haydn!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "813fe274": {
@@ -3029,9 +3449,19 @@
   "spoken": "The notes on the lines are E, G, B, D, F. Remember: Every Good Chick Does Fine! Play them going up.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "81a63036": {
+  "text": "Let's play Spring by Vivaldi!",
+  "spoken": "Let's play Spring by Vivaldi!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "820c7755": {
   "text": "New song: Strutting Rooster!",
   "spoken": "New song: Strutting Rooster!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "82290369": {
+  "text": "Let's play The Itsy Bitsy Spider!",
+  "spoken": "Let's play The Itsy Bitsy Spider!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "822b7260": {
@@ -3044,6 +3474,11 @@
   "spoken": "That's Bach: Toccata and Fugue in D minor!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "82649583": {
+  "text": "Let's play Deck the Halls!",
+  "spoken": "Let's play Deck the Halls!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "8295167e": {
   "text": "You have 202 eggs.",
   "spoken": "You have 202 eggs.",
@@ -3052,6 +3487,11 @@
  "829729a2": {
   "text": "This is the bass clef. It is for low notes, usually played by your left hand. Its two dots hug the F line! Play low F.",
   "spoken": "This is the bass clef. It is for low notes, usually played by your left hand. Its two dots hug the F line! Play low F.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "82972bb8": {
+  "text": "New song: Fr\u00e8re Jacques!",
+  "spoken": "New song: Fr\u00e8re Jacques!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "830172f8": {
@@ -3072,6 +3512,11 @@
  "83d3df06": {
   "text": "New song: Cluck Cluck Hen!",
   "spoken": "New song: Cluck Cluck Hen!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "83dd8fa5": {
+  "text": "New song: New World Symphony by Dvo\u0159\u00e1k!",
+  "spoken": "New song: New World Symphony by Dvo\u0159\u00e1k!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "83df4398": {
@@ -3129,6 +3574,11 @@
   "spoken": "New song: Chicken Races!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "86cb443b": {
+  "text": "Yes! It was Happy Birthday!",
+  "spoken": "Yes! It was Happy Birthday!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "86cf04ab": {
   "text": "Yes! It was My Coop, 'Tis of Thee!",
   "spoken": "Yes! It was My Coop, 'Tis of Thee!",
@@ -3152,6 +3602,11 @@
  "87f9c365": {
   "text": "You have 139 eggs.",
   "spoken": "You have 139 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "87fc1f17": {
+  "text": "New song: F\u00fcr Elise!",
+  "spoken": "New song: F\u00fcr Elise!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "87fd22ef": {
@@ -3254,14 +3709,34 @@
   "spoken": "Listen! Is the second note higher or lower?",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "8ac766b4": {
+  "text": "Yes! It was La Cucaracha!",
+  "spoken": "Yes! It was La Cucaracha!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "8b124219": {
   "text": "New song: Happy Hatch Day!",
   "spoken": "New song: Happy Hatch Day!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "8b1bfd74": {
+  "text": "Let's play Silent Night!",
+  "spoken": "Let's play Silent Night!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "8b1e9312": {
+  "text": "New song: Toccata and Fugue in D minor by Bach!",
+  "spoken": "New song: Toccata and Fugue in D minor by Bach!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "8b2fa379": {
   "text": "You have 171 eggs.",
   "spoken": "You have 171 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "8bf873eb": {
+  "text": "New song: Canon by Pachelbel!",
+  "spoken": "New song: Canon by Pachelbel!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "8bfed5c2": {
@@ -3287,6 +3762,11 @@
  "8cd74b9d": {
   "text": "You have 16 eggs.",
   "spoken": "You have 16 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "8cddf030": {
+  "text": "Yes! It was The Itsy Bitsy Spider!",
+  "spoken": "Yes! It was The Itsy Bitsy Spider!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "8d08c78f": {
@@ -3479,6 +3959,11 @@
   "spoken": "That's 22 days in a row!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "9248588f": {
+  "text": "New song: Old MacDonald Had a Farm!",
+  "spoken": "New song: Old MacDonald Had a Farm!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "92a501b8": {
   "text": "That's Morning Mood!",
   "spoken": "That's Morning Mood!",
@@ -3534,6 +4019,11 @@
   "spoken": "You have 401 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "94d5c060": {
+  "text": "Let's play Camptown Races!",
+  "spoken": "Let's play Camptown Races!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "94dce795": {
   "text": "You have 34 eggs.",
   "spoken": "You have 34 eggs.",
@@ -3562,6 +4052,11 @@
  "9609e5d3": {
   "text": "You have 120 eggs.",
   "spoken": "You have 120 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "963627b9": {
+  "text": "Yes! It was Ode to Joy!",
+  "spoken": "Yes! It was Ode to Joy!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "967d7876": {
@@ -3652,6 +4147,11 @@
  "9a68cced": {
   "text": "Nice! Now a little faster.",
   "spoken": "Nice! Now a little faster.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "9a7a04eb": {
+  "text": "Yes! It was Pop Goes the Weasel!",
+  "spoken": "Yes! It was Pop Goes the Weasel!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "9a7d71b7": {
@@ -3794,6 +4294,11 @@
   "spoken": "That's Beethoven: Symphony No. 5!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "a0605496": {
+  "text": "New song: Happy Birthday!",
+  "spoken": "New song: Happy Birthday!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "a0b3dc78": {
   "text": "Yes! It was This Old Hen!",
   "spoken": "Yes! It was This Old Hen!",
@@ -3814,6 +4319,21 @@
   "spoken": "That's Amazing Grace!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "a0db543b": {
+  "text": "Yes! It was Go Tell Aunt Rhody!",
+  "spoken": "Yes! It was Go Tell Aunt Rhody!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "a0fd5715": {
+  "text": "New song: Eine kleine Nachtmusik by Mozart!",
+  "spoken": "New song: Eine kleine Nachtmusik by Mozart!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "a140815b": {
+  "text": "New song: Funeral March by Chopin!",
+  "spoken": "New song: Funeral March by Chopin!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "a1770632": {
   "text": "A step is next door. A skip jumps one. Play E and F, then E and G.",
   "spoken": "A step is next door. A skip jumps one. Play E and F, then E and G.",
@@ -3827,6 +4347,11 @@
  "a1a87fef": {
   "text": "You have 106 eggs.",
   "spoken": "You have 106 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "a20ce3fb": {
+  "text": "Yes! It was Daisy Bell!",
+  "spoken": "Yes! It was Daisy Bell!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "a224ada6": {
@@ -3872,6 +4397,11 @@
  "a3ced811": {
   "text": "New song: Surprise Egg!",
   "spoken": "New song: Surprise Egg!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "a4144754": {
+  "text": "Yes! It was America!",
+  "spoken": "Yes! It was America!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "a42281a1": {
@@ -4024,6 +4554,11 @@
   "spoken": "New song: Oh My Darling Chickentine!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "a8f88bc0": {
+  "text": "New song: Ode to Joy!",
+  "spoken": "New song: Ode to Joy!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "a8fd34cc": {
   "text": "You have 253 eggs.",
   "spoken": "You have 253 eggs.",
@@ -4034,9 +4569,19 @@
   "spoken": "You have 115 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "a9941a3e": {
+  "text": "Yes! It was Sonata facile by Mozart!",
+  "spoken": "Yes! It was Sonata facile by Mozart!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "aa1d8df7": {
   "text": "You have 14 eggs.",
   "spoken": "You have 14 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "aa28ea35": {
+  "text": "Let's play Minuet in G!",
+  "spoken": "Let's play Minuet in G!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "aa3a0bf6": {
@@ -4104,6 +4649,11 @@
   "spoken": "Let's play Egg Hunt!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "ac8aa2a4": {
+  "text": "Yes! It was The Entertainer by Scott Joplin!",
+  "spoken": "Yes! It was The Entertainer by Scott Joplin!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "ace30768": {
   "text": "New song: Itsy Bitsy Chicken!",
   "spoken": "New song: Itsy Bitsy Chicken!",
@@ -4147,6 +4697,11 @@
  "adbc4c25": {
   "text": "You have 27 eggs.",
   "spoken": "You have 27 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "ae087237": {
+  "text": "New song: Twinkle Twinkle Little Star!",
+  "spoken": "New song: Twinkle Twinkle Little Star!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "ae16543c": {
@@ -4199,6 +4754,11 @@
   "spoken": "Let's play Deck the Coop!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "af7282ad": {
+  "text": "Real song names!",
+  "spoken": "Real song names!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "af916dab": {
   "text": "Let's play In the Hall of the Rooster King!",
   "spoken": "Let's play In the Hall of the Rooster King!",
@@ -4217,6 +4777,11 @@
  "b01f3a3e": {
   "text": "Yes! It was Three Brown Hens!",
   "spoken": "Yes! It was Three Brown Hens!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "b07b10fb": {
+  "text": "Let's play La Cucaracha!",
+  "spoken": "Let's play La Cucaracha!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "b086baac": {
@@ -4259,6 +4824,16 @@
   "spoken": "A, and B are near the top of the three black keys.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "b1e05bd5": {
+  "text": "New song: Skip to My Lou!",
+  "spoken": "New song: Skip to My Lou!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "b20f608c": {
+  "text": "Yes! It was Funeral March by Chopin!",
+  "spoken": "Yes! It was Funeral March by Chopin!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "b2271868": {
   "text": "No songs yet! Tap the red button when you play, and I will save your song.",
   "spoken": "No songs yet! Tap the red button when you play, and I will save your song.",
@@ -4277,6 +4852,11 @@
  "b2f0b691": {
   "text": "You have 315 eggs.",
   "spoken": "You have 315 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "b318fef3": {
+  "text": "Yes! It was When the Saints Go Marching In!",
+  "spoken": "Yes! It was When the Saints Go Marching In!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "b37fd198": {
@@ -4329,6 +4909,11 @@
   "spoken": "You have 148 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "b4bbdf72": {
+  "text": "New song: Jingle Bells!",
+  "spoken": "New song: Jingle Bells!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "b520cf8d": {
   "text": "You have 197 eggs.",
   "spoken": "You have 197 eggs.",
@@ -4352,6 +4937,16 @@
  "b5bf94d5": {
   "text": "Start on F flat.",
   "spoken": "Start on F flat.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "b5ffbeab": {
+  "text": "Let's play New World Symphony by Dvo\u0159\u00e1k!",
+  "spoken": "Let's play New World Symphony by Dvo\u0159\u00e1k!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "b6a32229": {
+  "text": "New song: Sonata facile by Mozart!",
+  "spoken": "New song: Sonata facile by Mozart!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "b731bc9f": {
@@ -4394,6 +4989,11 @@
   "spoken": "You have 284 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "b8753557": {
+  "text": "New song: The Entertainer by Scott Joplin!",
+  "spoken": "New song: The Entertainer by Scott Joplin!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "b8e9d169": {
   "text": "F sharp",
   "spoken": "F sharp",
@@ -4424,6 +5024,11 @@
   "spoken": "That's 15 days in a row!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "b9dfd24c": {
+  "text": "New song: Au Clair de la Lune!",
+  "spoken": "New song: Au Clair de la Lune!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "ba902b96": {
   "text": "You have 8 eggs.",
   "spoken": "You have 8 eggs.",
@@ -4439,14 +5044,29 @@
   "spoken": "Let's play Grumpy Rooster!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "bba6084d": {
+  "text": "Yes! It was Mary Had a Little Lamb!",
+  "spoken": "Yes! It was Mary Had a Little Lamb!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "bbd0f23d": {
   "text": "Left hand, play with the pecks. C, E, G, then hold C for two.",
   "spoken": "Left hand, play with the pecks. C, E, G, then hold C for two.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "bbd8ec31": {
+  "text": "Let's play Twinkle Twinkle Little Star!",
+  "spoken": "Let's play Twinkle Twinkle Little Star!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "bbde2b7a": {
   "text": "New song: Peck Peck Peck!",
   "spoken": "New song: Peck Peck Peck!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "bd1b2fc8": {
+  "text": "New song: Pop Goes the Weasel!",
+  "spoken": "New song: Pop Goes the Weasel!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "bd41defb": {
@@ -4487,6 +5107,11 @@
  "be1ef5b5": {
   "text": "Let's play Moonlight Chicks!",
   "spoken": "Let's play Moonlight Chicks!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "be4d8e6a": {
+  "text": "New song: Three Blind Mice!",
+  "spoken": "New song: Three Blind Mice!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "bec2373c": {
@@ -4542,6 +5167,11 @@
  "c01f2c41": {
   "text": "Let's play Chicken Walk!",
   "spoken": "Let's play Chicken Walk!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "c0b0d5a8": {
+  "text": "New song: Spring by Vivaldi!",
+  "spoken": "New song: Spring by Vivaldi!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "c0b7d7f9": {
@@ -4612,6 +5242,11 @@
  "c2769323": {
   "text": "Left pinky on low C. Play it!",
   "spoken": "Left pinky on low C. Play it!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "c28d8615": {
+  "text": "Let's play Canon by Pachelbel!",
+  "spoken": "Let's play Canon by Pachelbel!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "c2f1fa91": {
@@ -4692,6 +5327,11 @@
  "c4d7f5f3": {
   "text": "You have 322 eggs.",
   "spoken": "You have 322 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "c52b4d41": {
+  "text": "New song: Westminster Chimes!",
+  "spoken": "New song: Westminster Chimes!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "c545ecea": {
@@ -4782,6 +5422,11 @@
  "c7f12493": {
   "text": "Hi, Blueberry! Let's play!",
   "spoken": "Hi, Blueberry! Let's play!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "c8270534": {
+  "text": "Let's play London Bridge!",
+  "spoken": "Let's play London Bridge!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "c84c356d": {
@@ -5224,6 +5869,16 @@
   "spoken": "That's 38 days in a row!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "d6401367": {
+  "text": "Let's play Eine kleine Nachtmusik by Mozart!",
+  "spoken": "Let's play Eine kleine Nachtmusik by Mozart!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "d686c659": {
+  "text": "Yes! It was Row, Row, Row Your Boat!",
+  "spoken": "Yes! It was Row, Row, Row Your Boat!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "d695153d": {
   "text": "You have 45 eggs.",
   "spoken": "You have 45 eggs.",
@@ -5269,11 +5924,6 @@
   "spoken": "Now find C all by yourself!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
- "d7d3ffdc": {
-  "text": "That's New song!",
-  "spoken": "That's New song!",
-  "settings": "kokoro-v1.0/af_heart/1.0/48k"
- },
  "d8632eea": {
   "text": "That's 40 days in a row!",
   "spoken": "That's 40 days in a row!",
@@ -5309,6 +5959,11 @@
   "spoken": "Let's play Clucky's Egg!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "d975606e": {
+  "text": "Yes! It was We Wish You a Merry Christmas!",
+  "spoken": "Yes! It was We Wish You a Merry Christmas!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "da132e02": {
   "text": "You have 259 eggs.",
   "spoken": "You have 259 eggs.",
@@ -5342,6 +5997,11 @@
  "db29f575": {
   "text": "You have 52 eggs.",
   "spoken": "You have 52 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "dc209a64": {
+  "text": "Chicken song names!",
+  "spoken": "Chicken song names!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "dc3272d5": {
@@ -5409,6 +6069,16 @@
   "spoken": "Oops! Find G sharp.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "de4aea7d": {
+  "text": "Let's play Symphony No. 5 by Beethoven!",
+  "spoken": "Let's play Symphony No. 5 by Beethoven!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "de7086bb": {
+  "text": "Yes! It was Three Blind Mice!",
+  "spoken": "Yes! It was Three Blind Mice!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "dea41a9f": {
   "text": "Let's play Rooster Wake-Up!",
   "spoken": "Let's play Rooster Wake-Up!",
@@ -5449,6 +6119,11 @@
   "spoken": "You have 50 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "e0dde2c6": {
+  "text": "Yes! It was Greensleeves!",
+  "spoken": "Yes! It was Greensleeves!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "e105f0ea": {
   "text": "You have 105 eggs.",
   "spoken": "You have 105 eggs.",
@@ -5457,6 +6132,11 @@
  "e135ec38": {
   "text": "Oops! Find F.",
   "spoken": "Oops! Find F.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "e151d9ec": {
+  "text": "Let's play Auld Lang Syne!",
+  "spoken": "Let's play Auld Lang Syne!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "e198b30e": {
@@ -5472,6 +6152,16 @@
  "e25e3cd9": {
   "text": "You have 438 eggs.",
   "spoken": "You have 438 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "e2725f0e": {
+  "text": "Let's play Mary Had a Little Lamb!",
+  "spoken": "Let's play Mary Had a Little Lamb!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "e2d011f3": {
+  "text": "Let's play Korobeiniki!",
+  "spoken": "Let's play Korobeiniki!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "e2e6fbaf": {
@@ -5649,6 +6339,11 @@
   "spoken": "You have 143 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "e855c902": {
+  "text": "Let's play Au Clair de la Lune!",
+  "spoken": "Let's play Au Clair de la Lune!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "e922770c": {
   "text": "That's 99 days in a row!",
   "spoken": "That's 99 days in a row!",
@@ -5659,9 +6354,19 @@
   "spoken": "You have 140 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "e9572d43": {
+  "text": "Yes! It was Au Clair de la Lune!",
+  "spoken": "Yes! It was Au Clair de la Lune!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "e9c24bd6": {
   "text": "Yes! It was Chicken Can-Can!",
   "spoken": "Yes! It was Chicken Can-Can!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "e9cc4ba0": {
+  "text": "Let's play Hot Cross Buns!",
+  "spoken": "Let's play Hot Cross Buns!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "e9e5b65e": {
@@ -5679,9 +6384,19 @@
   "spoken": "That's Daisy Bell!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "eaef6b4f": {
+  "text": "New song: Symphony No. 5 by Beethoven!",
+  "spoken": "New song: Symphony No. 5 by Beethoven!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "eafb42df": {
   "text": "You have 223 eggs.",
   "spoken": "You have 223 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "eb28a713": {
+  "text": "Let's play Westminster Chimes!",
+  "spoken": "Let's play Westminster Chimes!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "eb8c56d4": {
@@ -5692,6 +6407,11 @@
  "ebebc1fd": {
   "text": "Let's play Rain, Rain, Go Away!",
   "spoken": "Let's play Rain, Rain, Go Away!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "ebff4ace": {
+  "text": "New song: Morning Mood!",
+  "spoken": "New song: Morning Mood!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "ec5948d8": {
@@ -5769,6 +6489,16 @@
   "spoken": "Start on B.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "ef8d6976": {
+  "text": "Let's play Good King Wenceslas!",
+  "spoken": "Let's play Good King Wenceslas!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "ef8e2eec": {
+  "text": "Let's play Go Tell Aunt Rhody!",
+  "spoken": "Let's play Go Tell Aunt Rhody!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "f0002c99": {
   "text": "New song: Egg Hunt!",
   "spoken": "New song: Egg Hunt!",
@@ -5784,9 +6514,19 @@
   "spoken": "You have one egg.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "f0501fe0": {
+  "text": "New song: Mary Had a Little Lamb!",
+  "spoken": "New song: Mary Had a Little Lamb!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "f07814bf": {
   "text": "That's Michael, Row the Boat Ashore!",
   "spoken": "That's Michael, Row the Boat Ashore!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "f0931c20": {
+  "text": "Let's play Amazing Grace!",
+  "spoken": "Let's play Amazing Grace!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "f0dbcc0b": {
@@ -5859,6 +6599,16 @@
   "spoken": "You have 47 eggs.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "f408bbfc": {
+  "text": "Let's play Happy Birthday!",
+  "spoken": "Let's play Happy Birthday!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "f436d3b9": {
+  "text": "Let's play Funeral March by Chopin!",
+  "spoken": "Let's play Funeral March by Chopin!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "f43a1919": {
   "text": "You have 203 eggs.",
   "spoken": "You have 203 eggs.",
@@ -5912,6 +6662,11 @@
  "f5a1a484": {
   "text": "You have 415 eggs.",
   "spoken": "You have 415 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "f5b0b7a5": {
+  "text": "Let's play F\u00fcr Elise!",
+  "spoken": "Let's play F\u00fcr Elise!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "f5f0fe00": {
@@ -5969,6 +6724,11 @@
   "spoken": "Hold G for three pecks. Then E for two, and one more E.",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "f7676116": {
+  "text": "New song: Auld Lang Syne!",
+  "spoken": "New song: Auld Lang Syne!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "f768a82e": {
   "text": "Echo game! Listen to my rhythm. Then play it back on any key.",
   "spoken": "Echo game! Listen to my rhythm. Then play it back on any key.",
@@ -6022,6 +6782,11 @@
  "fb107339": {
   "text": "Yes! It was Deck the Coop!",
   "spoken": "Yes! It was Deck the Coop!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "fb1ae3e4": {
+  "text": "New song: In the Hall of the Mountain King!",
+  "spoken": "New song: In the Hall of the Mountain King!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "fb269430": {
@@ -6079,9 +6844,19 @@
   "spoken": "Yes! It was Hens in a Row!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
+ "fd837ee9": {
+  "text": "Let's play Greensleeves!",
+  "spoken": "Let's play Greensleeves!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
  "fdcd0d8c": {
   "text": "That's 77 days in a row!",
   "spoken": "That's 77 days in a row!",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "fe368f2e": {
+  "text": "Let's play In the Hall of the Mountain King!",
+  "spoken": "Let's play In the Hall of the Mountain King!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "fe3dbf4e": {
@@ -6117,6 +6892,11 @@
  "ff0fe6da": {
   "text": "You have 79 eggs.",
   "spoken": "You have 79 eggs.",
+  "settings": "kokoro-v1.0/af_heart/1.0/48k"
+ },
+ "ff44dcee": {
+  "text": "New song: Camptown Races!",
+  "spoken": "New song: Camptown Races!",
   "settings": "kokoro-v1.0/af_heart/1.0/48k"
  },
  "ff4d7209": {

@@ -15,12 +15,20 @@ const ACC_WORD: Record<string, string> = { '': '', '#': ' sharp', 'b': ' flat', 
 // "C", "F sharp", "B flat" from a note label like F♯
 export const noteWords = (label: string): string => label[0] + ACC_WORD[label.slice(1)];
 // The tune a chicken song comes from ("Twinkle Twinkle Little Star"), or null for songs written for the app
-export const originalName = (song: Pick<Song, 'sub' | 'title'>): string | null => (song.sub && song.sub !== 'New song' && song.sub !== song.title ? song.sub : null);
-const spokenOriginal = (sub: string) => sub.replace(/\s*\(.*?\)/g, '');
-export const letsPlay = (song: Pick<Song, 'sub' | 'title'>, label: string): string[] => {
+// ("New song (G position)" and "Old rhyme, new tune" are notes about songs written for the app, not tune names)
+export const originalName = (song: Pick<Song, 'sub' | 'title'>): string | null => (song.sub && !/^(New song|Old rhyme)/.test(song.sub) && song.sub !== song.title ? song.sub : null);
+export const spokenOriginal = (sub: string) => sub.replace(/\s*\(.*?\)/g, '');
+// said on its own, "Pachelbel: Canon" reads better as "Canon by Pachelbel"
+export const spokenTune = (sub: string) => spokenOriginal(sub).replace(/^([^:]+):\s*(.+)$/, '$2 by $1');
+// real: the kid picked real song names, so skip the chicken name and just say the tune
+export const letsPlay = (song: Pick<Song, 'sub' | 'title'>, label: string, real = false): string[] => {
   const orig = originalName(song);
+  if (real && orig) return [`Let's play ${spokenTune(orig)}!`, startOn(label)];
   return [`Let's play ${song.title}!`, ...(orig ? [`That's ${spokenOriginal(orig)}!`] : []), startOn(label)];
 };
+// the 🐔/🎵 names button on the song screens
+export const NAMES_REAL = 'Real song names!';
+export const NAMES_CHICKEN = 'Chicken song names!';
 export const startOn = (label: string) => `Start on ${noteWords(label)}.`;
 export const oopsFind = (label: string) => `Oops! Find ${noteWords(label)}.`;
 export const openSongsAsk = (level: number) => `Open all the songs in level ${level}?`;
@@ -103,8 +111,11 @@ export function templatedLines(songs: Song[], levels: Level[]): string[] {
   const maxEggs = songs.length * 3 + levels.reduce((a, lv) => a + lv.lessons.length, 0) + EAR_MAX_EGGS + GAME_MAX_EGGS + QUIZ_MAX_EGGS + FRESH_MAX_EGGS;
   const out = [
     ...songs.flatMap((s) => letsPlay(s, firstLabel(s))),
+    ...songs.flatMap((s) => letsPlay(s, firstLabel(s), true)),
+    NAMES_REAL, NAMES_CHICKEN,
     ...labels.map(startOn),
     ...songs.map((s) => `New song: ${s.title}!`),
+    ...songs.filter(originalName).map((s) => `New song: ${spokenTune(originalName(s)!)}!`),
     ...labels.map(oopsFind),
     ...labels.map(noteWords),
     ...levels.map((lv) => openSongsAsk(lv.n)),
@@ -115,7 +126,7 @@ export function templatedLines(songs: Song[], levels: Level[]): string[] {
     ...SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN,
     RHYTHM_TURN, RHYTHM_AGAIN, RHYTHM_GOOD, RHYTHM_OK, RHYTHM_HOLD, RHYTHM_SHH,
     EAR_PICK, EAR_START(1), EAR_START(2), EAR_HINT,
-    GAMES_PICK, RUSH_START, RUSH_BEST, CLUCK_START, JAM_START, JAM_STOP, ...LEARN_CATS, MYSTERY_START, MOOD_START, FRESH_START, FRESH_HEAR, SPOT_START, SPOT_FASTER, SPOT_AGAIN, SPOT_FIXED, WRITE_START, WRITE_SAVED, WRITE_EMPTY, WRITE_FULL, ...Object.values(MOOD_RIGHT), ...knownSongs(songs).map((s) => mysteryWas(s.title)), ...TWINKLE_STAGES.map((s) => twinkleStart(s.word)),
+    GAMES_PICK, RUSH_START, RUSH_BEST, CLUCK_START, JAM_START, JAM_STOP, ...LEARN_CATS, MYSTERY_START, MOOD_START, FRESH_START, FRESH_HEAR, SPOT_START, SPOT_FASTER, SPOT_AGAIN, SPOT_FIXED, WRITE_START, WRITE_SAVED, WRITE_EMPTY, WRITE_FULL, ...Object.values(MOOD_RIGHT), ...knownSongs(songs).flatMap((s) => [mysteryWas(s.title), ...(originalName(s) ? [mysteryWas(spokenTune(originalName(s)!))] : [])]), ...TWINKLE_STAGES.map((s) => twinkleStart(s.word)),
     whoPlays,
     pickChicken,
     ...AVATARS.map((a) => hello(a.name)),
