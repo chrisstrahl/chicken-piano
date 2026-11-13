@@ -4,6 +4,7 @@
 //   chicken-piano-recordings-v1    { [player id]: Recording[] }                (recorder.ts)
 //   chicken-piano-mysongs-v1       { [player id]: MySong[] }                   (mysongs.ts)
 //   chicken-piano-lag              this device's measured input delays         (timing.ts)
+//   chicken-piano-private-songs    private song source: repo, token, downloaded songs (privatesongs.ts); not backed up
 //   chicken-piano-schema           which layout the keys above are in (SCHEMA); migrate() brings old ones up to date
 //   chicken-piano-backup-at        when a grown-up last saved a backup file
 //   chicken-piano-broken:<key>     a value that couldn't be read, kept instead of being overwritten
@@ -27,6 +28,7 @@ export const KEYS = {
   lag: 'chicken-piano-lag',
   schema: 'chicken-piano-schema',
   backupAt: 'chicken-piano-backup-at',
+  privateSongs: 'chicken-piano-private-songs',
 } as const;
 export const progressKey = (id: string) => `${KEYS.oldProgress}:${id}`;
 const brokenKey = (k: string) => `${PREFIX}-broken:${k}`;
@@ -136,7 +138,7 @@ export interface Backup { app: 'chicken-piano'; schema: number; at: number; data
 // Everything saved, as one object (the file a grown-up keeps). Broken copies and the schema stamp stay behind.
 export function makeBackup(s: Store, now = Date.now()): Backup {
   const data: Record<string, string> = {};
-  keysOf(s).filter((k) => k !== KEYS.schema && k !== KEYS.backupAt && !k.startsWith(`${PREFIX}-broken:`)).forEach((k) => { const v = readRaw(s, k); if (v != null) data[k] = v; });
+  keysOf(s).filter((k) => k !== KEYS.schema && k !== KEYS.backupAt && k !== KEYS.privateSongs && !k.startsWith(`${PREFIX}-broken:`)).forEach((k) => { const v = readRaw(s, k); if (v != null) data[k] = v; });
   return { app: 'chicken-piano', schema: SCHEMA, at: now, data };
 }
 export const backupName = (at: number) => `chicken-piano-backup-${new Date(at).toISOString().slice(0, 10)}.json`;

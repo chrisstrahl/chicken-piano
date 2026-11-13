@@ -1,9 +1,10 @@
-import { SONGS, LEVELS, PRAISE, COLORS, BEATS, letterOf, nameOf, isBlack, parse, songById, songsForLevel, setUserSongs, userSongs } from './music.js';
+import { SONGS, LEVELS, PRAISE, COLORS, BEATS, letterOf, nameOf, isBlack, parse, songById, songsForLevel, setUserSongs, userSongs, setPrivateSongs } from './music.js';
 import { coop, openSongsAsk, letsPlay, oopsFind, songDone, lessonDone, noteWords, whoPlays, pickChicken, hello, removeAsk, originalName, dayEgg, dayTalk, SPEED_WORDS, BEAT_START, ECHO_START, ECHO_AGAIN, RHYTHM_TURN, RHYTHM_AGAIN, RHYTHM_GOOD, RHYTHM_OK, RHYTHM_HOLD, RHYTHM_SHH, LEARN_CATS, SPOT_START, SPOT_FASTER, SPOT_AGAIN, SPOT_FIXED } from './lines.js';
 import { startAudio, playNote, noteDown, noteUp, playSequence, cluck, peck, bawk, silly, say, stopTalking, preloadVoice, startBeat } from './audio.js';
 import { BeatJudge, phrases, SPEEDS, barBeats, peckEvery, timeline } from './beat.js';
 import { struckAt, markTap, setLag, reloadLags } from './timing.js';
 import { browserStore } from './storage.js';
+import { readSource, writeSource, forgetSource, download, cleanSong, repoName, DEFAULT_PATH } from './privatesongs.js';
 import { startMic, stopMic, micOn, micSupported, expectNote, micHealth } from './mic.js';
 import { startMidi, midiSupported, midiAllowed } from './midi.js';
 import { drawStaff, focusX } from './staff.js';
@@ -79,7 +80,7 @@ const currentLevel = () => (LEVELS.find((lv) => !levelDone(lv)) || LEVELS[9]).n;
 const nextLesson = (lv: Level) => lv.lessons.findIndex((l) => !progress.lessons[l.id]);
 // progress.open[n]: a grown-up (or kid) chose to open every song in level n without doing its lessons
 const songsOpenIn = (lv: Level) => (progress.all || (progress.open || {})[lv.n] ? Infinity : [0, 1, 2, 3, Infinity][lessonsDone(lv)]);
-const songOpen = (s: Song) => s.level === 0 || songsForLevel(s.level).indexOf(s) < songsOpenIn(LEVELS[s.level - 1]);
+const songOpen = (s: Song) => s.level === 0 || !!s.priv || songsForLevel(s.level).indexOf(s) < songsOpenIn(LEVELS[s.level - 1]);
 
 /* ---------- chicken mascot ---------- */
 $$('[data-chicken]').forEach((el) => { el.outerHTML = CHICKEN.replace('class="chicken"', `class="chicken"${el.id ? ` id="${el.id}"` : ''}`); });
@@ -1245,6 +1246,51 @@ const fresh = setupFreshTunes({ missed: (m) => missedNote(nameOf(m)), show, bubb
 /* ---------- Write a Song (src/write.ts) ---------- */
 function loadMySongs() { setUserSongs(listMySongs(playerId())); }
 loadMySongs();
+
+/* ---------- private songs from the family's own GitHub repo (src/privatesongs.ts) ---------- */
+// The saved copy is used right away (works offline); a fresh copy is fetched in the background on each launch.
+type PrivateResult = { added: number; skipped: { id: string; why: string }[] };
+let privateResult: PrivateResult = { added: 0, skipped: [] };
+function usePrivateSongs(list: unknown[]): PrivateResult {
+  const checked = list.map(cleanSong);
+  const r = setPrivateSongs(checked.flatMap((c) => ('song' in c ? [c.song] : [])));
+  const bad = checked.flatMap((c, i) => ('why' in c ? [{ id: String((list[i] as any)?.id ?? `song ${i + 1}`), why: c.why }] : []));
+  privateResult = { added: r.added.length, skipped: [...bad, ...r.skipped] };
+  if (current === 'level') renderLevel(); else if (current === 'songs') renderSongs();
+  return privateResult;
+}
+async function refreshPrivateSongs(): Promise<string> {
+  const store = browserStore(), src = readSource(store);
+  if (!src) return '';
+  try {
+    const list = await download(src);
+    writeSource(store, { ...src, songs: list, at: Date.now(), error: '' });
+    usePrivateSongs(list);
+    return '';
+  } catch (e) {
+    const error = (e as Error).message || String(e);
+    writeSource(store, { ...src, error });
+    return error;
+  }
+}
+{
+  const src = readSource(browserStore());
+  if (src) { usePrivateSongs(src.songs); if (navigator.onLine !== false) refreshPrivateSongs(); }
+}
+const privateSongs = {
+  source: () => readSource(browserStore()),
+  result: () => privateResult,
+  // a grown-up typed a repo (and maybe a new token): download now; keep the old token when the box was left empty
+  async connect(repo: string, token: string): Promise<string> {
+    const store = browserStore(), old = readSource(store);
+    const r = /^https:\/\//.test(repo.trim()) && !/github\.com\//.test(repo) ? repo.trim() : repoName(repo);
+    if (!r) return 'That doesn\'t look like a GitHub repo. Use owner/name, like chrisstrahl/chicken-piano-songs.';
+    writeSource(store, { repo: r, path: old?.path || DEFAULT_PATH, token: token.trim() || old?.token || '', at: old?.repo === r ? old.at : 0, songs: old?.repo === r ? old.songs : [], error: '' });
+    return refreshPrivateSongs();
+  },
+  forget() { forgetSource(browserStore()); usePrivateSongs([]); },
+};
+
 const write = setupWrite({
   show, bubble, bigLetter, act, ask: (...a) => ask(...a), toast, player: () => players.current(),
   setInput: (f) => { onNote = f; }, noteIn, keyUp, changed: loadMySongs,
@@ -1259,6 +1305,7 @@ const parent = setupParent({
   avatar: (p) => `<span class="av">${avatarChicken(p.avatar)}</span>`,
   store: browserStore(), maxPlayers: MAX_PLAYERS, limits: { recordings: MAX_SAVED, mysongs: MAX_MYSONGS },
   reload: () => { players.reload(); reloadLags(); usePlayer(players.current().id); },
+  privateSongs,
 });
 
 /* ---------- ear quizzes: Mystery Melodies, Happy or Sad (src/quizgames.ts) ---------- */

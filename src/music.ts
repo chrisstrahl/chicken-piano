@@ -51,7 +51,7 @@ import { SONG_DATA } from './songs.js';
 import { arrange } from './arrange.ts';
 
 // lh / chords given in songs.js are kept as lhData / chordsData; arrange() works out the rest
-type SongOpts = Partial<Omit<SongData, 'id' | 'level' | 'emoji' | 'title' | 'sub' | 'notes' | 'lyrics'>>;
+type SongOpts = Partial<Omit<SongData, 'id' | 'level' | 'emoji' | 'title' | 'sub' | 'notes' | 'lyrics'>> & { priv?: boolean };
 const song = (id: string, level: number, emoji: string, title: string, sub: string, notes: string, lyrics: string, { lh, chords, fingers, lhFingers, ...opts }: SongOpts = {}): Song => arrange({
   id, level, emoji, title, sub, tempo: 100, time: '4/4', clef: 'treble', key: 'C', pickup: 0, bars: true, ...opts,
   lhData: lh, chordsData: chords, fingersData: fingers, lhFingersData: lhFingers, notes: parse(notes, lyrics),
@@ -65,6 +65,24 @@ export function setUserSongs(list: { id: string; emoji: string; title: string; n
   USER_SONGS.splice(0, USER_SONGS.length, ...list.map((u) => song(u.id, 0, u.emoji, u.title, '', u.notes, '')));
 }
 export const userSongs = (): Song[] => USER_SONGS.slice();
+// Songs from the family's private song source (src/privatesongs.ts), added to SONGS at the end of their level.
+// Ids get a 'priv-' prefix so they can't clash with built-in songs. Returns what was added and what was skipped.
+export function setPrivateSongs(list: SongData[]): { added: Song[]; skipped: { id: string; why: string }[] } {
+  for (let i = SONGS.length - 1; i >= 0; i--) if (SONGS[i].priv) SONGS.splice(i, 1);
+  const added: Song[] = [], skipped: { id: string; why: string }[] = [], seen = new Set<string>();
+  list.forEach(({ id: own, level, emoji, title, sub, notes, lyrics, diff, ...x }, i) => {
+    const id = `priv-${own}`;
+    if (seen.has(id)) return skipped.push({ id: own, why: 'same id as an earlier song' });
+    try {
+      const s = song(id, level, emoji, title, sub, notes, lyrics, { ...x, diff: 1000 + i, priv: true });
+      if (!s.notes.length) throw new Error('no notes');
+      seen.add(id);
+      added.push(s);
+    } catch (e) { skipped.push({ id: own, why: `couldn't read its notes (${(e as Error).message || e})` }); }
+  });
+  SONGS.push(...added);
+  return { added, skipped };
+}
 export const songById = (id: string): Song | undefined => SONGS.find((s) => s.id === id) || USER_SONGS.find((s) => s.id === id);
 
 /* ------------------------------------------------------------------------------------------------
