@@ -8,7 +8,9 @@ import { FRESH_STAGES } from './sightread.js';
 import { streak, dayKey } from './streaks.js';
 import { esc as escHtml } from './dom.js';
 import { KEYS, readRaw, keysOf, makeBackup, backupName, parseBackup, mergeBackup, lastFailedSave, writeJSON, type Store } from './storage.js';
-import type { Level, Song, Player } from './types';
+import type { Level, Song, SongData, Player } from './types';
+import type { Draft } from './scoreimport.js';
+import type { Upload } from './uploads.js';
 import type { PrivateSource } from './privatesongs.js';
 import { WHATSNEW } from './whatsnew.generated.js';
 
@@ -59,7 +61,7 @@ export interface ParentApp {
   songs: Song[];
   store: Store;
   maxPlayers: number;
-  limits: { recordings: number; mysongs: number };
+  limits: { recordings: number; mysongs: number; uploads: number };
   // a backup was loaded: re-read players, progress, songs
   reload: () => void;
   // the family's private song source (main.ts, src/privatesongs.ts)
@@ -68,6 +70,16 @@ export interface ParentApp {
     result: () => { added: number; skipped: { id: string; why: string }[] };
     connect: (repo: string, token: string) => Promise<string>; // '' when it worked, else the problem
     forget: () => void;
+  };
+  // songs uploaded as score files (main.ts, src/uploads.ts, src/scoreimport.ts)
+  uploads: {
+    list: () => Upload[];
+    skipped: () => { id: string; why: string }[];
+    max: number;
+    read: (name: string, bytes: Uint8Array) => Draft; // throws an Error to show
+    add: (song: SongData) => boolean; // false: no room
+    remove: (id: string) => void;
+    preview: (song: SongData) => boolean; // true: playing, false: stopped
   };
 }
 
@@ -189,6 +201,78 @@ export function setupParent(app: ParentApp) {
     if (t.id === 'btnPrivLoad') { if (!privBusy) privLoad(); } else { app.privateSongs.forget(); privNote = 'Private songs removed from this device.'; render(); }
   });
 
+
+  /* ---------- add a song: a score file (MusicXML or MIDI) becomes a song every kid can play ---------- */
+  let draft: Draft | null = null, upNote = '', playing = false;
+  const LEVEL_WORDS = ['', 'C D E', 'C to G', 'rests', 'up high', 'down low', '3/4 time', 'eighth notes', 'sharps and flats', 'bass clef', 'everything'];
+  // 'F#m' -> 'F sharp minor' (words, not symbols: the iPad's fonts can lack music signs)
+  const keyWords = (k: string) => k[0] + (k[1] === '#' ? ' sharp' : k[1] === 'b' ? ' flat' : '') + (k.endsWith('m') ? ' minor' : ' major');
+  const levelName = (n: number) => `Level ${n}${LEVEL_WORDS[n] ? ` (${LEVEL_WORDS[n]})` : ''}`;
+  function uploadCard() {
+    const list = app.uploads.list(), skipped = app.uploads.skipped();
+    let body = '';
+    if (draft) {
+      const s = draft.song, long = draft.notes > 300;
+      body = `<div class="pdraft">
+        <label class="pfield"><span>Song name</span><input id="upTitle" maxlength="60" value="${esc(s.title)}"></label>
+        <label class="pfield"><span>Put it in</span><select id="upLevel">${Array.from({ length: 10 }, (_, i) => i + 1).map((n) => `<option value="${n}"${n === s.level ? ' selected' : ''}>${levelName(n)}${n === s.level ? ' (our guess)' : ''}</option>`).join('')}</select></label>
+        <div class="prow"><span>Notes in the tune</span><b>${draft.notes}</b></div>
+        <div class="prow"><span>Key, time, speed</span><b>${esc(keyWords(s.key))} · ${s.time} · ${s.tempo} a minute</b></div>
+        <div class="prow"><span>Left hand</span><b>${draft.hasLh ? 'from the file' : 'the app makes one'}</b></div>
+        ${draft.warnings.map((w) => `<div class="pwarn">${esc(w)}</div>`).join('')}
+        ${long ? '<div class="pwarn">This is a long piece. Kids usually do best with songs under 100 notes; an easy arrangement of just the tune works best.</div>' : ''}
+        <div class="pbtns"><button class="btn" id="btnUpHear">${playing ? '⏹ Stop' : '▶️ Hear the start'}</button><button class="btn green" id="btnUpAdd">➕ Add song</button><button class="btn blue" id="btnUpCancel">✖ Cancel</button></div>
+      </div>`;
+    } else body = `<div class="pbtns"><button class="btn" id="btnUpPick">📂 Choose a score file</button></div>`;
+    return `<div class="pcard" id="uploadCard">
+      <div class="phead">🎼 <b>Add a song</b></div>
+      ${body}
+      ${upNote ? `<div class="pnote">${upNote}</div>` : ''}
+      ${list.length ? `<div class="psec">Added songs <small>(${list.length} of ${app.uploads.max})</small></div>
+      <div class="pups">${list.map((u) => `<div class="prow"><span>🎼 ${esc(u.title)} <small>${levelName(u.level)}</small></span><button class="btn small blue" data-unsong="${esc(u.id)}" aria-label="Remove ${esc(u.title)}">🗑</button></div>`).join('')}</div>` : ''}
+      ${skipped.length ? `<div class="pwarn">Couldn't load ${skipped.length}: ${skipped.slice(0, 5).map((x) => `<b>${esc(x.id)}</b> (${esc(x.why)})`).join(', ')}</div>` : ''}
+      <p class="ptip">Pick a score file: MusicXML (.musicxml, .mxl) or MIDI (.mid). MuseScore and most notation apps can export these, and many free scores online come as MusicXML or MIDI. No audio track is needed: the chicken plays the notes on its own piano and listens for them like any other song. Easy one-hand arrangements work best. The song shows up at the end of its level, open for every kid on this device, and goes along in backup files.</p>
+    </div>`;
+  }
+  const picker2 = document.createElement('input');
+  picker2.type = 'file'; // no accept list: iPad greys out .mid/.mxl files it doesn't recognise, so the app checks the file itself
+  picker2.style.display = 'none';
+  document.body.appendChild(picker2);
+  picker2.addEventListener('change', async () => {
+    const f = picker2.files && picker2.files[0];
+    picker2.value = '';
+    if (!f) return;
+    upNote = ''; draft = null;
+    try {
+      if (f.size > 8 * 1024 * 1024) throw new Error('That file is too big to be a score (over 8 MB).');
+      draft = app.uploads.read(f.name, new Uint8Array(await f.arrayBuffer()));
+    } catch (e) { upNote = `❌ ${esc((e as Error).message || String(e))}`; }
+    render();
+  });
+  function stopHearing() { if (playing && draft) app.uploads.preview(draft.song); playing = false; }
+  function readDraftFields() {
+    if (!draft) return;
+    const t = ($('#upTitle') as HTMLInputElement).value.replace(/[<>&"]/g, '').trim();
+    if (t) draft.song.title = t.slice(0, 60);
+    draft.song.level = +($('#upLevel') as HTMLSelectElement).value || draft.song.level;
+  }
+  document.addEventListener('click', (e) => {
+    const t = (e.target as Element).closest('#btnUpPick, #btnUpHear, #btnUpAdd, #btnUpCancel, [data-unsong]') as HTMLElement | null;
+    if (!t) return;
+    if (t.id === 'btnUpPick') { picker2.click(); return; }
+    if (t.dataset.unsong) {
+      const u = app.uploads.list().find((x) => x.id === t.dataset.unsong);
+      app.uploads.remove(t.dataset.unsong);
+      upNote = u ? `Removed ${esc(u.title)}.` : '';
+    } else if (t.id === 'btnUpHear' && draft) { readDraftFields(); playing = app.uploads.preview(draft.song); }
+    else if (t.id === 'btnUpCancel') { stopHearing(); draft = null; upNote = ''; }
+    else if (t.id === 'btnUpAdd' && draft) {
+      readDraftFields(); stopHearing();
+      if (app.uploads.add(draft.song)) { upNote = `✅ Added ${esc(draft.song.title)} to ${levelName(draft.song.level)}.`; draft = null; }
+      else upNote = `❌ Couldn't save it: this device is full, or there are already ${app.uploads.max} added songs.`;
+    }
+    render();
+  });
   /* ---------- what's new card: the newest days of CHANGELOG.md, built in by build.mjs ---------- */
   function newsCard() {
     if (!WHATSNEW.length) return '';
@@ -216,7 +300,7 @@ export function setupParent(app: ParentApp) {
         <div class="psec">Notes missed most <small>(songs and Fresh Tunes)</small></div>
         <div class="pmiss">${s.missed.length ? s.missed.map(([n, c]) => `<span><b>${esc(n)}</b> ${Number(c) || 0}×</span>`).join('') : '<i>Nothing yet</i>'}</div>
       </div>`;
-    }).join('') + backupCard() + privateCard() + newsCard();
+    }).join('') + uploadCard() + backupCard() + privateCard() + newsCard();
   }
-  return { screens: { parent: () => { note = ''; privNote = ''; render(); } }, loadBackup, privLoad };
+  return { screens: { parent: () => { note = ''; privNote = ''; upNote = ''; render(); } }, loadBackup, privLoad };
 }

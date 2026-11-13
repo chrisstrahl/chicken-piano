@@ -31,6 +31,8 @@ jobs:
         run: node test/storage.mjs
       - name: Private songs check
         run: node test/privatesongs.mjs
+      - name: Song upload check
+        run: node test/scoreimport.mjs
       - name: Release notes check
         run: node test/changelog.mjs
       - name: Game logic check

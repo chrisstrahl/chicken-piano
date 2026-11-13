@@ -67,14 +67,15 @@ export function setUserSongs(list: { id: string; emoji: string; title: string; n
 export const userSongs = (): Song[] => USER_SONGS.slice();
 // Songs from the family's private song source (src/privatesongs.ts), added to SONGS at the end of their level.
 // Ids get a 'priv-' prefix so they can't clash with built-in songs. Returns what was added and what was skipped.
-export function setPrivateSongs(list: SongData[]): { added: Song[]; skipped: { id: string; why: string }[] } {
-  for (let i = SONGS.length - 1; i >= 0; i--) if (SONGS[i].priv) SONGS.splice(i, 1);
+// Songs a grown-up uploaded (src/scoreimport.ts, main.ts) come through here too, with an 'up-' prefix.
+export function setPrivateSongs(list: SongData[], prefix = 'priv-'): { added: Song[]; skipped: { id: string; why: string }[] } {
+  for (let i = SONGS.length - 1; i >= 0; i--) if (SONGS[i].priv && SONGS[i].id.startsWith(prefix)) SONGS.splice(i, 1);
   const added: Song[] = [], skipped: { id: string; why: string }[] = [], seen = new Set<string>();
   list.forEach(({ id: own, level, emoji, title, sub, notes, lyrics, diff, ...x }, i) => {
-    const id = `priv-${own}`;
+    const id = `${prefix}${own}`;
     if (seen.has(id)) return skipped.push({ id: own, why: 'same id as an earlier song' });
     try {
-      const s = song(id, level, emoji, title, sub, notes, lyrics, { ...x, diff: 1000 + i, priv: true });
+      const s = song(id, level, emoji, title, sub, notes, lyrics, { ...x, diff: (prefix === 'priv-' ? 1000 : 2000) + i, priv: true });
       if (!s.notes.length) throw new Error('no notes');
       seen.add(id);
       added.push(s);

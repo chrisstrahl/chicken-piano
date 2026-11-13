@@ -9,7 +9,7 @@ import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
 
-const quick = ['songlib.mjs', 'recorder.mjs', 'storage.mjs', 'privatesongs.mjs', 'changelog.mjs', 'logic.mjs'];
+const quick = ['songlib.mjs', 'recorder.mjs', 'storage.mjs', 'privatesongs.mjs', 'changelog.mjs', 'logic.mjs', 'scoreimport.mjs'];
 const browser = process.argv.includes('--all') ? fs.readdirSync('test').filter((f) => f.endsWith('.cjs')).sort() : [];
 const only = process.argv.slice(2).filter((a) => !a.startsWith('--'));
 const tests = [...quick, ...browser].filter((t) => !only.length || only.some((o) => t.includes(o)));

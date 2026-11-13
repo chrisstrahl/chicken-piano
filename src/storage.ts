@@ -4,6 +4,7 @@
 //   chicken-piano-recordings-v1    { [player id]: Recording[] }                (recorder.ts)
 //   chicken-piano-mysongs-v1       { [player id]: MySong[] }                   (mysongs.ts)
 //   chicken-piano-lag              this device's measured input delays         (timing.ts)
+//   chicken-piano-uploads-v1      songs a grown-up uploaded from score files: (SongData & { at })[] (uploads.ts); every kid sees them
 //   chicken-piano-private-songs    private song source: repo, token, downloaded songs (privatesongs.ts); not backed up
 //   chicken-piano-schema           which layout the keys above are in (SCHEMA); migrate() brings old ones up to date
 //   chicken-piano-backup-at        when a grown-up last saved a backup file
@@ -29,6 +30,7 @@ export const KEYS = {
   schema: 'chicken-piano-schema',
   backupAt: 'chicken-piano-backup-at',
   privateSongs: 'chicken-piano-private-songs',
+  uploads: 'chicken-piano-uploads-v1',
 } as const;
 export const progressKey = (id: string) => `${KEYS.oldProgress}:${id}`;
 const brokenKey = (k: string) => `${PREFIX}-broken:${k}`;
@@ -209,13 +211,22 @@ function cleanMySong(m: unknown): Item | null {
   if (!isObj(m) || typeof m.id !== 'string' || !ID.test(m.id) || typeof m.notes !== 'string' || !/^[A-GRa-g#b0-9:+~hqwd ]{1,2000}$/.test(m.notes)) return null;
   return { id: m.id, at: num(m.at) ? m.at : 0, title: cleanText(m.title, 60) || 'My song', emoji: cleanText(m.emoji, 16) || '🎵', notes: m.notes } as Item;
 }
+// an uploaded song (uploads.ts): an id, a level, and text fields only (the app checks the notes again when it loads it)
+const UPLOAD_TEXT = ['emoji', 'title', 'sub', 'key', 'time', 'notes', 'lyrics', 'clef', 'lh', 'chords', 'fingers', 'lhFingers', 'lhStyle'];
+function cleanUpload(u: unknown): Item | null {
+  if (!isObj(u) || typeof u.id !== 'string' || !ID.test(u.id) || typeof u.notes !== 'string' || !num(u.level)) return null;
+  const out: Obj = { id: u.id, at: num(u.at) ? u.at : 0, level: u.level };
+  for (const k of ['tempo', 'pickup']) if (num(u[k])) out[k] = u[k];
+  for (const k of UPLOAD_TEXT) if (typeof u[k] === 'string') out[k] = cleanText(u[k], 20000);
+  return out as Item;
+}
 const cleanList = (v: unknown, clean: (x: unknown) => Item | null): Item[] => (Array.isArray(v) ? v.map(clean).filter((x): x is Item => !!x) : []);
 
 export interface MergeResult { added: string[]; merged: string[]; skipped: string[] }
 // Adds a backup's players and progress to what's here. A backup player joins the one here with the same id
 // (the Safari tab and home-screen app both start with 'p1'), or failing that the same name and chicken;
 // anyone else is added if there's room (maxPlayers).
-export function mergeBackup(s: Store, b: Backup, maxPlayers: number, limits = { recordings: 30, mysongs: 30 }): MergeResult {
+export function mergeBackup(s: Store, b: Backup, maxPlayers: number, limits: { recordings: number; mysongs: number; uploads?: number } = { recordings: 30, mysongs: 30 }): MergeResult {
   const res: MergeResult = { added: [], merged: [], skipped: [] };
   const from = memoryStore();
   Object.entries(b.data).forEach(([k, v]) => from.setItem(k, String(v)));
@@ -241,6 +252,9 @@ export function mergeBackup(s: Store, b: Backup, maxPlayers: number, limits = { 
   if (!mine.list.some((q) => q.id === mine.current) && mine.list.length) mine.current = mine.list[0].id;
   writeJSON(s, KEYS.players, mine);
   writeJSON(s, KEYS.mysongs, songsHere);
+  // uploaded songs belong to the device, not a kid: the backup's are added to the ones here
+  const upHere = readJSON<any[]>(s, KEYS.uploads, []), upThere = readJSON<any[]>(from, KEYS.uploads, []);
+  if (Array.isArray(upThere) && upThere.length) writeJSON(s, KEYS.uploads, unionById(Array.isArray(upHere) ? upHere : [], cleanList(upThere, cleanUpload), limits.uploads ?? 50, false));
   // recordings last: the biggest, and the ones that give way (oldest first) if room runs out
   while (!writeJSON(s, KEYS.recordings, recsHere, false)) {
     const lists = Object.values(recsHere).filter((l: any[]) => l.length);

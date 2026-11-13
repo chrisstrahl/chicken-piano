@@ -9,6 +9,9 @@ libraries and sounds below. Their licenses still apply to those parts.
 | [VexFlow](https://github.com/0xfe/vexflow) | 4.2.5 | MIT | Copyright (c) 2010 Mohit Muthanna Cheppudira |
 | [Pitchy](https://github.com/ianprime0509/pitchy) | 4.1.0 | MIT | Copyright 2018-2021 Ian Johnson |
 | [fft.js](https://github.com/indutny/fft.js) (used by Pitchy) | 4.0.4 | MIT | Copyright Fedor Indutny, 2017 |
+| [@tonejs/midi](https://github.com/Tonejs/Midi) (reads uploaded MIDI files) | 2.0.28 | MIT | Copyright (c) 2016 Yotam Mann |
+| [midi-file](https://github.com/carter-thaxton/midi-file) (used by @tonejs/midi) | 1.2.4 | MIT | Copyright (c) 2016 Carter Thaxton |
+| [fflate](https://github.com/101arrowz/fflate) (opens .mxl files) | 0.8.3 | MIT | Copyright (c) 2026 Arjun Barrett |
 | Bravura music font (inside VexFlow) | | SIL Open Font License 1.1 | Steinberg Media Technologies GmbH |
 | Piano samples: [tonejs-instruments](https://github.com/nbrosowsky/tonejs-instruments) via [tonejs-instrument-piano-mp3](https://github.com/Makefully-Studios/tonejs-instruments) | 1.1.2 | Samples: [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/); code: MIT | Samples collected and edited by Nicholas Brosowsky, from Versilian Studios VSCO 2 (per the project's sample-source-info.txt). Chicken Piano trims them to 2.5 s, mono, 64 kbps. |
 | Talking-chicken voice clips (`dist/voice`), recorded with [Kokoro-82M](https://github.com/hexgrad/kokoro) (voice `af_heart`) via [kokoro-onnx](https://github.com/thewh1teagle/kokoro-onnx) | 1.0 / 0.6.1 | Apache 2.0 (model weights and kokoro-onnx) | Kokoro model by hexgrad; kokoro-onnx by thewh1teagle. The model is used only at build time and is not shipped. |
@@ -20,7 +23,7 @@ Not third-party:
 - The talking chicken plays clips recorded with Kokoro (above); sentences without a clip use the device's built-in speech voice (Web Speech API).
 - Song melodies are traditional or public domain tunes (or new). The chicken lyrics are new.
 
-## MIT license text (Tone.js, VexFlow, Pitchy, fft.js)
+## MIT license text (Tone.js, VexFlow, Pitchy, fft.js, @tonejs/midi, midi-file, fflate)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 documentation files (the "Software"), to deal in the Software without restriction, including without limitation
