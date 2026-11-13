@@ -1,7 +1,7 @@
 // Private songs in the real app: a grown-up enters a repo and token on the grown-ups' page, the songs download
 // (GitHub is faked), show up open at the end of their level, survive a relaunch with GitHub unreachable, and go
 // when removed. usage: node test/privatesongs.cjs [shotsDir]
-const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+const { chromium } = require('playwright');
 (async () => {
   const out = process.argv[2] || 'shots';
   require('fs').mkdirSync(out, { recursive: true });
