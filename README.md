@@ -6,6 +6,8 @@
 
 No download, no sign-up, no ads. Open it in a browser, prop your tablet on the piano like sheet music, and start playing.
 
+🆕 **[What's new](CHANGELOG.md)**: release notes for grown-ups, newest first.
+
 <p align="center">
   <img src="shots/ipad-home.png" width="32%" alt="Home screen: Learn, Play Songs, Record a Song">
   <img src="shots/ipad-song.png" width="32%" alt="Playing a song with notes on the staff and the key to press lit up">

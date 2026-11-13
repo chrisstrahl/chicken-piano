@@ -9,6 +9,7 @@ import { streak, dayKey } from './streaks.js';
 import { KEYS, readRaw, keysOf, makeBackup, backupName, parseBackup, mergeBackup, lastFailedSave, writeJSON, type Store } from './storage.js';
 import type { Level, Song, Player } from './types';
 import type { PrivateSource } from './privatesongs.js';
+import { WHATSNEW } from './whatsnew.generated.js';
 
 type Saved = {
   songs?: Record<string, number>; lessons?: Record<string, boolean>; days?: Record<string, number>;
@@ -187,6 +188,15 @@ export function setupParent(app: ParentApp) {
     if (t.id === 'btnPrivLoad') { if (!privBusy) privLoad(); } else { app.privateSongs.forget(); privNote = 'Private songs removed from this device.'; render(); }
   });
 
+  /* ---------- what's new card: the newest days of CHANGELOG.md, built in by build.mjs ---------- */
+  function newsCard() {
+    if (!WHATSNEW.length) return '';
+    return `<div class="pcard" id="newsCard">
+      <div class="phead">🆕 <b>What's new</b></div>
+      ${WHATSNEW.map((d) => `<div class="psec">${d.date}</div><ul class="pnews">${d.items.map((i) => `<li>${i}</li>`).join('')}</ul>`).join('')}
+    </div>`;
+  }
+
   function render() {
     $('#parentCards').innerHTML = app.players().map((pl) => {
       const s = summarize(app.progressOf(pl.id), app.levels, app.songs, app.recordingsOf(pl.id));
@@ -205,7 +215,7 @@ export function setupParent(app: ParentApp) {
         <div class="psec">Notes missed most <small>(songs and Fresh Tunes)</small></div>
         <div class="pmiss">${s.missed.length ? s.missed.map(([n, c]) => `<span><b>${n}</b> ${c}×</span>`).join('') : '<i>Nothing yet</i>'}</div>
       </div>`;
-    }).join('') + backupCard() + privateCard();
+    }).join('') + backupCard() + privateCard() + newsCard();
   }
   return { screens: { parent: () => { note = ''; privNote = ''; render(); } }, loadBackup, privLoad };
 }
