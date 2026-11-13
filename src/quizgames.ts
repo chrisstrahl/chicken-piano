@@ -7,6 +7,7 @@ import { MYSTERY_STAGES, MOOD_STAGES, QUIZ_ROUNDS, quizEggs, mysteryPuzzle, mood
 import type { Mood } from './quiz.ts';
 import { MYSTERY_START, MOOD_START, MOOD_RIGHT, mysteryWas, ECHO_AGAIN, songDone, GAMES_PICK } from './lines.js';
 import { songName, spokenName } from './names.js';
+import { esc } from './dom.js';
 import type { Song } from './types';
 
 const $ = <T extends HTMLElement = HTMLElement>(s: string): T => document.querySelector<T>(s)!;
@@ -73,7 +74,7 @@ export function setupQuizzes(app: QuizApp) {
     const box = $('#quizChoices');
     box.className = `choices quizchoices ${kind}`;
     box.innerHTML = kind === 'mystery'
-      ? Q.cards.map((c) => `<button class="choice wide songpick" data-ans="${c.id}"><span class="em">${c.emoji}</span><small>${songName(c)}</small></button>`).join('')
+      ? Q.cards.map((c) => `<button class="choice wide songpick" data-ans="${c.id}"><span class="em">${esc(c.emoji)}</span><small>${esc(songName(c))}</small></button>`).join('')
       : `<button class="choice wide" data-ans="happy">😊<small>Happy</small></button><button class="choice wide" data-ans="sad">😢<small>Sad</small></button>`;
   }
   function newPuzzle(first = false) {

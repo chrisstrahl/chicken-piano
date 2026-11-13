@@ -14,6 +14,8 @@ the grown-ups' page and scroll to 🆕 What's new.
 
 ## 13 November 2026
 
+- 🔒 **Safer backups**: loading a backup file now cleans names and titles first, so a tampered file can't do anything but show text. (#53)
+- ⚡ **Smoother song play**: each note you play makes the iPad do less work, so the chicken and the staff keep up better in fast songs. (#53)
 - 🆕 **What's new**: these release notes now live in the app too, on the grown-ups' page.
 - 🔐 **Private songs**: grown-ups can load extra songs from the family's own private GitHub repository (grown-ups' page, 🔐 card). The songs are kept on the device, so they work offline, and they refresh each time the app opens. (#49)
 - 🎵 **Real song names**: a 🐔 / 🎵 button on the Songs and Level screens switches between the chicken titles and the real tune names, and the chicken says the real name too. Each kid keeps their own setting. (#50)

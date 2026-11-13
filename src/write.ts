@@ -9,6 +9,7 @@ import { listMySongs, saveMySong, deleteMySong, MAX_NOTES } from './mysongs.js';
 import type { MySong } from './mysongs.ts';
 import { WRITE_START, WRITE_SAVED, WRITE_EMPTY, WRITE_FULL, throwAwayAsk } from './lines.js';
 import type { NoteSource } from './types';
+import { esc } from './dom.js';
 
 const $ = <T extends HTMLElement = HTMLElement>(s: string): T => document.querySelector<T>(s)!;
 const NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
@@ -100,7 +101,7 @@ export function setupWrite(app: WriteApp) {
     app.changed();
     cluck(2);
     app.act(chicken(), 'happy', 900);
-    app.bubble($('#writeBubble'), `💾 ✅ ${W.emoji}`);
+    app.bubble($('#writeBubble'), `💾 ✅ ${esc(W.emoji)}`);
     say(WRITE_SAVED);
   }
 
