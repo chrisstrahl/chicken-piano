@@ -6,6 +6,7 @@ import { EAR_STAGES } from './ear.js';
 import { MYSTERY_STAGES, MOOD_STAGES } from './quiz.js';
 import { FRESH_STAGES } from './sightread.js';
 import { streak, dayKey } from './streaks.js';
+import { esc as escHtml } from './dom.js';
 import { KEYS, readRaw, keysOf, makeBackup, backupName, parseBackup, mergeBackup, lastFailedSave, writeJSON, type Store } from './storage.js';
 import type { Level, Song, Player } from './types';
 import type { PrivateSource } from './privatesongs.js';
@@ -104,7 +105,7 @@ export function setupParent(app: ParentApp) {
       <div class="prow"><span>Saved on this ${standalone() ? 'home-screen app' : 'browser tab'}</span><b>${kb} KB</b></div>
       ${full ? '<div class="pwarn">⚠️ This device ran out of room, so the oldest recordings were removed to keep progress safe.</div>' : ''}
       <div class="pbtns"><button class="btn" id="btnBackup">💾 Save backup file</button><button class="btn blue" id="btnRestore">📂 Load backup</button></div>
-      ${note ? `<div class="pnote">${note}</div>` : ''}
+      ${note ? `<div class="pnote">${escHtml(note)}</div>` : ''}
       <p class="ptip">Safari can erase saved progress if the app isn't opened for a while, and on an iPad the Safari tab and the home-screen app each keep their own progress. Save a backup to Files now and then. Loading a backup adds its eggs, lessons, songs and recordings to what's here; nothing is lost.</p>
     </div>`;
   }
@@ -201,7 +202,7 @@ export function setupParent(app: ParentApp) {
     $('#parentCards').innerHTML = app.players().map((pl) => {
       const s = summarize(app.progressOf(pl.id), app.levels, app.songs, app.recordingsOf(pl.id));
       return `<div class="pcard">
-        <div class="phead">${app.avatar(pl)}<b>${pl.name}</b></div>
+        <div class="phead">${app.avatar(pl)}<b>${esc(pl.name)}</b></div>
         <div class="prow"><span>🔥 Streak</span><b>${s.streak} day${s.streak === 1 ? '' : 's'}</b></div>
         <div class="prow"><span>📅 Practiced</span><b>${s.practiced} of the last 28 days</b></div>
         <div class="prow"><span>🎓 Lessons</span><b>${s.lessons} / ${s.lessonsOf}</b>${bar(s.lessons, s.lessonsOf)}</div>
@@ -213,7 +214,7 @@ export function setupParent(app: ParentApp) {
         ${s.fastestRush ? `<div class="prow sub"><span>Fastest Egg Rush</span><b>${(s.fastestRush / 1000).toFixed(1)} s</b></div>` : ''}
         <div class="prow"><span>🎙️ Recordings</span><b>${s.recordings}</b></div>
         <div class="psec">Notes missed most <small>(songs and Fresh Tunes)</small></div>
-        <div class="pmiss">${s.missed.length ? s.missed.map(([n, c]) => `<span><b>${n}</b> ${c}×</span>`).join('') : '<i>Nothing yet</i>'}</div>
+        <div class="pmiss">${s.missed.length ? s.missed.map(([n, c]) => `<span><b>${esc(n)}</b> ${Number(c) || 0}×</span>`).join('') : '<i>Nothing yet</i>'}</div>
       </div>`;
     }).join('') + backupCard() + privateCard() + newsCard();
   }

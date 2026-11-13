@@ -51,7 +51,7 @@ export async function download(src: Pick<PrivateSource, 'repo' | 'path' | 'token
   const headers: Record<string, string> = github ? { Accept: 'application/vnd.github.raw+json', 'X-GitHub-Api-Version': '2022-11-28' } : {};
   if (github && src.token) headers.Authorization = `Bearer ${src.token.trim()}`;
   let res;
-  try { res = await fetchFn(url, { headers, cache: 'no-store' }); } catch (e) { throw new Error('Couldn\'t reach GitHub. Is this device online?'); }
+  try { res = await fetchFn(url, { headers, cache: 'no-store', credentials: 'omit', referrerPolicy: 'no-referrer' }); } catch (e) { throw new Error('Couldn\'t reach GitHub. Is this device online?'); }
   if (!res.ok) {
     if (res.status === 401) throw new Error('GitHub didn\'t accept the token. It may have expired: make a new one.');
     if (res.status === 403) throw new Error('GitHub refused (403). Check the token can read this repo\'s Contents.');

@@ -4,6 +4,7 @@ import { parse, nameOf, letterOf, isBlack, COLORS } from './music.js';
 import { playNote, stopPiano, pianoSamples, say, stopTalking, cluck, bawk, audioContext } from './audio.js';
 import { drawStaff, focusNote } from './staff.js';
 import { throwAwayAsk } from './lines.js';
+import { esc } from './dom.js';
 import { makeKeyboard } from './keyboard.js';
 import type { RecInfo, Recording, NoteSource, Note } from './types';
 import { makeRecorder, toTokens, guessTempo, lengthMs, listRecordings, saveRecording, deleteRecording, renderAudio, MAX_MS } from './recorder.js';
@@ -75,7 +76,7 @@ export function setupRecordings(app: RecordingsApp) {
   /* ---------- the shelf of saved recordings ---------- */
   function renderShelf() {
     const recs = listRecordings(app.player());
-    $('#recCards').innerHTML = recs.map((r) => `<button class="card reccard" data-rec="${r.id}"><div class="em">${r.emoji}</div><div class="t">${r.title}</div>
+    $('#recCards').innerHTML = recs.map((r) => `<button class="card reccard" data-rec="${esc(r.id)}"><div class="em">${esc(r.emoji)}</div><div class="t">${esc(r.title)}</div>
       <div class="when">${new Date(r.at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} · ${clock(lengthMs(r.notes))}</div></button>`).join('');
     $('#recEmpty').style.display = recs.length ? 'none' : '';
     if (!recs.length) say('No songs yet! Tap the red button when you play, and I will save your song.');

@@ -1,6 +1,7 @@
 // On-screen piano keyboard, colored by note letter. The range changes per song or lesson (default C4 to E5).
 import { COLORS, letterOf, isBlack } from './music.js';
 import { markTap } from './timing.js';
+import { replay } from './dom.js';
 
 export const LOW = 60;
 export const HIGH = 76;
@@ -89,9 +90,8 @@ export function makeKeyboard(root: HTMLElement, onPress: (m: number) => void, on
   function flash(m: number, cls: string, ms = 400) {
     const k = keys[m];
     if (!k) return;
-    k.classList.remove(cls);
-    void k.offsetWidth;
-    k.classList.add(cls);
+    // only the hint is an animation that has to start over; the others are plain colors
+    if (cls === 'hint') replay(k, cls); else k.classList.add(cls);
     const t = timers.get(k) || {};
     clearTimeout(t[cls]);
     t[cls] = setTimeout(() => k.classList.remove(cls), ms);
@@ -133,7 +133,8 @@ export function makeKeyboard(root: HTMLElement, onPress: (m: number) => void, on
     // { midi: fingerNumber }
     setFingers(map: FingerMap = {}) {
       state.fingers = map;
-      Object.values(keys).forEach((k) => { k.querySelector('.fg')!.textContent = String(map[+k.dataset.m!] || ''); });
+      // only the keys whose number changes are touched (this runs on every note of a song)
+      Object.values(keys).forEach((k) => { const f = k.firstElementChild!, t = String(map[+k.dataset.m!] || ''); if (f.textContent !== t) f.textContent = t; });
     },
     setLetters(mode: string) { root.dataset.letters = mode; },
     setGroups(on: boolean) { root.classList.toggle('bgroups', !!on); },

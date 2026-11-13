@@ -108,6 +108,17 @@ body.midi #mic:not(.on){opacity:.6}
 @keyframes flapR{to{transform:rotate(-40deg)}}
 @keyframes peck{50%{transform:rotate(14deg) translateY(4px)}}
 @keyframes tilt{25%{transform:rotate(-12deg)}60%{transform:rotate(10deg)}}
+/* "again": the same animations under second names, so one can be started over by swapping to its twin (src/dom.ts replay) */
+.chicken.happy.again:not(.dance) .ck-all{animation-name:hop2}
+.chicken.happy.again:not(.dance) .ck-wl{animation-name:flapL2}
+.chicken.happy.again:not(.dance) .ck-wr{animation-name:flapR2}
+.chicken.peck.again:not(.dance) .ck-all{animation-name:peck2}
+.chicken.oops.again:not(.dance) .ck-all{animation-name:tilt2}
+@keyframes hop2{35%{transform:translateY(-22px)}70%{transform:translateY(0) scaleY(.92)}}
+@keyframes flapL2{to{transform:rotate(40deg)}}
+@keyframes flapR2{to{transform:rotate(-40deg)}}
+@keyframes peck2{50%{transform:rotate(14deg) translateY(4px)}}
+@keyframes tilt2{25%{transform:rotate(-12deg)}60%{transform:rotate(10deg)}}
 @keyframes dance{25%{transform:rotate(-10deg) translateY(-6px)}75%{transform:rotate(10deg) translateY(-6px)}}
 
 /* HOME */
@@ -300,6 +311,8 @@ body.midi #mic:not(.on){opacity:.6}
 .bubble .big.blk{font-size:clamp(20px,4.6vh,40px)}
 .bubble.pop{animation:bpop .3s}
 @keyframes bpop{50%{transform:scale(1.08)}}
+.bubble.pop.again{animation-name:bpop2}
+@keyframes bpop2{50%{transform:scale(1.08)}}
 .coach .spacer{flex:1}
 .coach .tools{display:flex;gap:min(10px,1vw);align-items:center;min-width:0;flex:0 1 auto}
 /* the song screen has many tools: they shrink on narrow screens, and next to a wide bubble, so all of them fit */
@@ -330,6 +343,8 @@ body.midi #mic:not(.on){opacity:.6}
 .wkey.hint{background:var(--c)}
 .bkey.hint{background:var(--violet)}
 @keyframes hinthop{50%{transform:translateY(-10px);box-shadow:0 0 0 6px #ffe45c}}
+.wkey.hint.again,.bkey.hint.again{animation-name:hinthop2}
+@keyframes hinthop2{50%{transform:translateY(-10px);box-shadow:0 0 0 6px #ffe45c}}
 /* the hint button bounces when the child seems stuck */
 #btnHint.nudge,#btnLessonHint.nudge{animation:pulse 1s ease-in-out infinite;background:#ffe45c}
 .staffcard .cur.pulse{animation:curpulse .5s ease-in-out 3}
