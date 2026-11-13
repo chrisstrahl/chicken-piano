@@ -118,6 +118,14 @@ const rec = (id, at) => ({ id, at, title: 't', emoji: '🎹', song: null, notes:
   check(J(r2.skipped) === '["Ivy"]', 'a seventh player is skipped, not squeezed in');
 }
 // 8. not a backup
+{
+  // uploaded songs belong to the device: a backup's are added to the ones here (by id, no doubles)
+  const here = memoryStore(), there = memoryStore();
+  writeJSON(here, KEYS.uploads, [{ id: 'a', at: 1, title: 'A' }]);
+  writeJSON(there, KEYS.uploads, [{ id: 'a', at: 1, title: 'A' }, { id: 'b', at: 2, title: 'B' }]);
+  mergeBackup(here, makeBackup(there), 6);
+  check(J(readJSON(here, KEYS.uploads, []).map((u) => u.id)) === '["a","b"]', 'uploaded songs merge from a backup');
+}
 check(parseBackup('{"hello":1}') === null && parseBackup('nope') === null, 'other files are refused');
 check(parseBackup(J({ app: 'chicken-piano', schema: SCHEMA + 1, at: 1, data: {} })) === null, 'a backup from a newer version is refused');
 

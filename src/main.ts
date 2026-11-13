@@ -6,6 +6,8 @@ import { BeatJudge, phrases, SPEEDS, barBeats, peckEvery, timeline } from './bea
 import { struckAt, markTap, setLag, reloadLags } from './timing.js';
 import { browserStore } from './storage.js';
 import { readSource, writeSource, forgetSource, download, cleanSong, repoName, DEFAULT_PATH } from './privatesongs.js';
+import { listUploads, addUpload, removeUpload, uploadId, MAX_UPLOADS } from './uploads.js';
+import { importScore } from './scoreimport.js';
 import { startMic, stopMic, micOn, micSupported, expectNote, micHealth } from './mic.js';
 import { startMidi, midiSupported, midiAllowed } from './midi.js';
 import { drawStaff, focusX } from './staff.js';
@@ -30,7 +32,7 @@ import { startOffline } from './offline.js';
 import { addWin, streak, todayWins, calendar, DAILY_GOAL } from './streaks.js';
 import type { Days } from './streaks.ts';
 import type { Drawn, StaffOpts } from './staff.ts';
-import type { Note, Pitch, Song, Level, LessonStep, NoteSource } from './types.ts';
+import type { Note, Pitch, Song, SongData, Level, LessonStep, NoteSource } from './types.ts';
 
 type Hands = 'rh' | 'lh' | 'both';
 type Part = 'rh' | 'lh';
@@ -1309,6 +1311,39 @@ const privateSongs = {
   forget() { forgetSource(browserStore()); usePrivateSongs([]); },
 };
 
+/* ---------- songs a grown-up uploaded as score files (src/uploads.ts, src/scoreimport.ts) ---------- */
+let uploadSkipped: { id: string; why: string }[] = [];
+function useUploads() {
+  const list = listUploads(browserStore());
+  const checked = list.map(cleanSong);
+  const r = setPrivateSongs(checked.flatMap((c) => ('song' in c ? [c.song] : [])), 'up-');
+  uploadSkipped = [...checked.flatMap((c, i) => ('why' in c ? [{ id: list[i].title || list[i].id, why: c.why }] : [])), ...r.skipped];
+  if (current === 'level') renderLevel(); else if (current === 'songs') renderSongs();
+}
+useUploads();
+let stopPreview: (() => void) | null = null;
+const uploads = {
+  list: () => listUploads(browserStore()),
+  skipped: () => uploadSkipped,
+  max: MAX_UPLOADS,
+  read: (name: string, bytes: Uint8Array) => importScore(name, bytes, uploadId()),
+  add(song: SongData): boolean { const ok = addUpload(browserStore(), song); if (ok) useUploads(); return ok; },
+  remove(id: string) { removeUpload(browserStore(), id); useUploads(); },
+  // play the first few bars so a grown-up can hear the file came through right; tap again to stop
+  preview(song: SongData): boolean {
+    if (stopPreview) { stopPreview(); stopPreview = null; return false; }
+    startAudio();
+    const notes = parse(song.notes).slice(0, 24);
+    const lh = song.lh ? parse(song.lh) : [];
+    const beats = notes.reduce((a, n) => a + (BEATS[n.d] || 1), 0);
+    let t = 0;
+    const lhPart = lh.filter((n) => { const ok = t < beats - 1e-6; t += BEATS[n.d] || 1; return ok; });
+    const stops = [playSequence(notes, song.tempo, null, () => { stopPreview = null; }), lhPart.length ? playSequence(lhPart, song.tempo, null, null, 0.55) : () => {}];
+    stopPreview = () => stops.forEach((f) => f());
+    return true;
+  },
+};
+
 const write = setupWrite({
   show, bubble, bigLetter, act, ask: (...a) => ask(...a), toast, player: () => players.current(),
   setInput: (f) => { onNote = f; }, noteIn, keyUp, changed: loadMySongs,
@@ -1321,9 +1356,10 @@ const parent = setupParent({
   progressOf: (id) => (id === playerId() ? progress : players.progress(id)),
   recordingsOf: (id) => listRecordings(id).length,
   avatar: (p) => `<span class="av">${avatarChicken(p.avatar)}</span>`,
-  store: browserStore(), maxPlayers: MAX_PLAYERS, limits: { recordings: MAX_SAVED, mysongs: MAX_MYSONGS },
+  store: browserStore(), maxPlayers: MAX_PLAYERS, limits: { recordings: MAX_SAVED, mysongs: MAX_MYSONGS, uploads: MAX_UPLOADS },
   reload: () => { players.reload(); reloadLags(); usePlayer(players.current().id); },
   privateSongs,
+  uploads,
 });
 
 /* ---------- ear quizzes: Mystery Melodies, Happy or Sad (src/quizgames.ts) ---------- */

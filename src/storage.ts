@@ -4,6 +4,7 @@
 //   chicken-piano-recordings-v1    { [player id]: Recording[] }                (recorder.ts)
 //   chicken-piano-mysongs-v1       { [player id]: MySong[] }                   (mysongs.ts)
 //   chicken-piano-lag              this device's measured input delays         (timing.ts)
+//   chicken-piano-uploads-v1      songs a grown-up uploaded from score files: (SongData & { at })[] (uploads.ts); every kid sees them
 //   chicken-piano-private-songs    private song source: repo, token, downloaded songs (privatesongs.ts); not backed up
 //   chicken-piano-schema           which layout the keys above are in (SCHEMA); migrate() brings old ones up to date
 //   chicken-piano-backup-at        when a grown-up last saved a backup file
@@ -29,6 +30,7 @@ export const KEYS = {
   schema: 'chicken-piano-schema',
   backupAt: 'chicken-piano-backup-at',
   privateSongs: 'chicken-piano-private-songs',
+  uploads: 'chicken-piano-uploads-v1',
 } as const;
 export const progressKey = (id: string) => `${KEYS.oldProgress}:${id}`;
 const brokenKey = (k: string) => `${PREFIX}-broken:${k}`;
@@ -178,7 +180,7 @@ export interface MergeResult { added: string[]; merged: string[]; skipped: strin
 // Adds a backup's players and progress to what's here. A backup player joins the one here with the same id
 // (the Safari tab and home-screen app both start with 'p1'), or failing that the same name and chicken;
 // anyone else is added if there's room (maxPlayers).
-export function mergeBackup(s: Store, b: Backup, maxPlayers: number, limits = { recordings: 30, mysongs: 30 }): MergeResult {
+export function mergeBackup(s: Store, b: Backup, maxPlayers: number, limits: { recordings: number; mysongs: number; uploads?: number } = { recordings: 30, mysongs: 30 }): MergeResult {
   const res: MergeResult = { added: [], merged: [], skipped: [] };
   const from = memoryStore();
   Object.entries(b.data).forEach(([k, v]) => from.setItem(k, String(v)));
@@ -204,6 +206,9 @@ export function mergeBackup(s: Store, b: Backup, maxPlayers: number, limits = { 
   if (!mine.list.some((q) => q.id === mine.current) && mine.list.length) mine.current = mine.list[0].id;
   writeJSON(s, KEYS.players, mine);
   writeJSON(s, KEYS.mysongs, songsHere);
+  // uploaded songs belong to the device, not a kid: the backup's are added to the ones here
+  const upHere = readJSON<any[]>(s, KEYS.uploads, []), upThere = readJSON<any[]>(from, KEYS.uploads, []);
+  if (Array.isArray(upThere) && upThere.length) writeJSON(s, KEYS.uploads, unionById(Array.isArray(upHere) ? upHere : [], upThere, limits.uploads ?? 50, false));
   // recordings last: the biggest, and the ones that give way (oldest first) if room runs out
   while (!writeJSON(s, KEYS.recordings, recsHere, false)) {
     const lists = Object.values(recsHere).filter((l: any[]) => l.length);

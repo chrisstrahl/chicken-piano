@@ -40,7 +40,7 @@ const { chromium } = require('playwright');
   await page.waitForTimeout(300);
   check(await page.evaluate(() => document.querySelector('#parent').classList.contains('active')), 'holding 1.5 s opens it');
   await page.screenshot({ path: `${out}/parent.png` });
-  const cards = await page.evaluate(() => [...document.querySelectorAll('#parentCards .pcard:not(#backupCard):not(#privCard)')].map((c) => c.textContent.replace(/\s+/g, ' ')));
+  const cards = await page.evaluate(() => [...document.querySelectorAll('#parentCards .pcard:not(#backupCard):not(#privCard):not(#uploadCard)')].map((c) => c.textContent.replace(/\s+/g, ' ')));
   check(cards.length === 2, `one card per kid (${cards.length})`);
   check(/Lessons ?2 \/ 40/.test(cards[0]) && /Songs played ?1 \//.test(cards[0]) && /Perfect \(3 eggs\) ?1/.test(cards[0]), 'lessons and songs counted');
   check(/Egg Rush ?2 \//.test(cards[0]) && /Fresh Tunes ?3 \//.test(cards[0]), 'game eggs per game');

@@ -27,6 +27,8 @@ jobs:
         run: node test/storage.mjs
       - name: Private songs check
         run: node test/privatesongs.mjs
+      - name: Song upload check
+        run: node test/scoreimport.mjs
 
   # Robot kids play the built app (test/kidbot). Not a required check: it reports, and fails only on real bugs
   # (page errors, stuck screens). The report and screenshots are attached to the run as "kid-report".
