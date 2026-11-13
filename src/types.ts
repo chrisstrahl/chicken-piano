@@ -88,6 +88,7 @@ export interface SongInput {
   bars: boolean;
   diff?: number;
   lhStyle?: string;
+  priv?: boolean; // from the family's private song source (privatesongs.ts): always open, listed last in its level
   notes: Note[];
   // the two-hand parts as written in songs.js, when given
   lhData?: Tokens;

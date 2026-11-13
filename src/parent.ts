@@ -8,6 +8,7 @@ import { FRESH_STAGES } from './sightread.js';
 import { streak, dayKey } from './streaks.js';
 import { KEYS, readRaw, keysOf, makeBackup, backupName, parseBackup, mergeBackup, lastFailedSave, writeJSON, type Store } from './storage.js';
 import type { Level, Song, Player } from './types';
+import type { PrivateSource } from './privatesongs.js';
 
 type Saved = {
   songs?: Record<string, number>; lessons?: Record<string, boolean>; days?: Record<string, number>;
@@ -59,6 +60,13 @@ export interface ParentApp {
   limits: { recordings: number; mysongs: number };
   // a backup was loaded: re-read players, progress, songs
   reload: () => void;
+  // the family's private song source (main.ts, src/privatesongs.ts)
+  privateSongs: {
+    source: () => PrivateSource | null;
+    result: () => { added: number; skipped: { id: string; why: string }[] };
+    connect: (repo: string, token: string) => Promise<string>; // '' when it worked, else the problem
+    forget: () => void;
+  };
 }
 
 // "today", "3 days ago"
@@ -145,6 +153,40 @@ export function setupParent(app: ParentApp) {
     if (t.id === 'btnBackup') saveBackup(); else picker.click();
   });
 
+  /* ---------- private songs card: songs from the family's own private GitHub repo ---------- */
+  let privNote = '', privBusy = false;
+  const esc = (t: string) => t.replace(/[<>&"]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' } as Record<string, string>)[c]);
+  function privateCard() {
+    const src = app.privateSongs.source(), r = app.privateSongs.result();
+    return `<div class="pcard" id="privCard">
+      <div class="phead">🔐 <b>Private songs</b></div>
+      ${src ? `<div class="prow"><span>From</span><b>${esc(src.repo)}</b></div>
+      <div class="prow"><span>Songs added</span><b>${r.added}</b></div>
+      <div class="prow sub"><span>Last downloaded</span><b>${src.at ? ago(src.at) : 'never'}</b></div>
+      ${src.error ? `<div class="pwarn">⚠️ ${esc(src.error)}${src.at ? ' Using the copy from last time.' : ''}</div>` : ''}
+      ${r.skipped.length ? `<div class="pwarn">Skipped ${r.skipped.length}: ${r.skipped.slice(0, 8).map((x) => `<b>${esc(x.id)}</b> (${esc(x.why)})`).join(', ')}</div>` : ''}` : ''}
+      <label class="pfield"><span>GitHub repo</span><input id="privRepo" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="chrisstrahl/chicken-piano-songs" value="${src ? esc(src.repo) : ''}"></label>
+      <label class="pfield"><span>Token${src?.token ? ' (saved; leave empty to keep)' : ''}</span><input id="privToken" type="password" autocomplete="off" placeholder="github_pat_…"></label>
+      <div class="pbtns"><button class="btn" id="btnPrivLoad"${privBusy ? ' disabled' : ''}>${privBusy ? '⏳ Loading…' : src ? '🔄 Load songs again' : '⬇️ Load songs'}</button>${src ? '<button class="btn blue" id="btnPrivForget">🗑 Remove</button>' : ''}</div>
+      ${privNote ? `<div class="pnote">${privNote}</div>` : ''}
+      <p class="ptip">Songs that can't go in the public app (like your own versions of today's hits) can live in a private GitHub repo as songs.json. They show up at the end of their level, open for everyone, on this device only. The token needs only read access to that one repo's Contents; it stays on this device and isn't put in backup files. The app checks for new songs each time it opens.</p>
+    </div>`;
+  }
+  async function privLoad() {
+    const repo = ($('#privRepo') as HTMLInputElement).value, token = ($('#privToken') as HTMLInputElement).value;
+    privBusy = true; privNote = ''; render();
+    const err = await app.privateSongs.connect(repo, token);
+    privBusy = false;
+    const r = app.privateSongs.result();
+    privNote = err ? `❌ ${esc(err)}` : `✅ ${r.added} song${r.added === 1 ? '' : 's'} ready.`;
+    render();
+  }
+  document.addEventListener('click', (e) => {
+    const t = (e.target as Element).closest('#btnPrivLoad, #btnPrivForget');
+    if (!t) return;
+    if (t.id === 'btnPrivLoad') { if (!privBusy) privLoad(); } else { app.privateSongs.forget(); privNote = 'Private songs removed from this device.'; render(); }
+  });
+
   function render() {
     $('#parentCards').innerHTML = app.players().map((pl) => {
       const s = summarize(app.progressOf(pl.id), app.levels, app.songs, app.recordingsOf(pl.id));
@@ -163,7 +205,7 @@ export function setupParent(app: ParentApp) {
         <div class="psec">Notes missed most <small>(songs and Fresh Tunes)</small></div>
         <div class="pmiss">${s.missed.length ? s.missed.map(([n, c]) => `<span><b>${n}</b> ${c}×</span>`).join('') : '<i>Nothing yet</i>'}</div>
       </div>`;
-    }).join('') + backupCard();
+    }).join('') + backupCard() + privateCard();
   }
-  return { screens: { parent: () => { note = ''; render(); } }, loadBackup };
+  return { screens: { parent: () => { note = ''; privNote = ''; render(); } }, loadBackup, privLoad };
 }
