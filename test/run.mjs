@@ -9,7 +9,7 @@ import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
 
-const quick = ['songlib.mjs', 'recorder.mjs', 'storage.mjs', 'privatesongs.mjs', 'changelog.mjs', 'scoreimport.mjs'];
+const quick = ['songlib.mjs', 'recorder.mjs', 'storage.mjs', 'privatesongs.mjs', 'changelog.mjs', 'logic.mjs', 'scoreimport.mjs'];
 const browser = process.argv.includes('--all') ? fs.readdirSync('test').filter((f) => f.endsWith('.cjs')).sort() : [];
 const only = process.argv.slice(2).filter((a) => !a.startsWith('--'));
 const tests = [...quick, ...browser].filter((t) => !only.length || only.some((o) => t.includes(o)));
@@ -27,7 +27,7 @@ let failed = 0;
 for (const t of tests) {
   const t0 = Date.now();
   // spawnSync would block the server above, so voice.cjs runs async
-  const r = t === 'voice.cjs' ? await runAsync(t) : spawnSync(process.execPath, [`test/${t}`], { encoding: 'utf8', timeout: 30 * 60 * 1000 });
+  const r = t === 'voice.cjs' ? await runAsync(t) : spawnSync(process.execPath, ['--no-warnings', `test/${t}`], { encoding: 'utf8', timeout: 30 * 60 * 1000 });
   const out = (r.stdout || '') + (r.stderr || '');
   const bad = r.status !== 0 || /\bFAIL\b|PAGEERROR/.test(out);
   if (bad) failed++;

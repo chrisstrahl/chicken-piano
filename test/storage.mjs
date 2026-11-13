@@ -1,6 +1,6 @@
 // Offline checks for saved data (src/storage.ts): migrations, unreadable values, a full device, backups.
 // Usage: node test/storage.mjs
-import { memoryStore, migrate, readJSON, writeJSON, KEYS, progressKey, SCHEMA, makeBackup, parseBackup, mergeBackup, mergeProgress } from '../src/storage.ts';
+import { memoryStore, migrate, readJSON, writeJSON, KEYS, progressKey, SCHEMA, makeBackup, parseBackup, mergeBackup, mergeProgress, keysOf } from '../src/storage.ts';
 import { makePlayers } from '../src/profiles.ts';
 import { saveRecording, listRecordings } from '../src/recorder.ts';
 import { saveMySong, listMySongs } from '../src/mysongs.ts';
@@ -8,7 +8,7 @@ import { saveMySong, listMySongs } from '../src/mysongs.ts';
 let fails = 0;
 const check = (ok, msg) => { console.log(`${ok ? 'PASS' : 'FAIL'} ${msg}`); if (!ok) fails++; };
 const J = JSON.stringify;
-const rec = (id, at) => ({ id, at, title: 't', emoji: '🎹', song: null, notes: [] });
+const rec = (id, at) => ({ id, at, title: 't', emoji: '🎹', song: null, notes: [[0, 60, 300, 0.8]] });
 
 // 1. a device from before players: its progress becomes player 1, the old key goes on the next launch
 {
@@ -121,13 +121,57 @@ const rec = (id, at) => ({ id, at, title: 't', emoji: '🎹', song: null, notes:
 {
   // uploaded songs belong to the device: a backup's are added to the ones here (by id, no doubles)
   const here = memoryStore(), there = memoryStore();
-  writeJSON(here, KEYS.uploads, [{ id: 'a', at: 1, title: 'A' }]);
-  writeJSON(there, KEYS.uploads, [{ id: 'a', at: 1, title: 'A' }, { id: 'b', at: 2, title: 'B' }]);
+  const up = (id, title) => ({ id, at: 1, level: 2, title, notes: 'C D E' });
+  writeJSON(here, KEYS.uploads, [up('a', 'A')]);
+  writeJSON(there, KEYS.uploads, [up('a', 'A'), up('b', '<img src=x onerror=alert(1)>B'), { id: '../x', notes: 'C' }]);
   mergeBackup(here, makeBackup(there), 6);
-  check(J(readJSON(here, KEYS.uploads, []).map((u) => u.id)) === '["a","b"]', 'uploaded songs merge from a backup');
+  const got = readJSON(here, KEYS.uploads, []);
+  check(J(got.map((u) => u.id)) === '["a","b"]', 'uploaded songs merge from a backup (bad ones left out)');
+  check(!/[<>]/.test(got[1].title), 'uploaded song titles from a backup lose markup');
 }
 check(parseBackup('{"hello":1}') === null && parseBackup('nope') === null, 'other files are refused');
 check(parseBackup(J({ app: 'chicken-piano', schema: SCHEMA + 1, at: 1, data: {} })) === null, 'a backup from a newer version is refused');
+
+// 9. a doctored backup: nothing in it may reach the page as markup, and odd shapes are dropped
+{
+  const evil = '<img src=x onerror=alert(1)>';
+  const data = {
+    [KEYS.players]: J({ current: 'p1', list: [
+      { id: 'p1', avatar: 'sunny', name: evil },
+      { id: '"><script>x</script>', avatar: 'rosie', name: 'Bad id' },
+      { id: 'p9', avatar: 'x" onload="y', name: 'Bad chicken' },
+      'not a player', null,
+    ] }),
+    [progressKey('p1')]: J({ songs: { a: 2, [evil]: 3, b: evil }, missed: { [evil]: 4 }, hands: 'lh', speed: 0.5, letters: false, junk: [1, 2], deep: { a: { b: { c: { d: { e: 1 } } } } } }),
+    [KEYS.recordings]: J({ p1: [
+      { id: 'ok1', at: 5, title: evil, emoji: evil, song: evil, notes: [[0, 60, 300, 0.8], 'x', [1, 2]] },
+      { id: evil, at: 6, title: 't', emoji: '🎹', song: null, notes: [[0, 60, 300, 0.8]] },
+      { id: 'nonotes', at: 7, title: 't', emoji: '🎹', song: null, notes: 'oops' },
+    ] }),
+    [KEYS.mysongs]: J({ p1: [
+      { id: 'w1', at: 1, emoji: evil, title: evil, notes: 'C4:q E4:h R:q G4:w' },
+      { id: 'w2', at: 2, emoji: '🎵', title: 'x', notes: evil },
+      { id: 'w3', at: 3, emoji: '🎵', title: 'x', notes: { a: 1 } },
+    ] }),
+    [KEYS.lag]: J({ mic: 40, tap: evil }),
+  };
+  // (JSON.parse makes "__proto__" an own key, the way a real file would)
+  data[progressKey('p1')] = data[progressKey('p1')].replace('{', '{"__proto__":{"polluted":true},');
+  const s = memoryStore();
+  const r = mergeBackup(s, parseBackup(J({ app: 'chicken-piano', schema: SCHEMA, at: 1, data })), 6);
+  const all = keysOf(s).map((k) => s.getItem(k)).join('\n');
+  check(!/[<>]/.test(all) && !all.includes('onerror=alert(1)>') && !all.includes('onload='), 'no markup from a backup is saved');
+  const pl = JSON.parse(s.getItem(KEYS.players));
+  check(pl.list.length === 1 && pl.list[0].id === 'p1' && pl.list[0].name.length <= 12 && r.added.length === 1, 'players with odd ids or chickens are dropped, names are cleaned');
+  const pr = JSON.parse(s.getItem(progressKey('p1')));
+  check(pr.songs.a === 2 && pr.hands === 'lh' && pr.speed === 0.5 && pr.letters === false && pr.junk === undefined && pr.songs.b === undefined, 'progress keeps numbers, yes/no and one-word settings only');
+  check({}.polluted === undefined && !Object.prototype.hasOwnProperty.call(pr, '__proto__') && pr.polluted === undefined, 'no prototype tricks');
+  const recs = listRecordings('p1', s);
+  check(recs.length === 1 && recs[0].id === 'ok1' && recs[0].song === null && recs[0].notes.length === 1, 'recordings: bad ids, bad notes and bad song links are dropped');
+  const mine = JSON.parse(s.getItem(KEYS.mysongs)).p1;
+  check(mine.length === 1 && mine[0].id === 'w1' && mine[0].notes === 'C4:q E4:h R:q G4:w', 'written songs: only real note text gets in');
+  check(J(JSON.parse(s.getItem(KEYS.lag))) === '{"mic":40}', 'delay check keeps numbers only');
+}
 
 console.log(fails ? `${fails} FAILED` : 'all passed');
 process.exit(fails ? 1 : 0);

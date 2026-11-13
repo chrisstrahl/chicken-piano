@@ -5,6 +5,7 @@ import { startAudio, playNote, noteDown, noteUp, playSequence, cluck, peck, bawk
 import { BeatJudge, phrases, SPEEDS, barBeats, peckEvery, timeline } from './beat.js';
 import { struckAt, markTap, setLag, reloadLags } from './timing.js';
 import { browserStore } from './storage.js';
+import { esc, replay } from './dom.js';
 import { readSource, writeSource, forgetSource, download, cleanSong, repoName, DEFAULT_PATH } from './privatesongs.js';
 import { listUploads, addUpload, removeUpload, uploadId, MAX_UPLOADS } from './uploads.js';
 import { importScore } from './scoreimport.js';
@@ -90,9 +91,8 @@ const songOpen = (s: Song) => s.level === 0 || !!s.priv || songsForLevel(s.level
 $$('[data-chicken]').forEach((el) => { el.outerHTML = CHICKEN.replace('class="chicken"', `class="chicken"${el.id ? ` id="${el.id}"` : ''}`); });
 function act(chicken: (Element & { _t?: ReturnType<typeof setTimeout> }) | null, cls: string, ms = 700) {
   if (!chicken) return;
-  chicken.classList.remove('happy', 'peck', 'oops');
-  void chicken.getBoundingClientRect();
-  chicken.classList.add(cls);
+  ['happy', 'peck', 'oops'].forEach((c) => c !== cls && chicken.classList.remove(c));
+  replay(chicken, cls);
   clearTimeout(chicken._t);
   chicken._t = setTimeout(() => chicken.classList.remove(cls), ms);
 }
@@ -109,7 +109,7 @@ function toast(msg: string, ms = 4000) {
 const bigLetter = (m: number, label?: string) => `<span class="big${isBlack(m) ? ' blk' : ''}" style="background:${isBlack(m) ? '#555' : COLORS[letterOf(m)]}">${label || nameOf(m)}</span>`;
 // the keys to press now; three or more (a chord with the other hand) get smaller circles
 const needHtml = (need: Pitch[]) => `<span class="keys${need.length > 2 ? ' many' : ''}">${need.map((k) => bigLetter(k.m, k.label)).join('')}</span>`;
-function bubble(el: HTMLElement, html: string) { el.innerHTML = html; el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); }
+function bubble(el: HTMLElement, html: string) { el.innerHTML = html; replay(el, 'pop'); }
 function confetti(n = 28) {
   for (let i = 0; i < n; i++) {
     const c = document.createElement('div');
@@ -182,6 +182,7 @@ function noteIn(m: number, source: NoteSource, vel?: number) {
 
 /* ---------- microphone button ---------- */
 const micBtn = $('#mic');
+const micLevel = $('#mic .lvl i');
 let lastQuietTip = 0;
 let heardCount = 0;
 // Grown-ups: hold the mic button for 1.5s to see what the microphone is doing (for bug reports).
@@ -205,7 +206,8 @@ micBtn.addEventListener('click', async () => {
       onNote: (m) => noteIn(m, 'mic'),
       onEnd: (m, at) => { recs.up(m, at, true); micEnd && micEnd(m, at); },
       onLevel: (v, quietMs) => {
-        $('#mic .lvl i').style.width = Math.round(v * 100) + '%';
+        const w = Math.round(v * 20) * 5 + '%'; // steps of 5%: the meter is 46 px wide, and this runs 25 times a second
+        if (micLevel.style.width !== w) micLevel.style.width = w;
         // nothing loud enough for 20s while waiting for notes: the tablet is probably too far from the piano
         if (quietMs! > 20000 && ['play', 'lesson'].includes(current) && performance.now() - lastQuietTip > 120000) {
           lastQuietTip = performance.now();
@@ -320,7 +322,7 @@ $('#start').addEventListener('pointerdown', async () => {
 function lookLikePlayer() {
   const p = players.current();
   lookOf(p).split(';').forEach((d) => { const [k, v] = d.split(':'); document.documentElement.style.setProperty(k, v); });
-  $('#btnWho').innerHTML = `${avatarChicken(p.avatar)}<span class="nm">${p.name}</span>`;
+  $('#btnWho').innerHTML = `${avatarChicken(p.avatar)}<span class="nm">${esc(p.name)}</span>`;
 }
 function usePlayer(id: string) {
   players.use(id);
@@ -334,8 +336,8 @@ $('#btnWho').addEventListener('click', () => { show('who'); say(whoPlays); });
 function renderWho() {
   const cur = players.current().id;
   $('#players').innerHTML = players.list().map((p) => `<div class="player${p.id === cur ? ' cur' : ''}">
-    <button class="pick" data-player="${p.id}">${avatarChicken(p.avatar)}<span class="nm">${p.name}</span></button>
-    <button class="btn round edit" data-edit="${p.id}" aria-label="Change">✏️</button></div>`).join('')
+    <button class="pick" data-player="${esc(p.id)}">${avatarChicken(p.avatar)}<span class="nm">${esc(p.name)}</span></button>
+    <button class="btn round edit" data-edit="${esc(p.id)}" aria-label="Change">✏️</button></div>`).join('')
     + (players.list().length < MAX_PLAYERS ? '<div class="player"><button class="pick add" data-edit="new" aria-label="New player"><span class="plus">➕</span></button></div>' : '');
 }
 function startAs(id: string) {
@@ -389,7 +391,7 @@ $('#edYes').addEventListener('click', () => {
 $('#edDel').addEventListener('click', () => {
   const p = players.list().find((x) => x.id === ED.id)!;
   closeEditor();
-  ask(`🗑️ ${avatarChicken(p.avatar, 'mini')} ${p.name}`, removeAsk(p.name), () => {
+  ask(`🗑️ ${avatarChicken(p.avatar, 'mini')} ${esc(p.name)}`, removeAsk(p.name), () => {
     players.remove(p.id);
     usePlayer(players.current().id);
     renderWho();
@@ -449,8 +451,8 @@ $('#mapNodes').addEventListener('click', (e) => {
 /* ---------- ONE LEVEL: 4 lessons, 5 songs ---------- */
 const eggRow = (n: number) => [0, 1, 2].map((i) => `<span class="${i < n ? '' : 'no'}">🥚</span>`).join('');
 function songCard(s: Song) {
-  if (!songOpen(s)) return `<button class="card song locked" data-song="${s.id}"><div class="em">🔒</div><div class="t">${songName(s)}</div></button>`;
-  return `<button class="card song" data-song="${s.id}"><div class="em">${s.emoji}</div><div class="t">${songName(s)}</div>${otherName(s) ? `<div class="orig">${otherName(s)}</div>` : ''}<div class="eggs">${eggRow(progress.songs[s.id] || 0)}</div></button>`;
+  if (!songOpen(s)) return `<button class="card song locked" data-song="${s.id}"><div class="em">🔒</div><div class="t">${esc(songName(s))}</div></button>`;
+  return `<button class="card song" data-song="${s.id}"><div class="em">${esc(s.emoji)}</div><div class="t">${esc(songName(s))}</div>${otherName(s) ? `<div class="orig">${esc(otherName(s))}</div>` : ''}<div class="eggs">${eggRow(progress.songs[s.id] || 0)}</div></button>`;
 }
 function renderLevel() {
   const lv = LEVELS[levelN - 1];
@@ -512,7 +514,7 @@ setNamesBtn();
 
 /* ---------- ALL SONGS ---------- */
 // the kid's own songs (Write a Song) come first, with a ➕ to write another
-const mySongCard = (s: Song) => `<button class="card song mine" data-song="${s.id}"><div class="em">${s.emoji}</div><div class="t">${s.title}</div><span class="editsong" data-editsong="${s.id}" aria-label="Change">✏️</span></button>`;
+const mySongCard = (s: Song) => `<button class="card song mine" data-song="${esc(s.id)}"><div class="em">${esc(s.emoji)}</div><div class="t">${esc(s.title)}</div><span class="editsong" data-editsong="${esc(s.id)}" aria-label="Change">✏️</span></button>`;
 function renderSongs() {
   $('#songCards').innerHTML = `<div class="lvrow mine" style="--lc:#9b6bff"><div class="lvtag">✏️</div><div class="mycards">
     ${userSongs().map(mySongCard).join('')}<button class="card addsong" data-write aria-label="Write a song"><div class="em">➕</div></button></div></div>` + LEVELS.map((lv) => `<div class="lvrow" style="--lc:${lv.color}"><div class="lvtag">${lv.n}<small>${lv.emoji}</small></div>
@@ -542,7 +544,7 @@ const judged = (j: BeatJudge) => {
 // beat0: the song beat (as drawn) of the lane's first note
 function flowStaff(start: number, beatMs: number, beat0: number) {
   playCard.classList.add('flow');
-  return (now: number) => { if (P.drawn) focusX(playCard, P.drawn, P.drawn.countAt(Math.max(beat0, beat0 + (now - start) / beatMs)), true); };
+  return (now: number) => { if (P.drawn) focusX(playCard, P.drawn, P.drawn.countAt(Math.max(beat0, beat0 + (now - start) / beatMs))); };
 }
 type PlayState = {
   song: Song; e: number; events: SongEvent[]; hands: Hands; mistakes: number; missed: boolean; wrongRow: number;
@@ -671,7 +673,7 @@ function openSong(id: string, back = 'songs') {
   const pref = progress.hands || 'rh';
   P.hands = !twoHands() ? 'rh' : P.song.melodyHand === 'lh' && pref === 'rh' ? 'lh' : pref;
   if (P.song.level) levelN = P.song.level;
-  $('#playTitle').innerHTML = `${P.song.emoji} ${songName(P.song)}${otherName(P.song) ? `<small>${otherName(P.song)}</small>` : ''}`;
+  $('#playTitle').innerHTML = `${esc(P.song.emoji)} ${esc(songName(P.song))}${otherName(P.song) ? `<small>${esc(otherName(P.song))}</small>` : ''}`;
   drawSong();
   restartSong(true);
   onNote = playInput;

@@ -176,6 +176,52 @@ const unionById = <T extends { id: string; at: number }>(a: T[], b: T[], max: nu
   return newestFirst ? all.slice(0, max) : all.slice(-max);
 };
 
+// A backup is a file from outside, so nothing in it is trusted: only the shapes the app itself saves get in,
+// ids are plain words, and text loses anything that could be read as markup. (A doctored file must not be
+// able to put its own HTML or script on the page.)
+const ID = /^[\w-]{1,32}$/;
+const BAD_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+const cleanText = (v: unknown, max: number): string => String(v ?? '').replace(/[<>&"'`]/g, '').replace(/\s+/g, ' ').trim().slice(0, max);
+const num = (v: unknown): v is number => typeof v === 'number' && isFinite(v);
+// progress: nested records of numbers and booleans, plus a few one-word settings
+export function cleanProgress(v: unknown, depth = 0): Obj {
+  const out: Obj = {};
+  if (!isObj(v) || depth > 3) return out;
+  for (const [key, x] of Object.entries(v).slice(0, 2000)) {
+    const k = cleanText(key, 40);
+    if (!k || BAD_KEYS.has(k)) continue;
+    if (num(x) || typeof x === 'boolean') out[k] = x;
+    else if (typeof x === 'string' && /^[\w-]{0,24}$/.test(x)) out[k] = x;
+    else if (isObj(x)) out[k] = cleanProgress(x, depth + 1);
+  }
+  return out;
+}
+export function cleanPlayer(p: unknown): Player | null {
+  if (!isObj(p) || typeof p.id !== 'string' || !ID.test(p.id) || typeof p.avatar !== 'string' || !ID.test(p.avatar)) return null;
+  return { id: p.id, avatar: p.avatar, name: cleanText(p.name, 12) || 'Chicken' };
+}
+type Item = { id: string; at: number };
+function cleanRecording(r: unknown): Item | null {
+  if (!isObj(r) || typeof r.id !== 'string' || !ID.test(r.id) || !Array.isArray(r.notes)) return null;
+  const notes = r.notes.filter((n: unknown) => Array.isArray(n) && n.length === 4 && n.every(num)).slice(0, 5000);
+  if (!notes.length) return null;
+  return { id: r.id, at: num(r.at) ? r.at : 0, title: cleanText(r.title, 60) || 'My song', emoji: cleanText(r.emoji, 16) || '🎹', song: typeof r.song === 'string' && ID.test(r.song) ? r.song : null, notes } as Item;
+}
+function cleanMySong(m: unknown): Item | null {
+  if (!isObj(m) || typeof m.id !== 'string' || !ID.test(m.id) || typeof m.notes !== 'string' || !/^[A-GRa-g#b0-9:+~hqwd ]{1,2000}$/.test(m.notes)) return null;
+  return { id: m.id, at: num(m.at) ? m.at : 0, title: cleanText(m.title, 60) || 'My song', emoji: cleanText(m.emoji, 16) || '🎵', notes: m.notes } as Item;
+}
+// an uploaded song (uploads.ts): an id, a level, and text fields only (the app checks the notes again when it loads it)
+const UPLOAD_TEXT = ['emoji', 'title', 'sub', 'key', 'time', 'notes', 'lyrics', 'clef', 'lh', 'chords', 'fingers', 'lhFingers', 'lhStyle'];
+function cleanUpload(u: unknown): Item | null {
+  if (!isObj(u) || typeof u.id !== 'string' || !ID.test(u.id) || typeof u.notes !== 'string' || !num(u.level)) return null;
+  const out: Obj = { id: u.id, at: num(u.at) ? u.at : 0, level: u.level };
+  for (const k of ['tempo', 'pickup']) if (num(u[k])) out[k] = u[k];
+  for (const k of UPLOAD_TEXT) if (typeof u[k] === 'string') out[k] = cleanText(u[k], 20000);
+  return out as Item;
+}
+const cleanList = (v: unknown, clean: (x: unknown) => Item | null): Item[] => (Array.isArray(v) ? v.map(clean).filter((x): x is Item => !!x) : []);
+
 export interface MergeResult { added: string[]; merged: string[]; skipped: string[] }
 // Adds a backup's players and progress to what's here. A backup player joins the one here with the same id
 // (the Safari tab and home-screen app both start with 'p1'), or failing that the same name and chicken;
@@ -189,7 +235,7 @@ export function mergeBackup(s: Store, b: Backup, maxPlayers: number, limits: { r
   const mine = readJSON<Players | null>(s, KEYS.players, null) || { current: 'p1', list: [] };
   const recsHere = readJSON<Obj>(s, KEYS.recordings, {}), recsThere = readJSON<Obj>(from, KEYS.recordings, {});
   const songsHere = readJSON<Obj>(s, KEYS.mysongs, {}), songsThere = readJSON<Obj>(from, KEYS.mysongs, {});
-  for (const p of theirs && Array.isArray(theirs.list) ? theirs.list : []) {
+  for (const p of (theirs && Array.isArray(theirs.list) ? theirs.list : []).map(cleanPlayer).filter((x): x is Player => !!x)) {
     let me = mine.list.find((q) => q.id === p.id) || mine.list.find((q) => q.name === p.name && q.avatar === p.avatar);
     if (!me) {
       if (mine.list.length >= maxPlayers) { res.skipped.push(p.name); continue; }
@@ -198,17 +244,17 @@ export function mergeBackup(s: Store, b: Backup, maxPlayers: number, limits: { r
       mine.list.push(me);
       res.added.push(me.name);
     } else res.merged.push(me.name);
-    const prog = mergeProgress(readJSON<Obj>(s, progressKey(me.id), {}), readJSON<Obj>(from, progressKey(p.id), {}));
+    const prog = mergeProgress(readJSON<Obj>(s, progressKey(me.id), {}), cleanProgress(readJSON<Obj>(from, progressKey(p.id), {})));
     writeJSON(s, progressKey(me.id), prog);
-    recsHere[me.id] = unionById(recsHere[me.id] || [], recsThere[p.id] || [], limits.recordings, true);
-    songsHere[me.id] = unionById(songsHere[me.id] || [], songsThere[p.id] || [], limits.mysongs, false);
+    recsHere[me.id] = unionById(recsHere[me.id] || [], cleanList(recsThere[p.id], cleanRecording), limits.recordings, true);
+    songsHere[me.id] = unionById(songsHere[me.id] || [], cleanList(songsThere[p.id], cleanMySong), limits.mysongs, false);
   }
   if (!mine.list.some((q) => q.id === mine.current) && mine.list.length) mine.current = mine.list[0].id;
   writeJSON(s, KEYS.players, mine);
   writeJSON(s, KEYS.mysongs, songsHere);
   // uploaded songs belong to the device, not a kid: the backup's are added to the ones here
   const upHere = readJSON<any[]>(s, KEYS.uploads, []), upThere = readJSON<any[]>(from, KEYS.uploads, []);
-  if (Array.isArray(upThere) && upThere.length) writeJSON(s, KEYS.uploads, unionById(Array.isArray(upHere) ? upHere : [], upThere, limits.uploads ?? 50, false));
+  if (Array.isArray(upThere) && upThere.length) writeJSON(s, KEYS.uploads, unionById(Array.isArray(upHere) ? upHere : [], cleanList(upThere, cleanUpload), limits.uploads ?? 50, false));
   // recordings last: the biggest, and the ones that give way (oldest first) if room runs out
   while (!writeJSON(s, KEYS.recordings, recsHere, false)) {
     const lists = Object.values(recsHere).filter((l: any[]) => l.length);
@@ -216,6 +262,6 @@ export function mergeBackup(s: Store, b: Backup, maxPlayers: number, limits: { r
     lists.sort((x: any[], y: any[]) => x[x.length - 1].at - y[y.length - 1].at)[0].pop();
   }
   // this device's delay check, if it hasn't done its own (same iPad, other app)
-  if (readRaw(s, KEYS.lag) == null && readRaw(from, KEYS.lag) != null) writeJSON(s, KEYS.lag, readJSON(from, KEYS.lag, {}));
+  if (readRaw(s, KEYS.lag) == null && readRaw(from, KEYS.lag) != null) writeJSON(s, KEYS.lag, cleanProgress(readJSON(from, KEYS.lag, {})));
   return res;
 }

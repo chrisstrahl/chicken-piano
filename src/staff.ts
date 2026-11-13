@@ -368,26 +368,34 @@ export function drawStaff(card: HTMLElement, notes: Note[], opts: StaffOpts = {}
 }
 
 // Move the highlight to x and scroll so it sits about 30% from the left.
-// A staff card's size, kept up to date by a ResizeObserver: focusX runs on every frame while the note lane
-// plays, and asking the card for its size there would make the browser lay out the page each time.
-// (Only the lane uses the kept size: right after a screen opens the card may not have been laid out yet.)
+// A staff card's size, kept up to date by a ResizeObserver. focusX runs on every note (and on every frame
+// while the note lane plays), and asking the card for its size there makes the browser lay out the page each
+// time. When a card changes size (the lane opens, the tablet turns, its screen is shown), the music is put
+// back where it was at the new size.
 const sizes = new WeakMap<HTMLElement, { w: number; h: number }>();
-const watcher = typeof ResizeObserver === 'undefined' ? null
-  : new ResizeObserver((list) => list.forEach((e) => { const el = e.target as HTMLElement; sizes.set(el, { w: el.clientWidth, h: el.clientHeight }); }));
-function cardSize(card: HTMLElement, cached: boolean) {
-  let s = cached && watcher ? sizes.get(card) : undefined;
-  if (!s) {
+const shown = new WeakMap<HTMLElement, { drawn: Drawn; x: number }>();
+const watcher = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver((list) => list.forEach((e) => {
+  const el = e.target as HTMLElement;
+  const was = sizes.get(el), now = { w: el.clientWidth, h: el.clientHeight };
+  sizes.set(el, now);
+  const last = shown.get(el);
+  if (last && now.h && (!was || was.w !== now.w || was.h !== now.h) && last.drawn.svg.isConnected && el.contains(last.drawn.svg)) focusX(el, last.drawn, last.x);
+}));
+function cardSize(card: HTMLElement) {
+  let s = watcher ? sizes.get(card) : undefined;
+  // not measured yet, or measured while its screen was hidden: ask the card itself
+  if (!s || !s.h || !s.w) {
     s = { w: card.clientWidth, h: card.clientHeight };
     if (watcher) { sizes.set(card, s); watcher.observe(card); }
   }
   return s;
 }
-// cached: use the size the card last had (for every-frame callers; others measure it fresh)
-export function focusX(card: HTMLElement, drawn: Drawn, x: number | null | undefined, cached = false) {
-  if (x === undefined || x === null) { drawn.cur.setAttribute('x', '-10000'); return; }
-  // read the card's size before changing anything, and only change what moved: the note lane calls this
-  // on every frame, and a size read after a write makes the browser lay the page out again (slow on iPad)
-  const { w: cw, h: ch } = cardSize(card, cached);
+export function focusX(card: HTMLElement, drawn: Drawn, x: number | null | undefined) {
+  if (x === undefined || x === null) { shown.delete(card); drawn.cur.setAttribute('x', '-10000'); return; }
+  shown.set(card, { drawn, x });
+  // sizes are read before anything is changed, and only what moved is changed
+  const { w: cw, h: ch } = cardSize(card);
+  if (!ch) return; // hidden: placed when the card appears
   const strip = card.querySelector<HTMLElement>('.strip')!;
   const scale = ch / drawn.H;
   const sx = String(x - 22);
