@@ -27,6 +27,28 @@ jobs:
         run: node test/storage.mjs
       - name: Private songs check
         run: node test/privatesongs.mjs
+      - name: Release notes check
+        run: node test/changelog.mjs
+
+  # Reminder, not a required check: a PR that changes the app (src/) should add a line to CHANGELOG.md,
+  # unless its description says "Release note: none".
+  release-note:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          BODY: ${{ github.event.pull_request.body }}
+        run: |
+          changed=$(git diff --name-only "$BASE"...HEAD)
+          if ! echo "$changed" | grep -q '^src/'; then echo "No app changes."; exit 0; fi
+          if echo "$changed" | grep -qx 'CHANGELOG.md'; then echo "CHANGELOG.md updated."; exit 0; fi
+          if printf '%s' "$BODY" | grep -qi 'release note: *none'; then echo "PR says no release note is needed."; exit 0; fi
+          echo "::error::This PR changes the app but not CHANGELOG.md. Add a line for parents under today's date, or write 'Release note: none' in the PR description."
+          exit 1
 
   # Robot kids play the built app (test/kidbot). Not a required check: it reports, and fails only on real bugs
   # (page errors, stuck screens). The report and screenshots are attached to the run as "kid-report".

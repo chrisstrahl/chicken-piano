@@ -2,6 +2,7 @@
 import { build } from 'esbuild';
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
+import { whatsNew } from './tools/changelog.mjs';
 
 const SAMPLE_DIR = 'node_modules/tonejs-instrument-piano-mp3';
 const NOTES = ['C3', 'Ds3', 'Fs3', 'A3', 'C4', 'Ds4', 'Fs4', 'A4', 'C5', 'Ds5', 'Fs5'];
@@ -18,6 +19,8 @@ for (const n of NOTES) {
 // Recorded voice clips (tools/voice); the page only asks for clips it knows exist.
 const voiceIds = fs.existsSync('dist/voice/manifest.json') ? Object.keys(JSON.parse(fs.readFileSync('dist/voice/manifest.json', 'utf8'))) : [];
 fs.writeFileSync('src/voice.generated.js', `export const VOICE = new Set(${JSON.stringify(voiceIds)});\n`);
+// The newest release notes, for the grown-ups' page 🆕 What's new card
+fs.writeFileSync('src/whatsnew.generated.js', `export const WHATSNEW = ${JSON.stringify(whatsNew(fs.readFileSync('CHANGELOG.md', 'utf8')))};\n`);
 fs.writeFileSync('src/samples.generated.js', `export const SAMPLES = ${JSON.stringify(samples)};\n`);
 
 const res = await build({ entryPoints: ['src/main.ts'], bundle: true, minify: true, format: 'iife', write: false, target: ['es2020'], legalComments: 'none', mainFields: ['module', 'main'] });
