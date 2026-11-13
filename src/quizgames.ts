@@ -6,6 +6,7 @@ import { makeKeyboard } from './keyboard.js';
 import { MYSTERY_STAGES, MOOD_STAGES, QUIZ_ROUNDS, quizEggs, mysteryPuzzle, moodPuzzle, melodyOf, opening } from './quiz.js';
 import type { Mood } from './quiz.ts';
 import { MYSTERY_START, MOOD_START, MOOD_RIGHT, mysteryWas, ECHO_AGAIN, songDone, GAMES_PICK } from './lines.js';
+import { songName, spokenName } from './names.js';
 import type { Song } from './types';
 
 const $ = <T extends HTMLElement = HTMLElement>(s: string): T => document.querySelector<T>(s)!;
@@ -72,7 +73,7 @@ export function setupQuizzes(app: QuizApp) {
     const box = $('#quizChoices');
     box.className = `choices quizchoices ${kind}`;
     box.innerHTML = kind === 'mystery'
-      ? Q.cards.map((c) => `<button class="choice wide songpick" data-ans="${c.id}"><span class="em">${c.emoji}</span><small>${c.title}</small></button>`).join('')
+      ? Q.cards.map((c) => `<button class="choice wide songpick" data-ans="${c.id}"><span class="em">${c.emoji}</span><small>${songName(c)}</small></button>`).join('')
       : `<button class="choice wide" data-ans="happy">😊<small>Happy</small></button><button class="choice wide" data-ans="sad">😢<small>Sad</small></button>`;
   }
   function newPuzzle(first = false) {
@@ -140,7 +141,7 @@ export function setupQuizzes(app: QuizApp) {
     app.bubble($('#quizBubble'), '🎉');
     const t = ++Q.tok;
     const next = () => { if (t !== Q.tok) return; if (Q.round >= QUIZ_ROUNDS) finish(); else newPuzzle(); };
-    say(kind === 'mystery' ? mysteryWas(Q.song!.title) : MOOD_RIGHT[Q.mood!], () => setTimeout(next, 500));
+    say(kind === 'mystery' ? mysteryWas(spokenName(Q.song!)) : MOOD_RIGHT[Q.mood!], () => setTimeout(next, 500));
   }
   function finish() {
     Q.done = true;
