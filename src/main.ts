@@ -52,7 +52,8 @@ type DayWin = ReturnType<typeof addWin>;
 declare global {
   interface Window { __cp: { progress: Progress } & Record<string, unknown>; __cpMs: unknown; __cpHeard: unknown; __cpFree: unknown; __cpFreeTokens: unknown; __cpMidi: unknown }
 }
-type PartyOptions = { again: () => void; next: () => void; words: string | string[]; chick?: boolean; rec?: { id: string } | null; day?: DayWin | null };
+// max: eggs there were to win (a lesson gives 1, so it shows no empty ones)
+type PartyOptions = { again: () => void; next: () => void; words: string | string[]; chick?: boolean; rec?: { id: string } | null; day?: DayWin | null; max?: number };
 
 // every element the app looks up is in index.html, so a lookup always finds it
 const $ = <T extends HTMLElement = HTMLElement>(s: string, r: ParentNode = document) => r.querySelector(s) as T;
@@ -250,6 +251,7 @@ async function connectMidi(asked: boolean) {
 }
 if (midiSupported()) {
   midiBtn.classList.add('can');
+  document.body.classList.add('midican');
   midiAllowed().then((ok): unknown => ok && connectMidi(false));
 }
 // Grown-ups: hold 🎹 for 1.5s to see which keyboard is connected.
@@ -538,7 +540,7 @@ const judged = (j: BeatJudge) => {
 // beat0: the song beat (as drawn) of the lane's first note
 function flowStaff(start: number, beatMs: number, beat0: number) {
   playCard.classList.add('flow');
-  return (now: number) => { if (P.drawn) focusX(playCard, P.drawn, P.drawn.countAt(Math.max(beat0, beat0 + (now - start) / beatMs))); };
+  return (now: number) => { if (P.drawn) focusX(playCard, P.drawn, P.drawn.countAt(Math.max(beat0, beat0 + (now - start) / beatMs)), true); };
 }
 type PlayState = {
   song: Song; e: number; events: SongEvent[]; hands: Hands; mistakes: number; missed: boolean; wrongRow: number;
@@ -826,7 +828,7 @@ $('#btnListen').addEventListener('click', () => {
   }, () => { P.stopDemo = null; stopDemo(); setCurrent(); }, 0.8));
   if (twoHands()) {
     const l = from(partNotes('lh'), start);
-    stops.push(playSequence(l.notes, P.song.tempo, (j) => { const n = l.notes[j]; if (!n.r) n.keys.forEach((k) => playKb.flash(k.m, 'hl', 350)); }, null, 0.55));
+    stops.push(playSequence(l.notes, tempo, (j) => { const n = l.notes[j]; if (!n.r) n.keys.forEach((k) => playKb.flash(k.m, 'hl', 350)); }, null, 0.55));
   }
   P.stopDemo = () => stops.forEach((f) => f());
 });
@@ -1352,10 +1354,11 @@ function ask(html: string, words: string, onYes: () => void) {
 // eggs won (a lesson gives 1, a song up to 3); chick: a level was just finished
 // rec: a recording that just stopped with the song, to listen to from here
 // day: today's practice (dayWin()); laying today's egg gets its own cheer
-function party(eggs: number, { again, next, words, chick = false, rec = null, day = null }: PartyOptions) {
+function party(eggs: number, { again, next, words, chick = false, rec = null, day = null, max = 3 }: PartyOptions) {
+  eggs = Math.max(0, Math.min(max, eggs));
   $('#partyEggs').innerHTML = chick ? '<span>🥚</span><span>🐣</span>'
-    : '<span>🥚</span>'.repeat(eggs) + '<span style="filter:grayscale(1) opacity(.25)">🥚</span>'.repeat(3 - eggs);
-  $('#partyTitle').textContent = eggs === 3 ? 'BAWK-TASTIC!' : 'BAWK!';
+    : '<span>🥚</span>'.repeat(eggs) + '<span style="filter:grayscale(1) opacity(.25)">🥚</span>'.repeat(max - eggs);
+  $('#partyTitle').textContent = eggs === max ? 'BAWK-TASTIC!' : 'BAWK!';
   $('#party').classList.add('show');
   $('#partyChicken').classList.add('dance');
   bawk();
@@ -1482,6 +1485,7 @@ function finishLesson() {
   if (newSongs.length) setTimeout(() => toast(`🔓 ${newSongs.map((x) => `${x.emoji} ${songName(x)}`).join('  ')}`, 5000), 900);
   const nxt = lv.lessons[L.li + 1] && !progress.lessons[lv.lessons[L.li + 1].id] ? lv.lessons[L.li + 1] : null;
   party(1, {
+    max: 1,
     chick: hatched,
     again: () => openLesson(lv.n, L.li),
     next: () => {

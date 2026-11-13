@@ -2,7 +2,7 @@
 // takes the notes in order, a wrong key twice lights the right one, the mic's ringing note isn't a miss, and
 // four tunes give eggs.
 // usage: node test/fresh.cjs [shotsDir]
-const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+const { chromium } = require('playwright');
 (async () => {
   const out = process.argv[2] || 'shots';
   require('fs').mkdirSync(out, { recursive: true });

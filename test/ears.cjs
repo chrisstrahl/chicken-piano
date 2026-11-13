@@ -1,7 +1,7 @@
 // Browser test for the ear game (👂 on the home screen): every nest finishes, wrong keys replay and then
 // light up the right key, eggs reach the coop, and the mic can't answer with the chicken's own notes.
 // usage: node test/ears.cjs [shotsDir]
-const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+const { chromium } = require('playwright');
 (async () => {
   const out = process.argv[2] || 'shots';
   const browser = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] });

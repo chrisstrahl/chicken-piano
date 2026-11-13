@@ -51,16 +51,32 @@ export function makeLane(canvas: HTMLCanvasElement, kb: Keyboard, kbRoot: HTMLEl
     });
   }
 
-  // x and width of the column above key m, in canvas pixels (CSS px)
-  function column(m: number, left: number): { x: number; w: number; black: boolean; right: number } | null {
+  // x and width of the column above key m, in canvas pixels (CSS px). The keys don't move while a piece
+  // plays, so they are measured a couple of times a second (or when the window or key range changes),
+  // not on every frame: measuring makes the browser lay the page out, which is slow on an iPad.
+  type Col = { x: number; w: number; black: boolean; right: number } | null;
+  let cols = new Map<number, Col>();
+  let geo = { key: '', at: 0, W: 0, H: 0, left: 0 };
+  function measure(now: number) {
+    const [lo, hi] = kb.range;
+    const key = `${innerWidth}x${innerHeight}:${lo}-${hi}`;
+    if (key === geo.key && now - geo.at < 500) return geo;
+    const box = canvas.getBoundingClientRect();
+    geo = { key, at: now, W: canvas.clientWidth, H: canvas.clientHeight, left: box.left };
+    cols = new Map();
+    for (let k = lo; k <= hi; k++) {
+      const el = kb.keys[k];
+      if (!el) continue;
+      const r = el.getBoundingClientRect();
+      const black = isBlack(k);
+      const pad = black ? 1 : Math.max(2, r.width * 0.08);
+      cols.set(k, { x: r.left - box.left + pad, w: r.width - pad * 2, black, right: r.right - box.left });
+    }
+    return geo;
+  }
+  function column(m: number): Col {
     const k = kb.keyFor(m);
-    if (k === null) return null;
-    const el = kb.keys[k];
-    if (!el) return null;
-    const r = el.getBoundingClientRect();
-    const black = isBlack(k);
-    const pad = black ? 1 : Math.max(2, r.width * 0.08);
-    return { x: r.left - left + pad, w: r.width - pad * 2, black, right: r.right - left };
+    return k === null ? null : cols.get(k) || null;
   }
 
   function roundRect(g: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
@@ -77,8 +93,14 @@ export function makeLane(canvas: HTMLCanvasElement, kb: Keyboard, kbRoot: HTMLEl
   function frame() {
     raf = requestAnimationFrame(frame);
     if (!run) return;
-    if (run.onFrame) run.onFrame(performance.now());
-    const W = canvas.clientWidth, H = canvas.clientHeight;
+    // measure first, then draw; the staff follows along (onFrame) last
+    draw(run);
+    if (run && run.onFrame) run.onFrame(performance.now());
+  }
+
+  function draw(run: LaneRun) {
+    const now = performance.now();
+    const { W, H } = measure(now);
     if (!W || !H) return;
     const dpr = Math.min(2, window.devicePixelRatio || 1);
     if (canvas.width !== Math.round(W * dpr) || canvas.height !== Math.round(H * dpr)) {
@@ -89,7 +111,6 @@ export function makeLane(canvas: HTMLCanvasElement, kb: Keyboard, kbRoot: HTMLEl
     if (!g) return;
     g.setTransform(dpr, 0, 0, dpr, 0, 0);
     g.clearRect(0, 0, W, H);
-    const now = performance.now();
     const { start, beatMs } = run;
     const hitY = H - 8;
     // a short lane looks fewer beats ahead so quarter notes stay big enough to read
@@ -97,7 +118,6 @@ export function makeLane(canvas: HTMLCanvasElement, kb: Keyboard, kbRoot: HTMLEl
     const pxBeat = (hitY - 4) / look;
     // y of a moment: due now -> on the line, LOOK_BEATS ahead -> at the top
     const yAt = (t: number) => hitY - ((t - now) / beatMs) * pxBeat;
-    const left = canvas.getBoundingClientRect().left;
 
     // the lane: one soft column per white key
     g.fillStyle = LANE_BG;
@@ -111,7 +131,7 @@ export function makeLane(canvas: HTMLCanvasElement, kb: Keyboard, kbRoot: HTMLEl
     g.lineWidth = 1;
     for (let m = lo; m <= hi; m++) {
       if (isBlack(m)) continue;
-      const c = column(m, left);
+      const c = column(m);
       if (!c) continue;
       const x = Math.round(c.right) + 1.5;
       g.beginPath();
@@ -144,7 +164,7 @@ export function makeLane(canvas: HTMLCanvasElement, kb: Keyboard, kbRoot: HTMLEl
       const miss = res === 'miss';
       if (res && !seen.has(s.i)) seen.set(s.i, now);
       for (const m of s.keys) {
-        const c = column(m, left);
+        const c = column(m);
         if (!c) continue;
         const col = COLORS[letterOf(m)] || '#999';
         // a hit note sinks into its key: only the part above the line is drawn
@@ -172,7 +192,7 @@ export function makeLane(canvas: HTMLCanvasElement, kb: Keyboard, kbRoot: HTMLEl
       if (hit && when !== undefined && now - when < GLOW) {
         const k = 1 - (now - when) / GLOW;
         for (const m of s.keys) {
-          const c = column(m, left);
+          const c = column(m);
           if (!c) continue;
           g.fillStyle = `rgba(255,216,77,${0.65 * k})`;
           roundRect(g, c.x - 6 * k, hitY - 26, c.w + 12 * k, 30, 10);
@@ -196,6 +216,7 @@ export function makeLane(canvas: HTMLCanvasElement, kb: Keyboard, kbRoot: HTMLEl
     start(r: LaneRun) {
       run = r;
       seen.clear();
+      geo.key = ''; // the lane opening moves the keys: measure again
       plan(r.notes);
       canvas.classList.add('on');
       kbRoot.closest('.stage')?.classList.add('laneOn');

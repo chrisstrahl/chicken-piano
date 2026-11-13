@@ -2,7 +2,7 @@
 // Songs (✏️ row), it plays in the song player without coop eggs, ✏️ on its card edits it, 🗑️ throws it away,
 // and each kid has their own songs.
 // usage: node test/write.cjs [shotsDir]
-const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+const { chromium } = require('playwright');
 (async () => {
   const out = process.argv[2] || 'shots';
   require('fs').mkdirSync(out, { recursive: true });

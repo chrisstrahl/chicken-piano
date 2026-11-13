@@ -3,7 +3,7 @@
 //   G4 A4 G4 A4 struck 0.16 s apart (sixteenths), silence, E4 E4 E4 struck 0.3 s apart (eighths).
 // With the metronome on, that is written C4:h, a rest, four sixteenths, a rest, eighths.
 // A browser's timer jitter can still drop one note of a run that fast, so the run checks allow one miss.
-const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+const { chromium } = require('playwright');
 (async () => {
   const browser = await chromium.launch({ args: ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream', '--use-file-for-fake-audio-capture=' + __dirname + '/freeplay.wav', '--autoplay-policy=no-user-gesture-required'] });
   const page = await browser.newPage({ viewport: { width: 1024, height: 768 }, permissions: ['microphone'] });

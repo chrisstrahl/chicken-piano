@@ -1,4 +1,4 @@
-const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+const { chromium } = require('playwright');
 (async () => {
   const browser = await chromium.launch();
   for (const [w,h,tag] of [[1024,768,'ipad'],[844,390,'phone']]) {

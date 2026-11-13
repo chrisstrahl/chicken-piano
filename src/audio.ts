@@ -158,8 +158,15 @@ export function playSequence(notes: PlayNote[], tempo: number, onNote?: ((i: num
   let i = 0;
   let timer: ReturnType<typeof setTimeout> | null = null;
   let stopped = false;
+  // each note is timed from the start, not from the note before: late timers don't add up, so two
+  // sequences started together (left and right hand) stay together
+  let t0 = performance.now();
+  let due = 0; // ms after t0 when note i starts
   const step = () => {
     if (stopped) return;
+    // far behind (the page was asleep): carry on from here instead of rushing through the missed notes
+    const late = performance.now() - (t0 + due);
+    if (late > 250) t0 += late;
     if (i >= notes.length) { onDone && onDone(); return; }
     const n = notes[i];
     const beats = BEATS[n.d] || 1;
@@ -170,7 +177,8 @@ export function playSequence(notes: PlayNote[], tempo: number, onNote?: ((i: num
     if (!n.r && !tied) playNote(n.keys.map((k) => k.m), hold * beat * 0.95, undefined, Array.isArray(vel) ? vel[i] ?? 0.8 : vel);
     onNote && onNote(i);
     i++;
-    timer = setTimeout(step, beats * beat * 1000);
+    due += beats * beat * 1000;
+    timer = setTimeout(step, Math.max(0, t0 + due - performance.now()));
   };
   step();
   return () => { stopped = true; clearTimeout(timer!); };

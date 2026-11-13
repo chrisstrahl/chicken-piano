@@ -1,5 +1,5 @@
 // Players: old progress moves into player 1; a second kid gets their own eggs; the picker shows at launch.
-const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+const { chromium } = require('playwright');
 (async () => {
   const browser = await chromium.launch();
   const ctx = await browser.newContext({ viewport: { width: 1024, height: 768 }, hasTouch: true });

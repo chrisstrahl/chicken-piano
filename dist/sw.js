@@ -1,5 +1,5 @@
 // Chicken Piano offline cache (see src/offline.js). build.mjs fills in the build stamp.
-const BUILD = '2026-11-13 06:54 UTC';
+const BUILD = '2026-11-13 07:30 UTC';
 const SHELL = `shell-${BUILD}`; // the page, manifest and icons of this build
 const VOICE = 'voice-v1'; // clips are named by a hash of their sentence, so a clip never changes
 const FONTS = 'fonts-v1';
@@ -54,7 +54,7 @@ self.addEventListener('fetch', (e) => {
   if (url.origin === location.origin) e.respondWith(networkFirst(SHELL, req));
 });
 
-// Download every voice clip (about 12 MB) so the chicken can talk offline, and drop clips no longer used.
+// Download every voice clip (about 18 MB) so the chicken can talk offline, and drop clips no longer used.
 let filling = null;
 async function fillVoice() {
   const list = await fetch(new URL('voice/manifest.json', self.registration.scope), { cache: 'no-cache' }).then((r) => r.json());

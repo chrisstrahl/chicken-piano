@@ -1,6 +1,6 @@
 // Browser test for play-with-the-beat (🥁), echo (🦜) and the speed button, using on-screen key taps.
 // usage: node test/practice.cjs [shotsDir]
-const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+const { chromium } = require('playwright');
 (async () => {
   const out = process.argv[2] || 'shots';
   const browser = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] });

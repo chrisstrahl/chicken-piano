@@ -92,8 +92,11 @@ export function drawGlyphs(root: Node) {
   const texts: Text[] = [];
   if (root.nodeType === Node.TEXT_NODE) texts.push(root as Text);
   else {
-    const walk = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-    for (let n = walk.nextNode(); n; n = walk.nextNode()) texts.push(n as Text);
+    // drawn music (staffs, chickens) is SVG: skip it whole rather than walking hundreds of shapes on every redraw
+    if (root instanceof Element && root.closest('svg')) return;
+    const skipSvg = { acceptNode: (n: Node) => (n.nodeName.toLowerCase() === 'svg' ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT) };
+    const walk = document.createTreeWalker(root, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT, skipSvg);
+    for (let n = walk.nextNode(); n; n = walk.nextNode()) if (n.nodeType === Node.TEXT_NODE) texts.push(n as Text);
   }
   for (const t of texts) {
     const s = t.data;

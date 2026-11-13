@@ -2,7 +2,7 @@
 // up, misses repeat the speed, three tries move on anyway, a clean bunny pass goes back to normal playing
 // at the start of the spot.
 // usage: node test/spot.cjs [shotsDir]
-const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+const { chromium } = require('playwright');
 (async () => {
   const out = process.argv[2] || 'shots';
   require('fs').mkdirSync(out, { recursive: true });

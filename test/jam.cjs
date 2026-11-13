@@ -2,7 +2,7 @@
 // starts and records by itself, notes go into the recording, stopping saves it into My Songs, and the
 // groove leaves out the chords while the microphone is listening.
 // usage: node test/jam.cjs [shotsDir]
-const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+const { chromium } = require('playwright');
 (async () => {
   const out = process.argv[2] || 'shots';
   require('fs').mkdirSync(out, { recursive: true });

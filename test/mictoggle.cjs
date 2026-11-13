@@ -1,5 +1,5 @@
 // Turn the ears on, off and on again, and check notes are still heard.
-const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+const { chromium } = require('playwright');
 (async () => {
   const browser = await chromium.launch({ args: ['--use-fake-ui-for-media-stream','--use-fake-device-for-media-stream','--use-file-for-fake-audio-capture=' + __dirname + '/edc.wav'] });
   const page = await browser.newPage({ viewport: { width: 1024, height: 768 }, permissions: ['microphone'] });
