@@ -11,6 +11,7 @@ import type { Level, Song, SongData, Player } from './types';
 import type { Draft } from './scoreimport.js';
 import type { Upload } from './uploads.js';
 import type { PrivateSource } from './privatesongs.js';
+import { WHATSNEW } from './whatsnew.generated.js';
 
 type Saved = {
   songs?: Record<string, number>; lessons?: Record<string, boolean>; days?: Record<string, number>;
@@ -271,6 +272,14 @@ export function setupParent(app: ParentApp) {
     }
     render();
   });
+  /* ---------- what's new card: the newest days of CHANGELOG.md, built in by build.mjs ---------- */
+  function newsCard() {
+    if (!WHATSNEW.length) return '';
+    return `<div class="pcard" id="newsCard">
+      <div class="phead">🆕 <b>What's new</b></div>
+      ${WHATSNEW.map((d) => `<div class="psec">${d.date}</div><ul class="pnews">${d.items.map((i) => `<li>${i}</li>`).join('')}</ul>`).join('')}
+    </div>`;
+  }
 
   function render() {
     $('#parentCards').innerHTML = app.players().map((pl) => {
@@ -290,7 +299,7 @@ export function setupParent(app: ParentApp) {
         <div class="psec">Notes missed most <small>(songs and Fresh Tunes)</small></div>
         <div class="pmiss">${s.missed.length ? s.missed.map(([n, c]) => `<span><b>${n}</b> ${c}×</span>`).join('') : '<i>Nothing yet</i>'}</div>
       </div>`;
-    }).join('') + uploadCard() + backupCard() + privateCard();
+    }).join('') + uploadCard() + backupCard() + privateCard() + newsCard();
   }
   return { screens: { parent: () => { note = ''; privNote = ''; upNote = ''; render(); } }, loadBackup, privLoad };
 }

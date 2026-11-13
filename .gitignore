@@ -3,5 +3,6 @@ build/
 test/shots/
 src/samples.generated.js
 src/voice.generated.js
+src/whatsnew.generated.js
 __pycache__/
 test/kidbot/out/
