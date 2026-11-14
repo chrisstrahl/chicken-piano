@@ -3,22 +3,32 @@
 // how long the note lasts, the faint lines going by are the beats (thick ones start a bar), and a note
 // that was hit lights up and sinks into its key; a missed one turns grey.
 //
-// It only draws: the timing (when note 0 is due, ms per beat) comes from whoever started the beat, on the
-// same performance.now() clock as BeatJudge, so the picture and the scoring always agree.
+// It only draws. Playing in time, the clock (when note 0 is due, ms per beat) comes from whoever started the
+// beat, on the same performance.now() clock as BeatJudge, so the picture and the scoring always agree.
+// In plain song play the lane waits: the caller says which beat is on the line, and the next notes slide
+// down to it when the right key is played.
 import { COLORS, letterOf, isBlack, BEATS } from './music.js';
 import type { Note } from './types.ts';
 type Sounding = Extract<Note, { m: number }>;
 import type { Keyboard } from './keyboard.ts';
 
 export type LaneResult = 'good' | 'early' | 'late' | 'miss' | 'wrong' | null | undefined;
+// One hand's notes. from: the beat (on the run's clock) of notes[0]; lh draws its bars narrower with a brown edge.
+export interface LanePart { notes: Note[]; id?: string; from?: number; lh?: boolean }
 export interface LaneRun {
-  notes: Note[]; // what is played (rests take their time, tied-on halves lengthen the note before)
-  start: number; // performance.now() when notes[0] is due
-  beatMs: number; // ms per quarter beat
+  notes?: Note[]; // one part, starting at beat 0 (rests take their time, tied-on halves lengthen the note before)
+  parts?: LanePart[]; // or several (two hands)
+  // The clock, either real time (playing in time: when notes[0] is due and ms per beat, on the same
+  // performance.now() clock as BeatJudge) or a beat the caller moves along (beatNow: the beat on the line).
+  start?: number;
+  beatMs?: number;
+  beatNow?: (now: number) => number;
   per?: number; // quarter beats in a bar (bar lines)
   every?: number; // quarter beats between beat lines (6/8 counts dotted quarters)
-  barAt?: number; // performance.now() of any bar line (default: start)
-  result?: (i: number) => LaneResult; // how note i went (BeatJudge items); nothing = not played yet
+  barAt?: number; // performance.now() of any bar line (default: start); or
+  barBeat?: number; // the beat of any bar line (default 0)
+  result?: (i: number, id: string) => LaneResult; // how note i of a part went; nothing = not played yet
+  finger?: (i: number, id: string, m: number) => number | null | undefined; // finger number for key m of note i
   letters?: () => boolean; // letter names on the bars
   onFrame?: (now: number) => void; // called on every frame while the lane runs (the staff follows along)
 }
@@ -36,19 +46,24 @@ export function makeLane(canvas: HTMLCanvasElement, kb: Keyboard, kbRoot: HTMLEl
   let run: LaneRun | null = null;
   let raf = 0;
   // note i -> { at: beats from note 0, len: beats it sounds (ties included) }
-  let spans: { i: number; at: number; len: number; keys: number[] }[] = [];
-  const seen = new Map<number, number>(); // note i -> when its result was first drawn (for the glow)
+  type Span = { i: number; id: string; lh: boolean; at: number; len: number; keys: number[] };
+  let spans: Span[] = [];
+  const seen = new Map<string, number>(); // part:note -> when its result was first drawn (for the glow)
 
-  function plan(notes: Note[]) {
+  function plan(parts: LanePart[]) {
     spans = [];
-    let at = 0;
-    notes.forEach((n, i) => {
-      const len = BEATS[n.d] || 1;
-      const prev = notes[i - 1] as Sounding | undefined;
-      if (!n.r && prev && !prev.r && prev.tie && spans.length) spans[spans.length - 1].len += len;
-      else if (!n.r) spans.push({ i, at, len, keys: n.keys.map((k) => k.m) });
-      at += len;
+    parts.forEach(({ notes, id = 'rh', from = 0, lh = false }) => {
+      let at = from;
+      let last: Span | null = null;
+      notes.forEach((n, i) => {
+        const len = BEATS[n.d] || 1;
+        const prev = notes[i - 1] as Sounding | undefined;
+        if (!n.r && prev && !prev.r && prev.tie && last) last.len += len;
+        else if (!n.r) spans.push((last = { i, id, lh, at, len, keys: n.keys.map((k) => k.m) }));
+        at += len;
+      });
     });
+    spans.sort((a, b) => a.at - b.at);
   }
 
   // x and width of the column above key m, in canvas pixels (CSS px). The keys don't move while a piece
@@ -111,13 +126,16 @@ export function makeLane(canvas: HTMLCanvasElement, kb: Keyboard, kbRoot: HTMLEl
     if (!g) return;
     g.setTransform(dpr, 0, 0, dpr, 0, 0);
     g.clearRect(0, 0, W, H);
-    const { start, beatMs } = run;
+    const timed = !run.beatNow;
+    const start = run.start ?? now, beatMs = run.beatMs || 500;
+    // the beat on the line right now
+    const nowB = run.beatNow ? run.beatNow(now) : (now - start) / beatMs;
     const hitY = H - 8;
     // a short lane looks fewer beats ahead so quarter notes stay big enough to read
     const look = Math.max(MIN_LOOK, Math.min(LOOK_BEATS, (hitY - 4) / 56));
     const pxBeat = (hitY - 4) / look;
-    // y of a moment: due now -> on the line, LOOK_BEATS ahead -> at the top
-    const yAt = (t: number) => hitY - ((t - now) / beatMs) * pxBeat;
+    // y of a beat: due now -> on the line, `look` beats ahead -> at the top
+    const yAt = (b: number) => hitY - (b - nowB) * pxBeat;
 
     // the lane: one soft column per white key
     g.fillStyle = LANE_BG;
@@ -142,10 +160,10 @@ export function makeLane(canvas: HTMLCanvasElement, kb: Keyboard, kbRoot: HTMLEl
 
     // beat lines go by with the music; a bar line is thicker
     const per = run.per || 4, every = run.every || 1;
-    const barAt = run.barAt ?? start;
-    const first = Math.floor((now - barAt) / (beatMs * every)) - 1;
+    const barB = run.barBeat ?? (run.barAt !== undefined ? (run.barAt - start) / beatMs : 0);
+    const first = Math.floor((nowB - barB) / every) - 1;
     for (let b = first; b <= first + look / every + 2; b++) {
-      const y = yAt(barAt + b * every * beatMs);
+      const y = yAt(barB + b * every);
       if (y < -4 || y > hitY) continue;
       const q = b * every;
       const bar = Math.abs(q / per - Math.round(q / per)) < 1e-6;
@@ -155,17 +173,21 @@ export function makeLane(canvas: HTMLCanvasElement, kb: Keyboard, kbRoot: HTMLEl
 
     // the notes
     const letters = run.letters ? run.letters() : true;
+    const font = (px: number) => `700 ${px}px Fredoka, ui-rounded, system-ui, sans-serif`;
+    g.textAlign = 'center';
     for (const s of spans) {
-      const t0 = start + s.at * beatMs, t1 = start + (s.at + s.len) * beatMs;
-      const yTop = yAt(t1) + 3, yBot = yAt(t0);
+      const yTop = yAt(s.at + s.len) + 3, yBot = yAt(s.at);
       if (yBot < -2 || yTop > H) continue;
-      const res = run.result ? run.result(s.i) : null;
+      const res = run.result ? run.result(s.i, s.id) : null;
       const hit = res === 'good' || res === 'early' || res === 'late';
       const miss = res === 'miss';
-      if (res && !seen.has(s.i)) seen.set(s.i, now);
+      const tag = s.id + ':' + s.i;
+      if (res && !seen.has(tag)) seen.set(tag, now);
       for (const m of s.keys) {
-        const c = column(m);
-        if (!c) continue;
+        const c0 = column(m);
+        if (!c0) continue;
+        // the left hand's bars are narrower, with a brown edge, so two hands can be told apart
+        const c = s.lh ? { ...c0, x: c0.x + c0.w * 0.14, w: c0.w * 0.72 } : c0;
         const col = COLORS[letterOf(m)] || '#999';
         // a hit note sinks into its key: only the part above the line is drawn
         const bot = hit ? Math.min(yBot, hitY) : yBot;
@@ -175,20 +197,43 @@ export function makeLane(canvas: HTMLCanvasElement, kb: Keyboard, kbRoot: HTMLEl
         roundRect(g, c.x, yTop, c.w, h, Math.min(12, c.w / 3));
         g.fillStyle = miss ? '#b9ada0' : col;
         g.fill();
-        if (c.black) { g.lineWidth = 3; g.strokeStyle = '#2a211b'; g.stroke(); }
+        if (c.black || s.lh) { g.lineWidth = 3; g.strokeStyle = c.black ? '#2a211b' : '#7a4a22'; g.stroke(); }
         if (hit) { g.lineWidth = 3; g.strokeStyle = '#ffffff'; g.stroke(); }
         g.globalAlpha = 1;
-        // the letter sits at the bottom of the bar, the end that reaches the line first
-        if (letters && !miss && h > 22 && c.w > 16) {
+        if (miss || c.w < 16) continue;
+        // labels sit at the bottom of the bar, the end that reaches the line first: the letter in the middle
+        // and the finger number in a white circle (like the staff's) beside it; on a narrow bar the finger
+        // goes under the letter, or alone when there is no room for both
+        const y = Math.min(bot, hitY) - 4;
+        const cx = c.x + c.w / 2;
+        const f = run.finger ? run.finger(s.i, s.id, m) : null;
+        const r = Math.min(11, c.w * 0.3);
+        const lpx = Math.min(22, c.w * 0.55);
+        const wide = c.w >= 46;
+        const ring = (x: number, yc: number) => {
+          g.beginPath();
+          g.arc(x, yc, r, 0, Math.PI * 2);
+          g.fillStyle = '#ffffff';
+          g.fill();
+          g.fillStyle = '#3b2716';
+          g.font = font(Math.round(r * 1.4));
+          g.textBaseline = 'middle';
+          g.fillText(String(f), x, yc + 1);
+        };
+        let ly = y; // where the letter's bottom goes
+        if (f && h > r * 2 + 6) {
+          if (wide) ring(c.x + c.w - r - 4, y - r);
+          else { ring(cx, y - r); ly = y - r * 2 - 3; }
+        }
+        if (letters && ly - yTop > lpx - 2) {
           g.fillStyle = c.black || letterOf(m) === 'E' ? '#3b2716' : '#ffffff';
-          g.font = `700 ${Math.min(22, c.w * 0.55)}px Fredoka, ui-rounded, system-ui, sans-serif`;
-          g.textAlign = 'center';
+          g.font = font(lpx);
           g.textBaseline = 'bottom';
-          g.fillText(letterOf(m) + (isBlack(m) ? '♯' : ''), c.x + c.w / 2, Math.min(bot, hitY) - 4);
+          g.fillText(letterOf(m) + (isBlack(m) ? '♯' : ''), f && wide ? Math.min(cx, c.x + c.w - r * 2 - 8 - lpx * 0.35) : cx, ly);
         }
       }
       // a hit glows on the line for a moment
-      const when = seen.get(s.i);
+      const when = seen.get(tag);
       if (hit && when !== undefined && now - when < GLOW) {
         const k = 1 - (now - when) / GLOW;
         for (const m of s.keys) {
@@ -203,8 +248,9 @@ export function makeLane(canvas: HTMLCanvasElement, kb: Keyboard, kbRoot: HTMLEl
     g.restore();
 
     // the line where notes are played: pulses on every beat
-    const phase = (((now - barAt) / (beatMs * every)) % 1 + 1) % 1;
-    const pulse = Math.max(0, 1 - phase * 4);
+    // (only in time: when the lane waits for a key, the line just glows)
+    const phase = ((((nowB - barB) / every) % 1) + 1) % 1;
+    const pulse = timed ? Math.max(0, 1 - phase * 4) : 0.4;
     g.fillStyle = '#ff8a1f';
     g.globalAlpha = 0.75 + 0.25 * pulse;
     g.fillRect(0, hitY - 2 - 2 * pulse, W, 5 + 4 * pulse);
@@ -213,11 +259,12 @@ export function makeLane(canvas: HTMLCanvasElement, kb: Keyboard, kbRoot: HTMLEl
 
   return {
     get on() { return !!run; },
+    get run() { return run; },
     start(r: LaneRun) {
       run = r;
       seen.clear();
       geo.key = ''; // the lane opening moves the keys: measure again
-      plan(r.notes);
+      plan(r.parts || [{ notes: r.notes || [] }]);
       canvas.classList.add('on');
       kbRoot.closest('.stage')?.classList.add('laneOn');
       if (!raf) raf = requestAnimationFrame(frame);
