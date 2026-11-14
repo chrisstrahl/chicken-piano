@@ -12,7 +12,11 @@ the grown-ups' page and scroll to 🆕 What's new.
      (tests, tidying) go in one "Behind the scenes" line, or nowhere. Never type music symbols here;
      the in-app card can't draw them on iPad. -->
 
-## 13 November 2026
+## 14 November 2026
+
+- 🎸 **Note lane in every song**: the falling notes now show in plain song play too, not just when playing with the beat. The notes wait on the orange line until the right key is played, then the next ones slide down. Tapping 👂 Listen makes them fall along with the music. Phones held sideways keep just the staff, which has more room there. (#56)
+- ✋ **Fingers on the falling notes**: every falling note shows its finger number in a white circle, the same as on the staff. With 🙌 both hands, the left hand's notes are narrower with a brown edge so the two hands are easy to tell apart. (#56)
+
 
 - 🎼 **Add a song from a score file**: on the grown-ups' page, the 🎼 Add a song card takes a MusicXML (.musicxml, .mxl) or MIDI (.mid) file, from MuseScore or a free score site, and turns it into a song with its tune, left hand, key, speed and words. No audio needed. Pick its level, tap ▶️ to hear the start, and it shows up open at the end of that level for every kid. (#53)
 - 🔒 **Safer backups**: loading a backup file now cleans names and titles first, so a tampered file can't do anything but show text. (#54)

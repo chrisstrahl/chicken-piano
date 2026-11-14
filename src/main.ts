@@ -532,8 +532,10 @@ const P: PlayState = { song: null as unknown as Song, e: 0, events: [], hands: '
   // play-with-the-beat and echo follow the melody note by note (P.i)
   i: 0, mode: null, tok: null, beat: null, loop: null, judge: null, stopEcho: null, phrases: [], ph: 0, turn: false, echoWrong: 0 };
 const playCard = $('#playStaff');
-// the note lane: notes fall onto their keys in 🥁 and 🔁 (src/highway.ts)
+// the note lane: notes fall onto their keys (src/highway.ts). In 🥁 and 🔁 they fall in time; in plain
+// play they wait on the line for the right key, then the next ones slide down.
 const playLane = makeLane($('#playLane') as HTMLCanvasElement, playKb, $('#playKb'));
+const laneFinger = (shift = 0) => (i: number, id: string, m: number) => fingerFor({ part: id as Part, i: i + shift, m } as Need) as number | undefined;
 // how note i went, from a BeatJudge (its items only list the notes that are played)
 const judged = (j: BeatJudge) => {
   const by = new Map<number, (typeof j.items)[number]>();
@@ -673,6 +675,9 @@ function openSong(id: string, back = 'songs') {
   const pref = progress.hands || 'rh';
   P.hands = !twoHands() ? 'rh' : P.song.melodyHand === 'lh' && pref === 'rh' ? 'lh' : pref;
   if (P.song.level) levelN = P.song.level;
+  // the lane takes its space before the staff is drawn (the staff picks grand or single by its height)
+  $('#playLane').classList.toggle('on', roomForLane());
+  playCard.closest('.stage')!.classList.toggle('laneOn', roomForLane());
   $('#playTitle').innerHTML = `${esc(P.song.emoji)} ${esc(songName(P.song))}${otherName(P.song) ? `<small>${esc(otherName(P.song))}</small>` : ''}`;
   drawSong();
   restartSong(true);
@@ -703,6 +708,9 @@ function setCurrent() {
   $('#playProg').style.width = (P.e / Math.max(1, P.events.length)) * 100 + '%';
   if (!ev) { focusX(playCard, P.drawn!, null); playKb.setTarget(null); playKb.setFingers({}); expectNote(null); return; }
   ev.got = new Set();
+  W.rate = 0;
+  W.to = ev.beat;
+  if (!P.mode && (!playLane.on || playLane.run !== W.run || !W.run)) waitLane();
   markUpTo(ev.beat);
   focusX(playCard, P.drawn!, P.drawn!.beatX(ev.beat));
   expectNote(ev.need[0].m);
@@ -710,6 +718,36 @@ function setCurrent() {
   playKb.setFingers(Object.fromEntries(ev.need.map((k) => [k.m, fingerFor(k)]).filter((x) => x[1])));
   bubble($('#playBubble'), `👉 ${needHtml(ev.need)}`);
   if (!P.mode) armHint($('#btnHint'));
+}
+/* the waiting lane (plain play and 👂 Listen): W.to is the beat that should sit on the line; the lane
+   slides there smoothly. While 👂 plays, the beat runs on with the music (W.rate beats per ms). */
+const W = { to: 0, shown: 0, last: 0, rate: 0, at: 0, cap: 0, run: null as object | null };
+function laneBeat(now: number) {
+  const want = W.rate ? Math.min(W.cap, W.to + (now - W.at) * W.rate) : W.to;
+  const dt = Math.min(200, now - (W.last || now));
+  W.last = now;
+  W.shown = W.rate ? want : W.shown + (want - W.shown) * (1 - Math.exp(-dt / 110));
+  return W.shown;
+}
+// when each note of a part starts, in beats
+const partBeats = (notes: Note[]) => { let b = 0; return notes.map((n) => { const x = b; b += BEATS[n.d] || 1; return x; }); };
+// A phone held sideways has no room for both the lane and a readable staff: there, plain play keeps just
+// the staff (playing in time still gets the lane).
+const roomForLane = () => innerHeight >= 500;
+function waitLane() {
+  if (!roomForLane()) { if (playLane.run === W.run) playLane.stop(); W.run = null; return; }
+  const hands: Part[] = !twoHands() ? ['rh'] : P.hands === 'both' ? ['rh', 'lh'] : [P.hands as Part];
+  const parts = hands.map((id) => ({ notes: partNotes(id), id, lh: id === 'lh' && hands.length > 1 }));
+  const beats = Object.fromEntries(parts.map((p) => [p.id, partBeats(p.notes)]));
+  const s = P.song;
+  W.shown = W.to; W.last = 0; W.rate = 0;
+  playLane.start({
+    parts, beatNow: laneBeat, per: barBeats(s.time), every: peckEvery(s.time), barBeat: s.pickup || 0,
+    // notes before the beat on the line have been played
+    result: (i, id) => (beats[id][i] < W.shown - 0.02 ? 'good' : null),
+    finger: laneFinger(), letters: () => !!progress.letters,
+  });
+  W.run = playLane.run;
 }
 // Beat and echo modes step through the melody one note at a time.
 // They follow the hand being played, or the melody when both are.
@@ -823,8 +861,11 @@ $('#btnListen').addEventListener('click', () => {
   const r = from(partNotes('rh'), start);
   const tempo = P.song.tempo * speed();
   const stops: (() => void)[] = [];
+  if (!P.mode && (playLane.run !== W.run || !W.run)) waitLane();
   stops.push(playSequence(r.notes, tempo, (j) => {
     const n = r.notes[j] as Sounding;
+    // the lane runs on with the music from this note to the next
+    W.to = r.beats[j]; W.at = performance.now(); W.rate = tempo / 60000; W.cap = r.beats[j] + (BEATS[n.d] || 1);
     focusX(playCard, P.drawn!, P.drawn!.beatX(r.beats[j]));
     if (n.r) { bubble($('#playBubble'), '🤫'); return; }
     playKb.flash(n.m, 'hl', 350);
@@ -883,6 +924,7 @@ function startMode(mode: 'beat' | 'echo') {
   restartSong(false);
   P.mode = mode;
   P.tok = {};
+  playLane.stop();
   $(mode === 'beat' ? '#btnBeat' : '#btnEcho').classList.add('on');
   playKb.setTarget(null);
   expectNote(null);
@@ -916,7 +958,7 @@ function startBeatMode() {
     });
     const start = P.beat.t0 + lead * beatMs;
     P.judge = new BeatJudge(notesP(), beatMs, start);
-    playLane.start({ notes: notesP(), start, beatMs, per, every, barAt: P.beat.t0, result: judged(P.judge), letters: () => !!progress.letters, onFrame: flowStaff(start, beatMs, 0) });
+    playLane.start({ parts: [{ notes: notesP(), id: modeHand() }], start, beatMs, per, every, barAt: P.beat.t0, result: judged(P.judge), finger: laneFinger(), letters: () => !!progress.letters, onFrame: flowStaff(start, beatMs, 0) });
     P.shown = -1;
     P.loop = setInterval(beatLoop, 40);
   });
@@ -1083,6 +1125,7 @@ function startSpot() {
   const ph = phs.find(([, b]) => tl[b - 1].at + tl[b - 1].len > beat + 1e-6) || phs[phs.length - 1];
   P.mode = 'spot';
   P.tok = {};
+  playLane.stop();
   spot = { a: ph[0], b: ph[1], lvl: 0, tries: 0 };
   $('#btnSpot').classList.add('on');
   const tok = P.tok;
@@ -1120,7 +1163,7 @@ function spotRound() {
     });
     const start = P.beat.t0 + per * beatMs;
     P.judge = new BeatJudge(part, beatMs, start);
-    playLane.start({ notes: part, start, beatMs, per, barAt: P.beat.t0, result: judged(P.judge), letters: () => !!progress.letters, onFrame: flowStaff(start, beatMs, d.beats[sp.a]) });
+    playLane.start({ parts: [{ notes: part, id: modeHand() }], start, beatMs, per, barAt: P.beat.t0, result: judged(P.judge), finger: laneFinger(sp.a), letters: () => !!progress.letters, onFrame: flowStaff(start, beatMs, d.beats[sp.a]) });
     P.shown = -1;
     P.loop = setInterval(spotLoop, 40);
   });
@@ -1190,7 +1233,7 @@ $('#btnSpot').addEventListener('click', () => {
 
 window.addEventListener('resize', () => {
   if (current !== 'play' || !P.drawn) return;
-  if (playLane.on) return;
+  if (playLane.on && playLane.run !== W.run) return; // playing in time: the staff follows the lane
   if (P.mode) return focusMel(P.i);
   const ev = evNow();
   focusX(playCard, P.drawn, ev ? P.drawn.beatX(ev.beat) : null);
